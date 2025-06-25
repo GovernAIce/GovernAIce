@@ -44,6 +44,9 @@ class DocumentUploadView(APIView):
                             defaults={'description': req, 'category': 'General'}
                         )
                         insight_obj.related_requirements.add(req_obj)
+            # Update FrameworkSelection status to COMPLETED after successful analysis
+            for framework in frameworks:
+                FrameworkSelection.objects.filter(document=doc, framework=framework).update(analysis_status='COMPLETED')
             for insight in insights:
                 if insight['framework'] == 'EU_AI_ACT':
                     doc.risk_classification = insight['risk_classification']
