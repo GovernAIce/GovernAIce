@@ -6,6 +6,9 @@ from datetime import datetime
 from pymongo import MongoClient
 
 import logging
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -70,7 +73,8 @@ def analyze_document(text, frameworks, doc_id):
         logger.error("Empty or invalid text provided for analysis")
         return [create_fallback_insight(fw, "Empty document text") for fw in frameworks]
     
-    genai.configure(api_key="AIzaSyC1i7rneq_8021sgC0b9xnwXjQ2Rb-57-8")
+    api_key = os.getenv("GEMINI_API_KEY")
+    genai.configure(api_key=api_key)
     model = genai.GenerativeModel('gemini-1.5-flash')
     insights = []
 
