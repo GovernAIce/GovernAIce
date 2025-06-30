@@ -1,0 +1,6 @@
+pypdf
+langchain
+chromadb 
+docling
+pytest
+boto3
