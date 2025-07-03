@@ -197,6 +197,36 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "product-info-upload",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"product_info\": \"Our product is an AI-powered chatbot for customer service, using natural language processing to assist users in real-time.\",\r\n    \"frameworks\": [\"EU_AI_ACT\", \"NIST_RMF\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/product-info-upload/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"product-info-upload",
+						""
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
