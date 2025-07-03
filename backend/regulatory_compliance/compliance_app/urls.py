@@ -1,8 +1,5 @@
 from django.urls import path
-from .views import (
-    DocumentUploadView, DocumentListView, DocumentDetailView,
-    ComplianceInsightListView, RegulatoryFrameworkListView, RequirementListView
-)
+from .views import *
 
 urlpatterns = [
     path('upload-and-analyze/', DocumentUploadView.as_view(), name='upload-and-analyze'),
@@ -11,4 +8,5 @@ urlpatterns = [
     path('compliance-insights/', ComplianceInsightListView.as_view(), name='compliance-insight-list'),
     path('frameworks/', RegulatoryFrameworkListView.as_view(), name='framework-list'),
     path('requirements/', RequirementListView.as_view(), name='requirement-list'),
+    path('product-info-upload/', ProductInfoUploadView.as_view(), name='product-info-upload'),
 ]

@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import Document, ComplianceInsight, RegulatoryFramework, Requirement, FrameworkSelection
+from .models import *
+from django.core.validators import MinLengthValidator
 
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -53,3 +54,18 @@ class AnalysisResultSerializer(serializers.Serializer):
     doc_id = serializers.CharField()
     filename = serializers.CharField()
     insights = serializers.ListField(child=serializers.DictField())
+
+
+class ProductInfoUploadSerializer(serializers.Serializer):
+    product_info = serializers.CharField(
+        validators=[MinLengthValidator(10)],
+        help_text="Enter the product details in the textbox."
+    )
+    frameworks = serializers.ListField(
+        child=serializers.ChoiceField(choices=[
+            ('EU_AI_ACT', 'EU AI Act'),
+            ('NIST_RMF', 'NIST AI RMF'),
+            ('CPRA', 'CPRA'),
+        ]),
+        help_text="List of regulatory frameworks to analyze against (e.g., ['EU_AI_ACT', 'NIST_RMF', 'CPRA'])."
+    )
