@@ -1,2 +1,2 @@
-../.env
- ../docker-compose.yml
+.env
+docker-compose.yml
