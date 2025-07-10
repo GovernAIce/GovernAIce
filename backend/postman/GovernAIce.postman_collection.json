@@ -18,31 +18,33 @@
 					"mode": "formdata",
 					"formdata": [
 						{
-							"key": "frameworks",
-							"value": "EU_AI_ACT",
-							"type": "text"
-						},
-						{
-							"key": "frameworks",
-							"value": "CPRA",
+							"key": "countries",
+							"value": "[\"EU\",\"Canada\"]",
 							"type": "text"
 						},
 						{
 							"key": "file",
 							"type": "file",
-							"src": "postman-cloud:///1f0512ae-9f92-4160-b483-96b998a5981c"
+							"src": "postman-cloud:///1f05d95d-c185-4da0-8361-1c730157a97a"
+						},
+						{
+							"key": "policies",
+							"value": "[\"General Data Protection Regulation (GDPR)\",\"Canada Personal Information Protection and Electronic Documents Act (PIPEDA)\"]",
+							"type": "text"
 						}
 					]
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/upload-and-analyze/",
+					"raw": "http://127.0.0.1:5000/upload-and-analyze/",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
-					"port": "8000",
+					"port": "5000",
 					"path": [
-						"api",
 						"upload-and-analyze",
 						""
 					]
@@ -59,14 +61,16 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/api/documents/",
+					"raw": "http://127.0.0.1:5000/documents/",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
-					"port": "8000",
+					"port": "5000",
 					"path": [
-						"api",
 						"documents",
 						""
 					]
@@ -83,21 +87,23 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/api/documents/?doc_id=921769f5-8e77-446e-87e6-a73f75fd5573/",
+					"raw": "http://127.0.0.1:5000/documents/?doc_id=172343a6-0e3a-4479-86fe-ad9283219b8e/",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
-					"port": "8000",
+					"port": "5000",
 					"path": [
-						"api",
 						"documents",
 						""
 					],
 					"query": [
 						{
 							"key": "doc_id",
-							"value": "921769f5-8e77-446e-87e6-a73f75fd5573/"
+							"value": "172343a6-0e3a-4479-86fe-ad9283219b8e/"
 						}
 					]
 				}
@@ -105,7 +111,7 @@
 			"response": []
 		},
 		{
-			"name": "compliance_insight",
+			"name": "search",
 			"request": {
 				"auth": {
 					"type": "noauth"
@@ -113,55 +119,24 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/api/compliance-insights/?doc_id=921769f5-8e77-446e-87e6-a73f75fd5573&framework=EU_AI_ACT",
+					"raw": "http://127.0.0.1:5000/documents/search/?query=AI Chatbot",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
-					"port": "8000",
+					"port": "5000",
 					"path": [
-						"api",
-						"compliance-insights",
+						"documents",
+						"search",
 						""
 					],
 					"query": [
 						{
-							"key": "doc_id",
-							"value": "921769f5-8e77-446e-87e6-a73f75fd5573"
-						},
-						{
-							"key": "framework",
-							"value": "EU_AI_ACT"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "framework requirements",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8000/api/requirements/?framework=EU_AI_ACT",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"api",
-						"requirements",
-						""
-					],
-					"query": [
-						{
-							"key": "framework",
-							"value": "EU_AI_ACT"
+							"key": "query",
+							"value": "AI Chatbot"
 						}
 					]
 				}
@@ -205,7 +180,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"product_info\": \"Our product is an AI-powered chatbot for customer service, using natural language processing to assist users in real-time.\",\r\n    \"frameworks\": [\"EU_AI_ACT\", \"NIST_RMF\"]\r\n}",
+					"raw": "{\r\n  \"product_info\": \"This is an AI chatbot system for customer service, handling personal data securely.\",\r\n  \"countries\": [\"EU\", \"Canada\"],\r\n  \"policies\": [\"General Data Protection Regulation (GDPR)\", \"Canada Personal Information Protection and Electronic Documents Act (PIPEDA)\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -213,14 +188,16 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8000/api/product-info-upload/",
+					"raw": "http://127.0.0.1:5000/product-info-upload/",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
-					"port": "8000",
+					"port": "5000",
 					"path": [
-						"api",
 						"product-info-upload",
 						""
 					]
