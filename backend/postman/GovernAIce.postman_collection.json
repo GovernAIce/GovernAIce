@@ -180,7 +180,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"product_info\": \"This is an AI chatbot system for customer service, handling personal data securely.\",\r\n  \"countries\": [\"EU\", \"Canada\"],\r\n  \"policies\": [\"General Data Protection Regulation (GDPR)\", \"Canada Personal Information Protection and Electronic Documents Act (PIPEDA)\"]\r\n}",
+					"raw": "{\r\n  \"product_info\": \"The AI Chatbot System for Customer Service is a sophisticated artificial intelligence solution designed to automate and enhance customer support operations. Built with advanced natural language processing (NLP), machine learning, and secure data-handling capabilities, this system can engage in real-time conversations with users, resolve queries, and assist with account-related tasks — all while prioritizing the protection and confidentiality of personal data.\",\r\n  \"countries\": [\"EU\", \"Canada\"],\r\n  \"policies\": [\"General Data Protection Regulation (GDPR)\", \"Canada Personal Information Protection and Electronic Documents Act (PIPEDA)\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
