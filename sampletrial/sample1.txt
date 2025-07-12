@@ -1,0 +1,17 @@
+AI System Name: SmartHire Recruiter AI
+Goal: The system identifies potential job candidates by scraping and analyzing LinkedIn
+profiles based on job descriptions. It prioritizes candidates with the best matching
+qualifications and sends a shortlist to recruiters.
+Features:
+● Automated Profile Search: Searches LinkedIn profiles using job criteria like skills,
+job titles, experience, and location.
+● Ranking Algorithm: Scores candidates based on relevancy and presents ranked
+lists.
+● Recommendation Suggestions: Suggests potential candidates not directly
+matching but with adjacent skills.
+● Candidate Outreach Support: Generates personalized messaging for outreach.
+Stakeholders:
+● Primary Users: HR professionals, recruiters.
+● Secondary Users: Job seekers (impacted by being selected or excluded).
+● Regulators: Ensuring compliance with data privacy laws (e.g., GDPR, CCPA).
+● Third Parties: LinkedIn (data provider).

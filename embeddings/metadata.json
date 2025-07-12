@@ -1,0 +1,19 @@
+{
+  "created_at": "2025-07-12T20:52:04.035305",
+  "model_name": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+  "embedding_dim": 768,
+  "total_documents": 5,
+  "total_chunks": 114,
+  "processing_history": [
+    {
+      "timestamp": "2025-07-12T20:53:27.601681",
+      "stats": {
+        "files_processed": 5,
+        "chunks_created": 114,
+        "embeddings_generated": 114,
+        "errors": []
+      }
+    }
+  ],
+  "last_updated": "2025-07-12T20:53:27.601681"
+}

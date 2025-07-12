@@ -1,0 +1,51 @@
+{
+  "timestamp": "2025-07-13T03:39:33.263159",
+  "document_name": "sample1",
+  "target_country": "ALL",
+  "frameworks_used": 114,
+  "overall_score": 1.4985772411732206,
+  "risk_level": "CRITICAL",
+  "detailed_scores": {
+    "semantic_similarity": 3.146443102933051,
+    "criteria_coverage": {
+      "transparency": 0.0,
+      "accountability": 0.0,
+      "fairness": 0.0,
+      "safety": 0.0,
+      "privacy": 2.0,
+      "human_oversight": 0.0,
+      "compliance": 2.0,
+      "impact_assessment": 0.0
+    },
+    "individual_criteria": {
+      "transparency": 0.0,
+      "accountability": 0.0,
+      "fairness": 0.0,
+      "safety": 0.0,
+      "privacy": 2.0,
+      "human_oversight": 0.0,
+      "compliance": 2.0,
+      "impact_assessment": 0.0
+    }
+  },
+  "recommendations": [
+    "- Transparency: 0.0",
+    "- Accountability: 0.0",
+    "- Fairness: 0.0",
+    "- Safety: 0.0",
+    "- Privacy: 2.0",
+    "- Human Oversight: 0.0",
+    "- Compliance: 2.0",
+    "- Impact Assessment: 0.0",
+    "- **Transparency:** Document and disclose the AI's decision-making processes.",
+    "- **Accountability:** Define clear roles and responsibilities for system outcomes."
+  ],
+  "gaps_identified": [
+    "- **Transparency:** The absence of information on how the AI operates may lead to trust issues among users and candidates.",
+    "- **Accountability:** Lack of defined responsibilities for errors or biases in the system.",
+    "- **Fairness:** No measures to prevent biases, risking unfair exclusion of qualified candidates.",
+    "- **Safety:** Unaddressed potential for unintended consequences, such as perpetuating stereotypes.",
+    "- **Human Oversight:** Absence of human review processes for AI decisions.",
+    "- **Impact Assessment:** No consideration of broader societal impacts or biases."
+  ]
+}
