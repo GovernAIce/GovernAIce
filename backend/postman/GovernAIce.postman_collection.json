@@ -29,7 +29,7 @@
 						},
 						{
 							"key": "policies",
-							"value": "[\"General Data Protection Regulation (GDPR)\",\"Canada Personal Information Protection and Electronic Documents Act (PIPEDA)\"]",
+							"value": "[\"General Data Protection Regulation\", \"Canada Artificial Intelligence and Data Act (AIDA)-proposed\"]",
 							"type": "text"
 						}
 					]
@@ -46,6 +46,52 @@
 					"port": "5000",
 					"path": [
 						"upload-and-analyze",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "upload-regulatory-compliance use case 3",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "countries",
+							"value": "[\"EU\",\"Canada\"]",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "postman-cloud:///1f05d95d-c185-4da0-8361-1c730157a97a"
+						},
+						{
+							"key": "policies",
+							"value": "[\"General Data Protection Regulation\", \"Canada Artificial Intelligence and Data Act (AIDA)-proposed\"]",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/upload-regulatory-compliance/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"upload-regulatory-compliance",
 						""
 					]
 				}
@@ -199,6 +245,38 @@
 					"port": "5000",
 					"path": [
 						"product-info-upload",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "analyze-regulatory-product-info use case 3",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"product_info\": \"The AI Chatbot System for Customer Service is a sophisticated artificial intelligence solution designed to automate and enhance customer support operations. Built with advanced natural language processing (NLP), machine learning, and secure data-handling capabilities, this system can engage in real-time conversations with users, resolve queries, and assist with account-related tasks — all while prioritizing the protection and confidentiality of personal data.\",\r\n  \"countries\": [\"EU\", \"Canada\"],\r\n  \"policies\": [\"General Data Protection Regulation\", \"Canada Artificial Intelligence and Data Act (AIDA)-proposed\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/analyze-regulatory-product-info/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"analyze-regulatory-product-info",
 						""
 					]
 				}
