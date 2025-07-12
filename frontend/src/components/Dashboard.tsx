@@ -16,11 +16,16 @@ const Dashboard: React.FC = () => (
       <RelevantPoliciesWidget />
       <OECDScoreWidget />
       <NISTAILifestyleWidget />
-      <EURiskLevelFrameworkWidget />
-      <div className="col-span-2 w-full row-span-2">
+      {/* <div className="col-span-2 w-full row-span-2">
         <ExcellenciesMajorGapsWidget />
+      </div> */}
+      <div className="w-full row-span-3">
+        <ChatWithMeWidget />
       </div>
-      <ChatWithMeWidget className="row-span-2" />
+      <div className="col-span-2 w-full row-span-2">
+        <EURiskLevelFrameworkWidget />
+      </div>
+
     </div>
   </div>
 );

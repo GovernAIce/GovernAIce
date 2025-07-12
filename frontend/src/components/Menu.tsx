@@ -74,7 +74,7 @@ const Menu: React.FC<MenuProps> = ({ projectName }) => {
       </div>
       <div className="p-4 border-t border-[#f0f0f0] flex items-center gap-2">
         <div className="w-8 h-8 bg-[#d9d9d9] rounded-full flex items-center justify-center">
-          <span className="w-4 h-4 text-[#9ea2ae]">U</span>
+          {/* <span className="w-4 h-4 text-[#9ea2ae]">U</span> */}
         </div>
         <span className="text-sm text-[#000000] font-medium">Name Name</span>
       </div>
