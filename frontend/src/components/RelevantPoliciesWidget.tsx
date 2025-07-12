@@ -19,7 +19,7 @@ const RelevantPoliciesWidget: React.FC = () => (
       <div className="flex justify-center items-center gap-4 mt-auto">
         <button>
           <img
-            src="/icons/arrow11.svg"
+            src="/icons/Arrow11.svg"
             alt="Left Arrow"
             style={{ width: '24px', height: '24px', cursor: 'pointer' }}
           />
@@ -27,9 +27,9 @@ const RelevantPoliciesWidget: React.FC = () => (
         <Button className="w-72 text-white text-sm">View Full Policy Document</Button>
         <button>
           <img
-            src="/icons/arrow11.svg"
+            src="/icons/Arrow10.svg"
             alt="Right Arrow"
-            style={{ width: '24px', height: '24px', cursor: 'pointer', transform: 'rotate(180deg)' }}
+            style={{ width: '24px', height: '24px', cursor: 'pointer' }}
           />
         </button>
       </div>

@@ -8,17 +8,19 @@ const UploadProjectWidget: React.FC = () => (
       alt="Info"
       className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
     />
-    <div className="flex flex-col items-center gap-2.5">
-      <div className="w-28 h-32 custom-bg rounded-lg flex items-center justify-center">
+    <div className="flex flex-row items-center justify-center gap-4 h-full w-full">
+      <div className="w-20 h-20 custom-bg rounded-lg flex items-center justify-center">
         <img
           src="/icons/Upload.svg"
           alt="Upload Icon"
         />
       </div>
-      <h3 className="text-xl text-[#1975d4] font-bold">Upload Project</h3>
-      <p className="text-sm text-black text-center">
-        Please upload your product illustration: doc, pdf, jpg...
-      </p>
+      <div className="flex flex-col">
+        <h3 className="text-xl text-[#1975d4] font-bold">Upload Project</h3>
+        <p className="text-sm text-black">
+          Please upload your product illustration: doc, pdf, jpg...
+        </p>
+      </div>
     </div>
   </Card>
 );

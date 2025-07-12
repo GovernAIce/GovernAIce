@@ -60,9 +60,9 @@ const Menu: React.FC<MenuProps> = ({ projectName }) => {
               key={index}
               onClick={() => setSelected(index)}
               className={`w-full flex items-center gap-2 px-3 py-1 text-sm rounded-none ${
-                selected === index
+                item.label === 'Home'
                   ? 'bg-gray-200 text-[#1975d4] font-bold'
-                  : 'text-black hover:bg-gray-100'
+                  : 'bg-transparent text-black hover:bg-gray-100'
               }`}
             >
               {/* Replace with icon import or inline SVG as needed */}

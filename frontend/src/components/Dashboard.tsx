@@ -2,8 +2,9 @@ import React from 'react';
 import UploadProjectWidget from './UploadProjectWidget';
 import ExplorePolicyWidget from './ExplorePolicyWidget';
 import RelevantPoliciesWidget from './RelevantPoliciesWidget';
-import OverallScoreWidget from './OverallScoreWidget';
-import PoliciesRegulatorsWidget from './PoliciesRegulatorsWidget';
+import OECDScoreWidget from './OECDScoreWidget';
+import NISTAILifestyleWidget from './NISTAILifestyleWidget';
+import EURiskLevelFrameworkWidget from './EURiskLevelFrameworkWidget';
 import ChatWithMeWidget from './ChatWithMeWidget';
 import ExcellenciesMajorGapsWidget from './ExcellenciesMajorGapsWidget';
 
@@ -13,12 +14,13 @@ const Dashboard: React.FC = () => (
       <UploadProjectWidget />
       <ExplorePolicyWidget />
       <RelevantPoliciesWidget />
-      <OverallScoreWidget />
-      <PoliciesRegulatorsWidget />
-      <ChatWithMeWidget className="row-span-2" />
-      <div className="col-span-2 w-full">
+      <OECDScoreWidget />
+      <NISTAILifestyleWidget />
+      <EURiskLevelFrameworkWidget />
+      <div className="col-span-2 w-full row-span-2">
         <ExcellenciesMajorGapsWidget />
       </div>
+      <ChatWithMeWidget className="row-span-2" />
     </div>
   </div>
 );

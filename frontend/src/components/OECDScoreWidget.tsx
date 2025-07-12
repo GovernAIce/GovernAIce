@@ -1,15 +1,15 @@
 import React from 'react';
 import Card from './Card';
 
-const OverallScoreWidget: React.FC = () => (
+const OECDScoreWidget: React.FC = () => (
   <Card className="custom-border relative p-4 h-full">
     <img
-      src="/public/icons/info.svg"
+      src="/icons/info.svg"
       alt="Info"
       className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
     />
     <div className="flex flex-col justify-center items-center h-full">
-      <h3 className="text-xl text-[#1975d4] font-bold">Overall Score: 85</h3>
+      <h3 className="text-xl text-[#1975d4] font-bold">OECD Score: 80</h3>
       <p className="text-sm text-black text-center mb-2">Compare use case to the target policies and give an overall score about the compliance level</p>
       <svg viewBox="0 0 200 200" className="w-40 h-40 mt-2" >
         <polygon points="100,20 150,50 170,100 150,150 100,180 50,150 30,100 50,50" fill="none" stroke="#d9d9d9" strokeWidth="1"/>
@@ -29,4 +29,4 @@ const OverallScoreWidget: React.FC = () => (
   </Card>
 );
 
-export default OverallScoreWidget; 
+export default OECDScoreWidget; 
