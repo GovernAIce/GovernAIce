@@ -21,7 +21,7 @@
 <body>
   <div id="root"></div>
   <script type="text/babel">
-    const { useState } = React;
+    const { useState, useEffect } = React;
 
     // Simulated Lucide Icons
     const icons = {
@@ -71,154 +71,293 @@
     );
 
     // Menu Component
- const Menu = ({ projectName }) => {
-  const [selected, setSelected] = useState(null);
+    const Menu = ({ projectName, onSelect }) => {
+      const [selected, setSelected] = useState(null);
 
-  const menuItems = [
-    { type: "header", label: "Menu" },
-    { type: "item", label: "Home", icon: "Home" },
-    { type: "header", label: "Tools" },
-    { type: "item", label: "Policy Analysis", icon: "FileText" },
-    { type: "item", label: "Opportunity Identification", icon: "Target" },
-    { type: "item", label: "Compliance Risk Assessment", icon: "Shield" },
-    { type: "item", label: "Reports Generation", icon: "BarChart3" },
-    { type: "item", label: "Policy Engagement", icon: "Users" },
-    { type: "item", label: "Vendor Management", icon: "Building" },
-    { type: "header", label: "Project Folders:" },
-    { type: "item", label: projectName, icon: "Folder" }, // Dynamic project name
-    { type: "item", label: "UX@Berkeley", icon: "Folder" },
-    { type: "header", label: "Reports:" },
-    { type: "item", label: "Feb. 28th - 9:46am", icon: "FileText" },
-    { type: "item", label: "Jan. 5th - 11:53am", icon: "FileText" },
-    { type: "item", label: "Jan. 7th - 12:11am", icon: "FileText" },
-    { type: "item", label: "Jan. 30th - 6:40pm", icon: "FileText" },
-    { type: "header", label: "Team Members" },
-    { type: "item", label: "Name Name", icon: "User" },
-    { type: "item", label: "Name Name", icon: "User" },
-    { type: "item", label: "Name Name", icon: "User" },
-    { type: "item", label: "Name Name", icon: "User" },
-    { type: "item", label: "Name Name", icon: "User" },
-  ];
+      const menuItems = [
+        { type: "header", label: "Menu" },
+        { type: "item", label: "Home", icon: "Home" },
+        { type: "header", label: "Tools" },
+        { type: "item", label: "Policy Analysis", icon: "FileText" },
+        { type: "item", label: "Opportunity Identification", icon: "Target" },
+        { type: "item", label: "Compliance Risk Assessment", icon: "Shield" },
+        { type: "item", label: "Reports Generation", icon: "BarChart3" },
+        { type: "item", label: "Policy Engagement", icon: "Users" },
+        { type: "item", label: "Vendor Management", icon: "Building" },
+        { type: "header", label: "Project Folders:" },
+        { type: "item", label: projectName, icon: "Folder" }, // Dynamic project name
+        { type: "item", label: "UX@Berkeley", icon: "Folder" },
+        { type: "header", label: "Reports:" },
+        { type: "item", label: "Feb. 28th - 9:46am", icon: "FileText" },
+        { type: "item", label: "Jan. 5th - 11:53am", icon: "FileText" },
+        { type: "item", label: "Jan. 7th - 12:11am", icon: "FileText" },
+        { type: "item", label: "Jan. 30th - 6:40pm", icon: "FileText" },
+        { type: "header", label: "Team Members" },
+        { type: "item", label: "Name Name", icon: "User" },
+        { type: "item", label: "Name Name", icon: "User" },
+        { type: "item", label: "Name Name", icon: "User" },
+        { type: "item", label: "Name Name", icon: "User" },
+        { type: "item", label: "Name Name", icon: "User" },
+      ];
 
-  return (
-    <div className="w-64 h-screen bg-white flex flex-col border-r border-[#d9d9d9] rounded-r-lg shadow-lg">
-      <div className="px-4 py-4 border-b border-[#f0f0f0] flex items-center gap-2">
-        <img src="/icons/LogoVector.svg" alt="Logo" className="w-6 h-6" />
-        <span
-          className="text-[20.13px] text-[#1975d4] font-bold inline-block"
-          style={{ fontFamily: "'Libre Baskerville', serif", width: "123px" }}
-        >GovernAIce</span>
-      </div>
-      <div className="flex-1 overflow-y-auto px-2 py-2">
-        {menuItems.map((item, index) =>
-          item.type === "header" ? (
-            <h3
-              key={index}
-              className="text-[#9ea2ae] text-xs font-semibold mt-4 mb-1 px-2"
-            >
-              {item.label}
-            </h3>
-          ) : (
-            <button
-              key={index}
-              onClick={() => setSelected(index)}
-              className={`w-full flex items-center gap-2 px-3 py-1 text-sm rounded-none ${
-                selected === index
-                  ? "bg-gray-200 text-[#1975d4] font-bold"
-                  : "text-black hover:bg-gray-100"
-              }`}
-            >
-              {React.createElement(icons[item.icon], {
-                className: `w-4 h-4 ${
-                  selected === index ? "text-[#1975d4]" : "text-black"
-                }`,
+      return (
+        <div className="w-64 h-screen bg-white flex flex-col border-r border-[#d9d9d9] rounded-r-lg shadow-lg">
+          <div className="px-4 py-4 border-b border-[#f0f0f0] flex items-center gap-2">
+            <img src="/icons/LogoVector.svg" alt="Logo" className="w-6 h-6" />
+            <span
+              className="text-[20.13px] text-[#1975d4] font-bold inline-block"
+              style={{ fontFamily: "'Libre Baskerville', serif", width: "123px" }}
+            >GovernAIce</span>
+          </div>
+          <div className="flex-1 overflow-y-auto px-2 py-2">
+            {menuItems.map((item, index) =>
+              item.type === "header" ? (
+                <h3
+                  key={index}
+                  className="text-[#9ea2ae] text-xs font-semibold mt-4 mb-1 px-2"
+                >
+                  {item.label}
+                </h3>
+              ) : (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setSelected(index);
+                    onSelect(index); // Notify parent of selection
+                  }}
+                  className={`w-full flex items-center gap-2 px-3 py-1 text-sm rounded-none ${
+                    selected === index
+                      ? "bg-gray-200 text-[#1975d4] font-bold"
+                      : "text-black hover:bg-gray-100"
+                  }`}
+                >
+                  {React.createElement(icons[item.icon], {
+                    className: `w-4 h-4 ${
+                      selected === index ? "text-[#1975d4]" : "text-black"
+                    }`,
+                  })}
+                  <span className="truncate">{item.label}</span>
+                </button>
+              )
+            )}
+          </div>
+          <div className="p-4 border-t border-[#f0f0f0] flex items-center gap-2">
+            <div className="w-8 h-8 bg-[#d9d9d9] rounded-full flex items-center justify-center">
+              {React.createElement(icons["User"], {
+                className: "w-4 h-4 text-[#9ea2ae]",
               })}
-              <span className="truncate">{item.label}</span>
-            </button>
-          )
-        )}
-      </div>
-      <div className="p-4 border-t border-[#f0f0f0] flex items-center gap-2">
-        <div className="w-8 h-8 bg-[#d9d9d9] rounded-full flex items-center justify-center">
-          {React.createElement(icons["User"], {
-            className: "w-4 h-4 text-[#9ea2ae]",
-          })}
+            </div>
+            <span className="text-sm text-[#000000] font-medium">Name Name</span>
+          </div>
         </div>
-        <span className="text-sm text-[#000000] font-medium">Name Name</span>
-      </div>
-    </div>
-  );
-};
-
-
-
+      );
+    };
 
     // Header Component
     const Header = ({ projectName, setProjectName }) => {
-  const [editMode, setEditMode] = useState(false);
+      const [editMode, setEditMode] = useState(false);
+      const [currentTime, setCurrentTime] = useState("");
 
-  return (
-    <div className="bg-white border-b border-[#d9d9d9] p-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-8">
-          <h2 className="text-[#1975d4] text-2xl font-semibold">Good Evening Yan</h2>
-          {editMode ? (
-            <input
-              type="text"
-              value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              className="text-[#1975d4] text-2xl font-semibold border border-[#d9d9d9] rounded p-2 w-64 focus:outline-none focus:ring-2 focus:ring-[#1975d4]"
-              placeholder="Enter project name"
-              aria-label="Edit project name"
-            />
-          ) : (
-            <h3 className="text-[#1975d4] text-2xl font-semibold">{projectName}</h3>
-          )}
-        </div>
-        <div className="flex items-center gap-4">
-          <span className="text-[#9ea2ae] text-sm">last updated: Jul 12, 2025 - 04:55 PM IST</span>
-          <div className="flex items-center gap-2">
-            <span className="text-[#1975d4] font-semibold text-lg bg-white border-2 border-[#1975d4] px-4 py-1 rounded">Edit Mode</span>
-            <label className="relative inline-flex items-center cursor-pointer" aria-label="Toggle Edit Mode">
-              <input
-                type="checkbox"
-                className="sr-only peer"
-                checked={editMode}
-                onChange={() => setEditMode(!editMode)}
-              />
-              <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#1975d4] rounded-full peer peer-checked:bg-[#1975d4] peer-checked:after:translate-x-7 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all"></div>
-            </label>
+      useEffect(() => {
+        const now = new Date();
+        setCurrentTime(
+          now.toLocaleString("en-US", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+            timeZone: "Asia/Kolkata",
+          })
+        );
+      }, []);
+
+      return (
+        <div className="bg-white border-b border-[#d9d9d9] p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-8">
+              <h2 className="text-[#1975d4] text-2xl font-semibold">Good Evening Yan</h2>
+              {editMode ? (
+                <input
+                  type="text"
+                  value={projectName}
+                  onChange={(e) => setProjectName(e.target.value)}
+                  className="text-[#1975d4] text-2xl font-semibold border border-[#d9d9d9] rounded p-2 w-64 focus:outline-none focus:ring-2 focus:ring-[#1975d4]"
+                  placeholder="Enter project name"
+                  aria-label="Edit project name"
+                />
+              ) : (
+                <h3 className="text-[#1975d4] text-2xl font-semibold">{projectName}</h3>
+              )}
+            </div>
+            <div className="flex items-center gap-4">
+              <span className="text-[#9ea2ae] text-sm">last updated: Jul 12, 2025 - {currentTime} IST</span>
+              <div className="flex items-center gap-2">
+                <span className="text-[#1975d4] font-semibold text-lg bg-white border-2 border-[#1975d4] px-4 py-1 rounded">Edit Mode</span>
+                <label className="relative inline-flex items-center cursor-pointer" aria-label="Toggle Edit Mode">
+                  <input
+                    type="checkbox"
+                    className="sr-only peer"
+                    checked={editMode}
+                    onChange={() => setEditMode(!editMode)}
+                  />
+                  <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#1975d4] rounded-full peer peer-checked:bg-[#1975d4] peer-checked:after:translate-x-7 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all"></div>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-  );
-};
+      );
+    };
+
     // UploadProjectWidget Component
     const UploadProjectWidget = () => (
-  <Card className="custom-border relative p-4">
-    {/* Info Icon in top-right */}
-    <img
-      src="/public/icons/info.svg"
-      alt="Info"
-      className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-    />
-
-    <div className="flex flex-col items-center gap-2.5">
-      <div className="w-28 h-32 custom-bg rounded-lg flex items-center justify-center">
+      <Card className="custom-border relative p-4">
         <img
-          src="/public/icons/Upload.svg"
-          alt="Upload Icon"
-          className="" // No size change applied
+          src="/public/icons/info.svg"
+          alt="Info"
+          className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
         />
-      </div>
-      <h3 className="text-xl text-[#1975d4] font-bold">Upload Project</h3>
-      <p className="text-sm text-black text-center">
-        Please upload your product illustration: doc, pdf, jpg...
-      </p>
-    </div>
-  </Card>
-);
+        <div className="flex flex-col items-center gap-2.5">
+          <div className="w-28 h-32 custom-bg rounded-lg flex items-center justify-center">
+            <img
+              src="/public/icons/Upload.svg"
+              alt="Upload Icon"
+              className=""
+            />
+          </div>
+          <h3 className="text-xl text-[#1975d4] font-bold">Upload Project</h3>
+          <p className="text-sm text-black text-center">
+            Please upload your product illustration: doc, pdf, jpg...
+          </p>
+        </div>
+      </Card>
+    );
+
+    // New Score Widgets
+    const OECDScoreWidget = () => (
+      <Card className="custom-border relative p-4">
+        <img
+          src="/public/icons/info.svg"
+          alt="Info"
+          className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
+        />
+        <div className="flex flex-col gap-2.5 items-center">
+          <h3 className="text-xl text-[#1975d4] font-bold">OECD Score: 80</h3>
+          <p className="text-sm text-black">
+            Compare use case to the OECD AI Risk Framework and give an overall score about the compliance level
+          </p>
+          <div className="w-full h-70 flex items-center">
+            <svg viewBox="0 0 200 200" className="w-full h-full">
+              <polygon points="100,20 150,50 170,100 150,150 100,180 50,150 30,100 50,50" fill="none" stroke="#d9d9d9" strokeWidth="1"/>
+              <polygon points="100,40 130,60 150,100 130,140 100,160 70,140 50,100 70,60" fill="none" stroke="#d9d9d9" strokeWidth="1"/>
+              <polygon points="100,60 110,80 130,100 110,120 100,140 90,120 70,100 90,80" fill="none" stroke="#d9d9d9" strokeWidth="1"/>
+              <polygon points="100,30 140,65 160,100 140,135 100,170 60,135 40,100 60,65" fill="#1975d4" fillOpacity="0.3" stroke="#1975d4" strokeWidth="2"/>
+              <line x1="100" y1="100" x2="100" y2="20" stroke="#d9d9d9" strokeWidth="1"/>
+              <line x1="100" y1="100" x2="150" y2="50" stroke="#d9d9d9" strokeWidth="1"/>
+              <line x1="100" y1="100" x2="170" y2="100" stroke="#d9d9d9" strokeWidth="1"/>
+              <line x1="100" y1="100" x2="150" y2="150" stroke="#d9d9d9" strokeWidth="1"/>
+              <line x1="100" y1="100" x2="100" y2="180" stroke="#d9d9d9" strokeWidth="1"/>
+              <line x1="100" y1="100" x2="50" y2="150" stroke="#d9d9d9" strokeWidth="1"/>
+              <line x1="100" y1="100" x2="30" y2="100" stroke="#d9d9d9" strokeWidth="1"/>
+              <line x1="100" y1="100" x2="50" y2="50" stroke="#d9d9d9" strokeWidth="1"/>
+            </svg>
+          </div>
+        </div>
+      </Card>
+    );
+
+    const NISTAILifecycleWidget = () => (
+      <Card className="custom-border relative p-4">
+        <img
+          src="/public/icons/info.svg"
+          alt="Info"
+          className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
+        />
+        <div className="flex flex-col gap-2.5 items-center">
+          <h3 className="text-xl text-[#f9844a] font-bold">NIST AI Lifecycle: 60/75</h3>
+          <p className="text-sm text-black">
+            Compare use case to the NIST AI Lifecycle framework and give overall scores about both the risk and mitigability levels
+          </p>
+          <div className="w-full h-70 flex items-center">
+            <svg viewBox="0 0 200 200" className="w-full h-full">
+              <polygon points="100,20 150,50 170,100 150,150 100,180 50,150 30,100 50,50" fill="none" stroke="#d9d9d9" strokeWidth="1"/>
+              <polygon points="100,40 130,60 150,100 130,140 100,160 70,140 50,100 70,60" fill="none" stroke="#d9d9d9" strokeWidth="1"/>
+              <polygon points="100,60 110,80 130,100 110,120 100,140 90,120 70,100 90,80" fill="none" stroke="#d9d9d9" strokeWidth="1"/>
+              <polygon points="100,30 140,65 160,100 140,135 100,170 60,135 40,100 60,65" fill="#1975d4" fillOpacity="0.3" stroke="#1975d4" strokeWidth="2"/>
+              <line x1="100" y1="100" x2="100" y2="20" stroke="#d9d9d9" strokeWidth="1"/>
+              <line x1="100" y1="100" x2="150" y2="50" stroke="#d9d9d9" strokeWidth="1"/>
+              <line x1="100" y1="100" x2="170" y2="100" stroke="#d9d9d9" strokeWidth="1"/>
+              <line x1="100" y1="100" x2="150" y2="150" stroke="#d9d9d9" strokeWidth="1"/>
+              <line x1="100" y1="100" x2="100" y2="180" stroke="#d9d9d9" strokeWidth="1"/>
+              <line x1="100" y1="100" x2="50" y2="150" stroke="#d9d9d9" strokeWidth="1"/>
+              <line x1="100" y1="100" x2="30" y2="100" stroke="#d9d9d9" strokeWidth="1"/>
+              <line x1="100" y1="100" x2="50" y2="50" stroke="#d9d9d9" strokeWidth="1"/>
+            </svg>
+          </div>
+        </div>
+      </Card>
+    );
+
+    const EURiskLevelFrameworkWidget = () => (
+      <Card className="custom-border relative p-4">
+        <img
+          src="/public/icons/info.svg"
+          alt="Info"
+          className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
+        />
+        <div className="flex flex-col gap-2.5 items-center">
+          <h3 className="text-xl text-[#f9c74f] font-bold">EU Risk Level Framework: 5/8</h3>
+          <p className="text-sm text-black">
+            Compare use case to the EU AI Risk Framework and give overall score about the risk and mitigation levels
+          </p>
+          <div className="w-full h-70 flex items-center">
+            <div className="relative w-full h-full p-4">
+              <div className="flex items-end justify-center h-full gap-2">
+                <div className="flex flex-col items-center gap-1">
+                  <div className="flex gap-1">
+                    <div className="w-4 h-16 bg-[#ff928a] rounded-t"></div>
+                    <div className="w-4 h-12 bg-[#ffae4c] rounded-t"></div>
+                    <div className="w-4 h-20 bg-[#6fd195] rounded-t"></div>
+                  </div>
+                  <span className="text-xs text-[#9ea2ae]">Figma</span>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <div className="flex gap-1">
+                    <div className="w-4 h-20 bg-[#1975d4] rounded-t"></div>
+                    <div className="w-4 h-16 bg-[#3cc3df] rounded-t"></div>
+                    <div className="w-4 h-24 bg-[#6fd195] rounded-t"></div>
+                  </div>
+                  <span className="text-xs text-[#9ea2ae]">AI</span>
+                </div>
+              </div>
+              <div className="absolute bottom-0 right-0 text-xs">
+                <div className="flex flex-wrap gap-2">
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-[#ff928a] rounded"></div>
+                    <span className="text-[#9ea2ae]">2020</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-[#1975d4] rounded"></div>
+                    <span className="text-[#9ea2ae]">2021</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-[#3cc3df] rounded"></div>
+                    <span className="text-[#9ea2ae]">2022</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-[#6fd195] rounded"></div>
+                    <span className="text-[#9ea2ae]">2023</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-[#ffae4c] rounded"></div>
+                    <span className="text-[#9ea2ae]">2024</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Card>
+    );
 
     // ExplorePolicyWidget Component
     const ExplorePolicyWidget = () => {
@@ -229,10 +368,10 @@
       return (
         <Card className="custom-border relative p-4">
           <img
-  src="/public/icons/info.svg"
-  alt="Info"
-  className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-/>
+            src="/public/icons/info.svg"
+            alt="Info"
+            className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
+          />
           <div className="flex flex-col gap-2.5">
             <h3 className="text-xl text-[#1975d4] font-bold">Explore Policy</h3>
             <div className="relative">
@@ -274,61 +413,53 @@
 
     // RelevantPoliciesWidget Component
     const RelevantPoliciesWidget = () => (
-  <Card className="custom-border relative p-4">
-    <img
-  src="/public/icons/info.svg"
-  alt="Info"
-  className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-/>
-    <div className="flex flex-col gap-5">
-      <div className="flex justify-between items-center">
-        <h3 className="text-xl text-[#1975d4] font-bold">Relevant Policies & Regulators</h3>
-      </div>
-
-      <p className="text-sm text-black">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...
-      </p>
-
-      {/* Arrows + Button row */}
-      <div className="flex justify-center items-center gap-4">
-        {/* Left Arrow */}
-        <button>
-          <img
-            src="/public/icons/arrow11.svg" // Place the SVG file in public/icons/
-            alt="Left Arrow"
-            style={{ width: '24px', height: '24px', cursor: 'pointer' }}
-          />
-        </button>
-
-        {/* Button */}
-        <Button className="w-72 text-white text-sm">View Full Policy Document</Button>
-
-        {/* Right Arrow (rotated) */}
-        <button>
-          <img
-            src="/public/icons/arrow11.svg"
-            alt="Right Arrow"
-            style={{
-              width: '24px',
-              height: '24px',
-              cursor: 'pointer',
-              transform: 'rotate(180deg)',
-            }}
-          />
-        </button>
-      </div>
-    </div>
-  </Card>
-);
+      <Card className="custom-border relative p-4">
+        <img
+          src="/public/icons/info.svg"
+          alt="Info"
+          className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
+        />
+        <div className="flex flex-col gap-5">
+          <div className="flex justify-between items-center">
+            <h3 className="text-xl text-[#1975d4] font-bold">Relevant Policies & Regulators</h3>
+          </div>
+          <p className="text-sm text-black">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...
+          </p>
+          <div className="flex justify-center items-center gap-4">
+            <button>
+              <img
+                src="/public/icons/arrow11.svg"
+                alt="Left Arrow"
+                style={{ width: '24px', height: '24px', cursor: 'pointer' }}
+              />
+            </button>
+            <Button className="w-72 text-white text-sm">View Full Policy Document</Button>
+            <button>
+              <img
+                src="/public/icons/arrow11.svg"
+                alt="Right Arrow"
+                style={{
+                  width: '24px',
+                  height: '24px',
+                  cursor: 'pointer',
+                  transform: 'rotate(180deg)',
+                }}
+              />
+            </button>
+          </div>
+        </div>
+      </Card>
+    );
 
     // OverallScoreWidget Component
     const OverallScoreWidget = () => (
       <Card className="custom-border relative p-4">
         <img
-  src="/public/icons/info.svg"
-  alt="Info"
-  className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-/>
+          src="/public/icons/info.svg"
+          alt="Info"
+          className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
+        />
         <div className="flex flex-col gap-2.5 items-center">
           <h3 className="text-xl text-[#1975d4] font-bold">Overall Score: 85</h3>
           <p className="text-sm text-black">Compare use case to the target policies and give an overall score about the compliance level</p>
@@ -354,12 +485,12 @@
 
     // PoliciesRegulatorsWidget Component
     const PoliciesRegulatorsWidget = () => (
-      <Card className="custom-border relative p-4 ">
+      <Card className="custom-border relative p-4">
         <img
-  src="/public/icons/info.svg"
-  alt="Info"
-  className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-/>
+          src="/public/icons/info.svg"
+          alt="Info"
+          className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
+        />
         <div className="flex flex-col gap-2.5">
           <h3 className="text-xl text-[#1975d4] font-bold">Relevant Policies & Regulators</h3>
           <p className="text-sm text-black">(pop up relevant information)</p>
@@ -419,105 +550,116 @@
 
     // ChatWithMeWidget Component
     const ChatWithMeWidget = () => {
-  const [message, setMessage] = useState('');
+      const [message, setMessage] = useState('');
 
-  return (
-    <Card className="custom-border relative p-4 h-full flex flex-col justify-between">
-      {/* Info Icon in top-right corner */}
-      <img
-        src="/icons/info.svg"
-        alt="Info"
-        className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-      />
-
-      {/* Content Above Input */}
-      <div className="flex flex-col gap-2.5">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-[#1975d4] rounded-full flex items-center justify-center">
-            <span className="text-white text-sm">😊</span>
+      return (
+        <Card className="custom-border relative p-4 h-full flex flex-col justify-between">
+          <img
+            src="/icons/info.svg"
+            alt="Info"
+            className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
+          />
+          <div className="flex flex-col gap-2.5">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-[#1975d4] rounded-full flex items-center justify-center">
+                <span className="text-white text-sm">😊</span>
+              </div>
+              <h3 className="text-xl text-[#1975d4] font-bold">Chat with Me</h3>
+            </div>
+            <p className="text-sm text-black">
+              I am Govii, how can I help you with compliance project today?
+            </p>
           </div>
-          <h3 className="text-xl text-[#1975d4] font-bold">Chat with Me</h3>
-        </div>
-        <p className="text-sm text-black">
-          I am Govii, how can I help you with compliance project today?
-        </p>
-      </div>
-
-      {/* Input at Bottom */}
-      <div className="flex items-center border-2 border-gray-300 rounded-full p-2 mt-4">
-        <Input
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type Here"
-          className="flex-1 text-sm text-gray-700 bg-transparent outline-none"
-        />
-        {React.createElement(icons["Send"], { className: "w-5 h-5 text-[#1975d4]" })}
-      </div>
-    </Card>
-  );
-};
+          <div className="flex items-center border-2 border-gray-300 rounded-full p-2 mt-4">
+            <Input
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Type Here"
+              className="flex-1 text-sm text-gray-700 bg-transparent outline-none"
+            />
+            {React.createElement(icons["Send"], { className: "w-5 h-5 text-[#1975d4]" })}
+          </div>
+        </Card>
+      );
+    };
 
     // ExcellenciesMajorGapsWidget Component
     const ExcellenciesMajorGapsWidget = () => (
-  <Card className="relative p-6 border-2 border-[#1975d4] rounded-xl">
-    {/* Info icon at top-right */}
-    <img
-      src="/icons/info.svg"
-      alt="Info"
-      className="absolute top-3 right-3 w-4 h-4 cursor-pointer"
-    />
-
-    {/* Content in two equal columns */}
-    <div className="flex flex-row gap-10">
-      {/* Excellencies */}
-      <div className="flex-1">
-        <h3 className="text-[#1975d4] text-xl font-bold mb-2">Excellencies</h3>
-        <p className="text-black text-base leading-relaxed">
-          Identify and list which parts are well-written in the use case,<br />
-          compared to the selected policies,<br />
-          such as measures to risks.
-        </p>
-      </div>
-
-      {/* Major Gaps */}
-      <div className="flex-1">
-        <h3 className="text-[#1975d4] text-xl font-bold mb-2">Major Gaps</h3>
-        <p className="text-black text-base leading-relaxed">
-          Identify and list what are missed in the use case,<br />
-          compared to the selected policies.
-        </p>
-      </div>
-    </div>
-  </Card>
-);
+      <Card className="relative p-6 border-2 border-[#1975d4] rounded-xl">
+        <img
+          src="/icons/info.svg"
+          alt="Info"
+          className="absolute top-3 right-3 w-4 h-4 cursor-pointer"
+        />
+        <div className="flex flex-row gap-10">
+          <div className="flex-1">
+            <h3 className="text-[#1975d4] text-xl font-bold mb-2">Excellencies</h3>
+            <p className="text-black text-base leading-relaxed">
+              Identify and list which parts are well-written in the use case,<br />
+              compared to the selected policies,<br />
+              such as measures to risks.
+            </p>
+          </div>
+          <div className="flex-1">
+            <h3 className="text-[#1975d4] text-xl font-bold mb-2">Major Gaps</h3>
+            <p className="text-black text-base leading-relaxed">
+              Identify and list what are missed in the use case,<br />
+              compared to the selected policies.
+            </p>
+          </div>
+        </div>
+      </Card>
+    );
 
     // Dashboard Component
-    const Dashboard = () => (
-      <div className="grid grid-cols-3 gap-4 p-6">
+    const Dashboard = ({ selectedMenuItem }) => (
+  <div className="grid grid-cols-3 gap-4 p-6">
+    {selectedMenuItem === 5 ? (
+      <>
         <UploadProjectWidget />
         <ExplorePolicyWidget />
         <RelevantPoliciesWidget />
-        <OverallScoreWidget />
-        <PoliciesRegulatorsWidget />
+        <OECDScoreWidget />
+        <NISTAILifecycleWidget />
+        <EURiskLevelFrameworkWidget />
+        <ExcellenciesMajorGapsWidget />
+        <ChatWithMeWidget />
+        
+      </>
+    ) : (
+      <>
+      <UploadProjectWidget />
+      <ExplorePolicyWidget />
+      <RelevantPoliciesWidget />
+      <OverallScoreWidget />
+      <PoliciesRegulatorsWidget />
+        
+        
         <ChatWithMeWidget />
         <ExcellenciesMajorGapsWidget />
-      </div>
-    );
+        
+        
+        
+      </>
+    )}
+  </div>
+);
 
     // App Component
-const App = () => {
-  const [projectName, setProjectName] = useState("Project Name");
+    const App = () => {
+      const [projectName, setProjectName] = useState("Project Name");
+      const [selectedMenuItem, setSelectedMenuItem] = useState(null);
 
-  return (
-    <div className="flex h-screen bg-[#e6f0fa]">
-      <Menu projectName={projectName} />
-      <div className="flex-1 flex flex-col">
-        <Header projectName={projectName} setProjectName={setProjectName} />
-        <Dashboard />
-      </div>
-    </div>
-  );
-};
+      return (
+        <div className="flex h-screen bg-[#e6f0fa]">
+          <Menu projectName={projectName} onSelect={setSelectedMenuItem} />
+          <div className="flex-1 flex flex-col">
+            <Header projectName={projectName} setProjectName={setProjectName} />
+            <Dashboard selectedMenuItem={selectedMenuItem} />
+          </div>
+        </div>
+      );
+    };
 
     // Render the App
     ReactDOM.render(<App />, document.getElementById('root'));
