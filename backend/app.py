@@ -174,7 +174,7 @@ COUNTRY_POLICIES = {
 # MongoDB connection
 def get_mongo_client():
     try:
-        client = MongoClient('mongodb://localhost:27017/', serverSelectionTimeoutMS=5000)
+        client = MongoClient(os.getenv("MONGO_URI"))
         client.server_info()  # Test connection
         logger.info("Successfully connected to MongoDB")
         return client
