@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -66,3 +70,9 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.sidebar-item { @apply text-left p-2 rounded hover:bg-gray-200; }
+.selected { @apply bg-blue-200; }
+.custom-border { @apply border-2 border-[#1975d4]; }
+.custom-bg { @apply bg-[#e6f0fa]; }
+.custom-button { background: linear-gradient(180deg, #9fd8ff, #1975d4); }
