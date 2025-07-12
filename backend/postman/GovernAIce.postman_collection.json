@@ -87,7 +87,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:5000/documents/?doc_id=172343a6-0e3a-4479-86fe-ad9283219b8e/",
+					"raw": "http://127.0.0.1:5000/documents/?doc_id=2d75af5e-1704-4d3a-a0e1-88abf37c32e3",
 					"protocol": "http",
 					"host": [
 						"127",
@@ -103,7 +103,7 @@
 					"query": [
 						{
 							"key": "doc_id",
-							"value": "172343a6-0e3a-4479-86fe-ad9283219b8e/"
+							"value": "2d75af5e-1704-4d3a-a0e1-88abf37c32e3"
 						}
 					]
 				}
@@ -180,7 +180,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"product_info\": \"The AI Chatbot System for Customer Service is a sophisticated artificial intelligence solution designed to automate and enhance customer support operations. Built with advanced natural language processing (NLP), machine learning, and secure data-handling capabilities, this system can engage in real-time conversations with users, resolve queries, and assist with account-related tasks — all while prioritizing the protection and confidentiality of personal data.\",\r\n  \"countries\": [\"EU\", \"Canada\"],\r\n  \"policies\": [\"General Data Protection Regulation (GDPR)\", \"Canada Personal Information Protection and Electronic Documents Act (PIPEDA)\"]\r\n}",
+					"raw": "{\r\n  \"product_info\": \"The AI Chatbot System for Customer Service is a sophisticated artificial intelligence solution designed to automate and enhance customer support operations. Built with advanced natural language processing (NLP), machine learning, and secure data-handling capabilities, this system can engage in real-time conversations with users, resolve queries, and assist with account-related tasks — all while prioritizing the protection and confidentiality of personal data.\",\r\n  \"countries\": [\"EU\", \"Canada\"],\r\n  \"policies\": [\"General Data Protection Regulation\", \"Canada Artificial Intelligence and Data Act (AIDA)-proposed\"]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"

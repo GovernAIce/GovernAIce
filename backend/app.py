@@ -21,156 +21,6 @@ load_dotenv()
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# Country to policies mapping
-COUNTRY_POLICIES = {
-    'EU': [
-        'EU Artificial Intelligence Act',
-        'General Data Protection Regulation (GDPR)',
-        'European Health Data Space Regulation (EHDS)',
-        'EU Data Governance Act (DGA)',
-        'EU Data Act',
-        'EU Network and Information Systems Directive (NIS2 Directive)',
-        'Council of Europe Framework Convention on Artificial Intelligence and Human Rights, Democracy, and the Rule of Law',
-        'The European Convention on Human Rights'
-    ],
-    'USA': [
-        'Executive Order 14179: Removing Barriers to American Leadership in Artificial Intelligence',
-        'Memorandum M-25-21: Advancing Governance, Innovation, and Risk Management for Agency Use of Artificial Intelligence',
-        'Memorandum M-25-22: Driving Efficient and Ethical Acquisition of Artificial Intelligence',
-        'Executive Order on Advancing Artificial Intelligence Education for American Youth',
-        'Executive Order on Cybersecurity and AI',
-        'Planned Executive Order on AI Infrastructure and Energy Supply',
-        'Maintaining American Leadership in Artificial Intelligence',
-        'National AI Initiative Act',
-        'California Consumer Privacy Act (CCPA)',
-        'AV Policy Guidance 4.0',
-        'St. Louis Ordinance on the City\'s Use of Surveillance Technology',
-        'Illinois Biometric Information Privacy Act',
-        'NIST AI Risk Management Framework (RMF 1.0)'
-    ],
-    'Canada': [
-        'Bill C-27: Digital Charter Implementation Act, 2022',
-        'Consumer Privacy Protection Act (CPPA)',
-        'Personal Information and Data Protection Tribunal Act (CPPA)',
-        'Artificial Intelligence and Data Act (AIDA)',
-        'Voluntary Code of Conduct on the Responsible Development and Management of Advanced Generative AI Systems',
-        'Canada Personal Information Protection and Electronic Documents Act (PIPEDA)',
-        'Canada Privacy Act',
-        'The Canada Consumer Product Safety Act',
-        'The Food and Drugs Act',
-        'The Motor Vehicle Safety Act',
-        'Canada Bank Act',
-        'Canadian Human Rights Act',
-        'The Criminal Code'
-    ],
-    'UK': [
-        'UK Data Protection Act 2018',
-        'UK Online Safety Act',
-        'UK Code of Conduct for Data-Driven Health and Care Technology',
-        'UK National Data Strategy',
-        'UK\'s National AI Strategy',
-        'UK Innovation Strategy: leading the future by creating it',
-        'UK Digital Strategy',
-        'The UK Government Resilience Framework',
-        'Digital Regulation: driving growth and unlocking innovation',
-        'UK\'s AI Regulation White Paper',
-        'UK Digital Development Strategy (DDS) 2024-2030',
-        'UK Signed the Council of Europe Framework Convention on Artificial Intelligence and Human Rights, Democracy, and the Rule of Law',
-        'UK AI Opportunity Action Plan',
-        'Data Protection and Digital Information Bill',
-        'GOV.UK Chat',
-        'AI and data protection risk toolkit',
-        'Consultation to Copyright and Artificial Intelligence',
-        'Financial Services and Markets Act 2000',
-        'UK Digital Markets, Competition and Consumers Act 2024',
-        'UK\'s Equality Act 2010',
-        'UK Human Rights Act 1998',
-        'Enterprise Act 2002',
-        'Competition Act 1998'
-    ],
-    'China': [
-        'The Interim Administrative Measures for Generative AI Services',
-        'The Criminal Law of China',
-        'the Civil Code of China',
-        'Copyright Law of the People’s Republic of China',
-        'China\'s Cybersecurity Law',
-        'China’s Data Security Law',
-        'China\'s Personal Information Protection Law (PIPL)',
-        'The Law on the Progress of Science and Technology',
-        'Code of Ethics for the New Generation Artificial Intelligence',
-        'The Measures for Review of Scientific and Technological Ethics (for Trial Implementation)',
-        'Guidance for the Classification and Definition of AI-Based Medical Software Products',
-        'Administrative Provisions on Autonomous Vehicle Road Testing (Trial)',
-        'Provisions on the Administration of Automotive Data Security (for Trial Implementation)',
-        'Basic Security Requirements for Generative AI Services',
-        'Cybersecurity Technology—Generative Artificial Intelligence Data Annotation Security Specification',
-        'Cybersecurity Technology—Basic Security Requirements for Generative Artificial Intelligence Service'
-    ],
-    'Japan': [
-        'Act on Promotion of Research and Development and Utilization of Artificial Intelligence-Related Technologies',
-        'Act on the Protection of Personal Information (APPI)',
-        'AI Strategy 2019',
-        'Social Principles of Human-centric AI',
-        'AI Guidelines for Business (2024 version)',
-        'Guide to Evaluation Perspectives on AI Safety'
-    ],
-    'South Korea': [
-        'National Strategy for Artificial Intelligence',
-        'Personal Information Protection Act (PIPA)',
-        'Basic Act on the Development of Artificial Intelligence and Creation of a Trust Base',
-        'Bill on the Promotion of Artificial Intelligence Industry and Securing Trust'
-    ],
-    'Singapore': [
-        'Singapore National AI Strategy 2.0',
-        'Singapore Model AI Governance Framework',
-        'Model AI Governance Framework for Generative AI'
-    ],
-    'India': [
-        'India Responsible AI Guidelines',
-        'NATIONAL STRATEGY FOR ARTIFICIAL INTELLIGENCE',
-        'THE DIGITAL PERSONAL DATA PROTECTION ACT',
-        'THE INFORMATION TECHNOLOGY ACT'
-    ],
-    'Australia': [
-        'Australia AI Ethics Principles',
-        'Australia\'s Privacy Act 1988',
-        'Online Safety Act 2021',
-        'Voluntary AI Safety Standard',
-        'Mandatory Guardrails for Safe & Responsible AI'
-    ],
-    'Taiwan': [
-        'Basic Law for Developments of Artificial Intelligence',
-        'AI Technology R&D Guidelines',
-        'Taiwan Artificial Intelligence Action Plan 2.0',
-        'AI Basic Act'
-    ],
-    'UAE': [
-        'UAE AI Ethics Guidelines',
-        'UAE National Strategy for Artificial Intelligence',
-        'UAE Charter for the Development and Use of Artificial Intelligence',
-        'Law No. 3 of 2024 Establishing the Artificial Intelligence and Advanced Technology Council (AIATC)'
-    ],
-    'Saudi Arabia': [
-        'National Strategy for Data and Artificial Intelligence',
-        'AI Ethics Principles',
-        'Personal Data Protection Law'
-    ],
-    'Brazil': [
-        'Brazil’s AI Act PL 21/20',
-        'Brazilian General Data Protection Law',
-        'Brazil AI Act PL 2338/2023',
-        'Brazilian Data Protection Law LGPD LAW No. 13,709'
-    ],
-    'International': [
-        'AS ISO/IEC 42001:2023 - Artificial intelligence Management system',
-        'Hiroshima AI Process Friends Group Declaration',
-        'Hiroshima Process International Guiding Principles for All AI Actors',
-        'OECD AI principle',
-        'UNESCO Ethics of Artificial Intelligence',
-        'Global Digital Compact'
-    ]
-}
-
 # MongoDB connection
 def get_mongo_client():
     try:
@@ -181,6 +31,19 @@ def get_mongo_client():
     except Exception as e:
         logger.error(f"Failed to connect to MongoDB: {e}")
         raise Exception(f"MongoDB connection failed: {str(e)}")
+
+# Fetch country policies from MongoDB
+def get_country_policies():
+    mongo_client = get_mongo_client()
+    try:
+        mongo_db = mongo_client['Training']
+        policies = {}
+        for country in mongo_db.list_collection_names():
+            country_policies = mongo_db[country].find()
+            policies[country] = [doc.get('title', '') for doc in country_policies if doc.get('title')]
+        return policies
+    finally:
+        mongo_client.close()
 
 # Extract text from PDF
 def extract_text_from_pdf(file):
@@ -244,10 +107,8 @@ def analyze_document(text, countries, policies, doc_id):
     # Generate prompts for each policy
     prompts = {}
     for country in countries:
-        country_policies = policies if policies else COUNTRY_POLICIES.get(country, [])
+        country_policies = policies if policies else get_country_policies().get(country, [])
         for policy in country_policies:
-            if policy not in COUNTRY_POLICIES.get(country, []):
-                continue
             prompts[policy] = f"""
             You are an expert in the {policy} from {country}. Analyze the following product description for compliance with this policy.
             
@@ -331,13 +192,13 @@ def document_upload():
     if not file:
         return jsonify({'error': 'No file uploaded'}), 400
     
-    # Validate countries and policies
-    valid_countries = set(COUNTRY_POLICIES.keys())
+    # Validate countries
+    valid_countries = set(get_country_policies().keys())
     if not all(c in valid_countries for c in countries):
         return jsonify({'error': 'Invalid country specified'}), 400
     if policies:
         for policy in policies:
-            if not any(policy in COUNTRY_POLICIES[c] for c in countries):
+            if not any(policy in get_country_policies().get(c, []) for c in countries):
                 return jsonify({'error': f'Policy {policy} not valid for specified countries'}), 400
     
     text = extract_text_from_pdf(file)
@@ -354,16 +215,21 @@ def document_upload():
         }
         mongo_db.documents.insert_one(document)
         
-        insights = analyze_document(text, countries, policies or [p for c in countries for p in COUNTRY_POLICIES[c]], doc_id)
+        insights = analyze_document(text, countries, policies or [p for c in countries for p in get_country_policies().get(c, [])], doc_id)
         
-        # Update compliance_scores for specific policies
+        # Update document with compliance details
         for insight in insights:
             policy = insight.get('policy')
-            if policy == 'EU Artificial Intelligence Act':
-                mongo_db.documents.update_one(
-                    {'doc_id': doc_id},
-                    {'$set': {'compliance_scores.EU_AI_ACT': insight.get('compliance_score', 0)}}
-                )
+            mongo_db.documents.update_one(
+                {'doc_id': doc_id},
+                {'$set': {
+                    f'compliance_scores.{policy}': {
+                        'score': int(insight.get('compliance_score', 0)),
+                        'excellent_points': insight.get('excellent_points', []),
+                        'major_gaps': insight.get('major_gaps', [])
+                    }
+                }}
+            )
         
         response_data = {
             'doc_id': doc_id,
@@ -391,13 +257,13 @@ def product_info_upload():
         if not isinstance(countries, list) or not isinstance(policies, list) or len(product_info) < 10:
             return jsonify({'error': 'Invalid input: countries and policies must be lists, product_info must be at least 10 characters'}), 400
         
-        # Validate countries and policies
-        valid_countries = set(COUNTRY_POLICIES.keys())
+        # Validate countries
+        valid_countries = set(get_country_policies().keys())
         if not all(c in valid_countries for c in countries):
             return jsonify({'error': 'Invalid country specified'}), 400
         if policies:
             for policy in policies:
-                if not any(policy in COUNTRY_POLICIES[c] for c in countries):
+                if not any(policy in get_country_policies().get(c, []) for c in countries):
                     return jsonify({'error': f'Policy {policy} not valid for specified countries'}), 400
         
         doc_id = str(uuid.uuid4())
@@ -413,16 +279,21 @@ def product_info_upload():
             }
             mongo_db.documents.insert_one(document)
             
-            insights = analyze_document(product_info, countries, policies or [p for c in countries for p in COUNTRY_POLICIES[c]], doc_id)
+            insights = analyze_document(product_info, countries, policies or [p for c in countries for p in get_country_policies().get(c, [])], doc_id)
             
-            # Update compliance_scores for specific policies
+            # Update document with compliance details
             for insight in insights:
                 policy = insight.get('policy')
-                if policy == 'EU Artificial Intelligence Act':
-                    mongo_db.documents.update_one(
-                        {'doc_id': doc_id},
-                        {'$set': {'compliance_scores.EU_AI_ACT': insight.get('compliance_score', 0)}}
-                    )
+                mongo_db.documents.update_one(
+                    {'doc_id': doc_id},
+                    {'$set': {
+                        f'compliance_scores.{policy}': {
+                            'score': int(insight.get('compliance_score', 0)),
+                            'excellent_points': insight.get('excellent_points', []),
+                            'major_gaps': insight.get('major_gaps', [])
+                        }
+                    }}
+                )
             
             response_data = {
                 'doc_id': doc_id,
