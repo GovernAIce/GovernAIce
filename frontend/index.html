@@ -72,70 +72,88 @@
 
     // Menu Component
     const Menu = () => {
-      const [selected, setSelected] = useState(null);
-      const menuItems = [
-        { type: "header", label: "Menu" },
-        { type: "item", label: "Home", icon: "Home" },
-        { type: "header", label: "Tools" },
-        { type: "item", label: "Policy Analysis", icon: "FileText" },
-        { type: "item", label: "Opportunity Identification", icon: "Target" },
-        { type: "item", label: "Compliance Risk Assessment", icon: "Shield" },
-        { type: "item", label: "Reports Generation", icon: "BarChart3" },
-        { type: "item", label: "Policy Engagement", icon: "Users" },
-        { type: "item", label: "Vendor Management", icon: "Building" },
-        { type: "header", label: "Project Folders:" },
-        { type: "item", label: "GovernAIce", icon: "Folder" },
-        { type: "item", label: "UX@Berkeley", icon: "Folder" },
-        { type: "header", label: "Reports:" },
-        { type: "item", label: "Feb. 28th - 9:46am", icon: "FileText" },
-        { type: "item", label: "Jan. 5th - 11:53am", icon: "FileText" },
-        { type: "item", label: "Jan. 7th - 12:11am", icon: "FileText" },
-        { type: "item", label: "Jan. 30th - 6:40pm", icon: "FileText" },
-        { type: "header", label: "Team Members" },
-        { type: "item", label: "Name Name", icon: "User" },
-        { type: "item", label: "Name Name", icon: "User" },
-        { type: "item", label: "Name Name", icon: "User" },
-        { type: "item", label: "Name Name", icon: "User" },
-        { type: "item", label: "Name Name", icon: "User" }
-      ];
+  const [selected, setSelected] = useState(null);
 
-      return (
-        <div className="w-64 bg-[#ffffff] border-r border-[#d9d9d9] flex flex-col h-screen">
-          <div className="p-6 border-b border-[#f0f0f0]">
-            <h1 className="text-[#1975d4] text-2xl font-bold flex items-center">
-              {React.createElement(icons["FileText"], { className: "w-6 h-6 mr-2" })}
-              GovernAIce
-            </h1>
-          </div>
-          <div className="flex-1 overflow-y-auto p-4">
-            <Input type="text" placeholder="Menu" className="w-full p-2 mb-4 border border-blue-300 rounded" />
-            {menuItems.map((item, index) => (
-              item.type === "header" ? (
-                <h3 key={index} className="text-[#9ea2ae] text-sm font-medium mb-3">{item.label}</h3>
-              ) : (
-                <Button
-                  key={index}
-                  variant="ghost"
-                  className={`w-full justify-start gap-3 sidebar-item ${selected === index ? 'selected' : ''}`}
-                  onClick={() => setSelected(index)}
-                >
-                  {React.createElement(icons[item.icon], { className: "w-4 h-4" })}
-                  {item.label}
-                </Button>
-              )
-            ))}
-          </div>
-          <div className="p-4 border-t border-[#f0f0f0]">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#d9d9d9] rounded-full flex items-center justify-center">
-                {React.createElement(icons["User"], { className: "w-5 h-5 text-[#9ea2ae]" })}
-              </div>
-              <span className="text-[#000000] font-medium">Name Name</span>
-            </div>
-          </div>
+  const menuItems = [
+    { type: "header", label: "Menu" },
+    { type: "item", label: "Home", icon: "Home" },
+    { type: "header", label: "Tools" },
+    { type: "item", label: "Policy Analysis", icon: "FileText" },
+    { type: "item", label: "Opportunity Identification", icon: "Target" },
+    { type: "item", label: "Compliance Risk Assessment", icon: "Shield" },
+    { type: "item", label: "Reports Generation", icon: "BarChart3" },
+    { type: "item", label: "Policy Engagement", icon: "Users" },
+    { type: "item", label: "Vendor Management", icon: "Building" },
+    { type: "header", label: "Project Folders:" },
+    { type: "item", label: "GovernAIce", icon: "Folder" },
+    { type: "item", label: "UX@Berkeley", icon: "Folder" },
+    { type: "header", label: "Team Members" },
+    { type: "item", label: "Name Name", icon: "User" },
+    { type: "item", label: "Name Name", icon: "User" },
+    { type: "item", label: "Name Name", icon: "User" },
+    { type: "item", label: "Name Name", icon: "User" },
+    { type: "item", label: "Name Name", icon: "User" },
+  ];
+
+  return (
+    <div className="w-64 bg-[#f8f8f8] flex flex-col h-screen border-r border-[#d9d9d9]">
+      {/* Logo */}
+      <div className="px-6 py-4 border-b border-[#f0f0f0]">
+        <div className="flex items-center gap-2">
+          <img src="/icons/LogoVector.svg" alt="Logo" className="w-10 h-10" />
+          <span
+            className="text-[20.13px] text-[#1975d4] font-bold inline-block"
+            style={{ fontFamily: "'Libre Baskerville', serif", width: "123px" }}
+          >
+            GovernAIce
+          </span>
         </div>
-      );
-    };
+      </div>
+
+      {/* Menu Items */}
+      <div className="flex-1 overflow-y-auto px-4 py-4">
+        {menuItems.map((item, index) =>
+          item.type === "header" ? (
+            <h3
+              key={index}
+              className="text-[#9ea2ae] text-sm font-semibold mt-6 mb-2"
+            >
+              {item.label}
+            </h3>
+          ) : (
+            <button
+              key={index}
+              onClick={() => setSelected(index)}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded ${
+                selected === index
+                  ? "bg-[#e6f0ff] text-[#1975d4] font-semibold"
+                  : "text-black hover:bg-[#f0f0f0]"
+              }`}
+            >
+              {React.createElement(icons[item.icon], {
+                className: `w-4 h-4 ${
+                  selected === index ? "text-[#1975d4]" : "text-black"
+                }`,
+              })}
+              <span className="text-sm">{item.label}</span>
+            </button>
+          )
+        )}
+      </div>
+
+      {/* Bottom User Section */}
+      <div className="px-4 py-4 border-t border-[#f0f0f0]">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-[#d9d9d9] rounded-full flex items-center justify-center">
+            {React.createElement(icons["User"], { className: "w-5 h-5 text-white" })}
+          </div>
+          <span className="text-black font-medium">Name Name</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 
     // Header Component
     const Header = () => {
@@ -144,7 +162,7 @@
         <div className="bg-white border-b border-[#d9d9d9] p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-8">
-              <h2 className="text-[#1975d4] text-2xl font-semibold">Good Evening,</h2>
+              <h2 className="text-[#1975d4] text-2xl font-semibold">Good Evening Yan</h2>
               <h3 className="text-[#1975d4] text-2xl font-semibold">Project Name</h3>
             </div>
             <div className="flex items-center gap-4">
@@ -166,7 +184,16 @@
       <Card className="custom-border">
         <div className="flex flex-col items-center gap-2.5">
           <div className="w-28 h-32 custom-bg rounded-lg flex items-center justify-center">
-            {React.createElement(icons["Upload"], { className: "w-16 h-16 text-[#1975d4]" })}
+<img src="/icons/Upload.svg" alt="Upload Icon" className="position: absolute;
+height: 74.93%;
+width: 74.93%;
+top: 12.51%;
+right: 12.56%;
+bottom: 12.56%;
+left: 12.51%;
+max-width: 100%;
+overflow: hidden;
+max-height: 100%;" />
           </div>
           <h3 className="text-xl text-[#1975d4] font-bold">Upload Project</h3>
           <p className="text-sm text-black text-center">Please upload your product illustration: doc, pdf, jpg...</p>
@@ -223,22 +250,49 @@
 
     // RelevantPoliciesWidget Component
     const RelevantPoliciesWidget = () => (
-      <Card className="custom-border">
-        <div className="flex flex-col gap-5">
-          <div className="flex justify-between">
-            {React.createElement(icons["Info"], { className: "w-5 h-5 text-[#1975d4]" })}
-            <h3 className="text-xl text-[#1975d4] font-bold">Relevant Policies & Regulators</h3>
-            {React.createElement(icons["Info"], { className: "w-5 h-5 text-[#1975d4]" })}
-          </div>
-          <p className="text-sm text-black">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt...
-          </p>
-          <div className="flex justify-center">
-            <Button className="w-72 text-white text-sm">View Full Policy Document</Button>
-          </div>
-        </div>
-      </Card>
-    );
+  <Card className="custom-border">
+    <div className="flex flex-col gap-5">
+      <div className="flex justify-between items-center">
+        {React.createElement(icons["Info"], { className: "w-5 h-5 text-[#1975d4]" })}
+        <h3 className="text-xl text-[#1975d4] font-bold">Relevant Policies & Regulators</h3>
+        {React.createElement(icons["Info"], { className: "w-5 h-5 text-[#1975d4]" })}
+      </div>
+
+      <p className="text-sm text-black">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...
+      </p>
+
+      {/* Arrows + Button row */}
+      <div className="flex justify-center items-center gap-4">
+        {/* Left Arrow */}
+        <button>
+          <img
+            src="/public/icons/arrow11.svg" // Place the SVG file in public/icons/
+            alt="Left Arrow"
+            style={{ width: '24px', height: '24px', cursor: 'pointer' }}
+          />
+        </button>
+
+        {/* Button */}
+        <Button className="w-72 text-white text-sm">View Full Policy Document</Button>
+
+        {/* Right Arrow (rotated) */}
+        <button>
+          <img
+            src="/public/icons/arrow11.svg"
+            alt="Right Arrow"
+            style={{
+              width: '24px',
+              height: '24px',
+              cursor: 'pointer',
+              transform: 'rotate(180deg)',
+            }}
+          />
+        </button>
+      </div>
+    </div>
+  </Card>
+);
 
     // OverallScoreWidget Component
     const OverallScoreWidget = () => (
