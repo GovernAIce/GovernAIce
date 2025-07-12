@@ -1,0 +1,209 @@
+{
+	"info": {
+		"_postman_id": "ffa01280-c6c9-43e3-ac6d-381db47f52ce",
+		"name": "GovernAIce",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41012335"
+	},
+	"item": [
+		{
+			"name": "upload-and-analyze",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "countries",
+							"value": "[\"EU\",\"Canada\"]",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "postman-cloud:///1f05d95d-c185-4da0-8361-1c730157a97a"
+						},
+						{
+							"key": "policies",
+							"value": "[\"General Data Protection Regulation (GDPR)\",\"Canada Personal Information Protection and Electronic Documents Act (PIPEDA)\"]",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/upload-and-analyze/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"upload-and-analyze",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "view documents",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/documents/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"documents",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "view specific doc using doc_id",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/documents/?doc_id=2d75af5e-1704-4d3a-a0e1-88abf37c32e3",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"documents",
+						""
+					],
+					"query": [
+						{
+							"key": "doc_id",
+							"value": "2d75af5e-1704-4d3a-a0e1-88abf37c32e3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:5000/documents/search/?query=AI Chatbot",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"documents",
+						"search",
+						""
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "AI Chatbot"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete document",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8000/api/upload-and-analyze/?doc_id=921769f5-8e77-446e-87e6-a73f75fd5573",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"upload-and-analyze",
+						""
+					],
+					"query": [
+						{
+							"key": "doc_id",
+							"value": "921769f5-8e77-446e-87e6-a73f75fd5573"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product-info-upload",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"product_info\": \"The AI Chatbot System for Customer Service is a sophisticated artificial intelligence solution designed to automate and enhance customer support operations. Built with advanced natural language processing (NLP), machine learning, and secure data-handling capabilities, this system can engage in real-time conversations with users, resolve queries, and assist with account-related tasks — all while prioritizing the protection and confidentiality of personal data.\",\r\n  \"countries\": [\"EU\", \"Canada\"],\r\n  \"policies\": [\"General Data Protection Regulation\", \"Canada Artificial Intelligence and Data Act (AIDA)-proposed\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/product-info-upload/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"product-info-upload",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
