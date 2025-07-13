@@ -13,6 +13,8 @@ interface OECDPrinciple {
 
 const OECDScoreWidget: React.FC<OECDScoreWidgetProps> = ({ hasInput = true }) => {
   const [selectedPrinciple, setSelectedPrinciple] = useState<OECDPrinciple | null>(null);
+  const [hoveredLegend, setHoveredLegend] = useState<string | null>(null);
+  const [tooltip, setTooltip] = useState<{ x: number; y: number; label: string; value: number } | null>(null);
 
   // OECD AI Principles with sample scores (these would come from analysis results)
   const oecdPrinciples: OECDPrinciple[] = [
@@ -80,137 +82,76 @@ const OECDScoreWidget: React.FC<OECDScoreWidgetProps> = ({ hasInput = true }) =>
   }
 
   return (
-    <Card className="custom-border relative p-4 h-full">
-      <img
-        src="/icons/info.svg"
-        alt="Info"
-        className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-      />
-      <div className="flex flex-col h-full">
-        <div className="text-center mb-4">
-          <h3 className="text-xl text-[#1975d4] font-bold">OECD AI Principles</h3>
-          <div className="flex items-center justify-center gap-2 mt-1">
-            <span className="text-2xl font-bold text-[#1975d4]">{overallScore}</span>
-            <span className="text-sm text-gray-600">/ 100</span>
-          </div>
-          <p className="text-xs text-gray-600 mt-1">Overall Compliance Score</p>
-        </div>
-
-        {/* Radar Chart */}
-        <div className="flex-1 flex justify-center items-center">
-          <div className="relative">
-            <svg viewBox="0 0 200 200" className="w-48 h-48">
-              {/* Background circles */}
-              <circle cx="100" cy="100" r="60" fill="none" stroke="#e5e7eb" strokeWidth="1"/>
-              <circle cx="100" cy="100" r="45" fill="none" stroke="#e5e7eb" strokeWidth="1"/>
-              <circle cx="100" cy="100" r="30" fill="none" stroke="#e5e7eb" strokeWidth="1"/>
-              <circle cx="100" cy="100" r="15" fill="none" stroke="#e5e7eb" strokeWidth="1"/>
-              
-              {/* Axis lines */}
-              {axisLines.map((line, index) => (
-                <line
-                  key={index}
-                  x1={line.x1}
-                  y1={line.y1}
-                  x2={line.x2}
-                  y2={line.y2}
-                  stroke="#d1d5db"
-                  strokeWidth="1"
-                />
-              ))}
-              
-              {/* Radar polygon */}
-              <polygon
-                points={radarPoints}
-                fill="#1975d4"
-                fillOpacity="0.3"
-                stroke="#1975d4"
-                strokeWidth="2"
-              />
-              
-              {/* Data points */}
-              {oecdPrinciples.map((principle, index) => {
-                const angle = (index * 2 * Math.PI) / oecdPrinciples.length - Math.PI / 2;
-                const distance = (principle.score / 100) * 60;
-                const x = 100 + distance * Math.cos(angle);
-                const y = 100 + distance * Math.sin(angle);
-                
-                return (
-                  <circle
-                    key={index}
-                    cx={x}
-                    cy={y}
-                    r="3"
-                    fill={principle.color}
-                    stroke="white"
-                    strokeWidth="1"
-                    className="cursor-pointer hover:r-4 transition-all"
-                    onMouseEnter={() => setSelectedPrinciple(principle)}
-                    onMouseLeave={() => setSelectedPrinciple(null)}
-                  />
-                );
-              })}
-            </svg>
-            
-            {/* Center score */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-lg font-bold text-[#1975d4]">{overallScore}</div>
-                <div className="text-xs text-gray-500">Score</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Principle Legend */}
-        <div className="mt-4 space-y-2">
-          {oecdPrinciples.map((principle, index) => (
-            <div
+    <Card className="custom-border flex flex-row items-center p-4 h-full">
+      {/* Left: Score and description */}
+      <div className="flex-1 flex flex-col justify-center">
+        <h2 style={{ fontSize: '12', color: '#1975D4', fontWeight: 700 }}>OECD AI Principles: {overallScore}</h2>
+        <p className="text-base mt-2">
+          Compare use case to the OECD AI Principles and get an overall compliance score across all five principles.
+        </p>
+      </div>
+      {/* Right: Chart */}
+      <div className="relative" style={{ width: 250, height: 250 }}>
+        <svg width={250} height={250} viewBox="0 0 200 200">
+          {/* Background circles */}
+          <circle cx="100" cy="100" r="60" fill="none" stroke="#e5e7eb" strokeWidth="1" />
+          <circle cx="100" cy="100" r="45" fill="none" stroke="#e5e7eb" strokeWidth="1" />
+          <circle cx="100" cy="100" r="30" fill="none" stroke="#e5e7eb" strokeWidth="1" />
+          <circle cx="100" cy="100" r="15" fill="none" stroke="#e5e7eb" strokeWidth="1" />
+          {/* Axis lines */}
+          {axisLines.map((line, index) => (
+            <line
               key={index}
-              className={`flex items-center justify-between p-2 rounded text-xs transition-colors ${
-                selectedPrinciple?.name === principle.name ? 'bg-blue-50' : 'hover:bg-gray-50'
-              }`}
-              onMouseEnter={() => setSelectedPrinciple(principle)}
-              onMouseLeave={() => setSelectedPrinciple(null)}
-            >
-              <div className="flex items-center gap-2">
-                <div 
-                  className="w-3 h-3 rounded-full" 
-                  style={{ backgroundColor: principle.color }}
-                />
-                <span className="font-medium">{principle.name}</span>
-              </div>
-              <span className="font-bold">{principle.score}%</span>
-            </div>
+              x1={line.x1}
+              y1={line.y1}
+              x2={line.x2}
+              y2={line.y2}
+              stroke="#d1d5db"
+              strokeWidth="1"
+            />
           ))}
-        </div>
-
-        {/* Hover Details */}
-        {selectedPrinciple && (
-          <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <h4 className="text-sm font-bold text-blue-800 mb-1">{selectedPrinciple.name}</h4>
-            <div className="flex items-center gap-2 mb-2">
-              <div className="flex-1 bg-gray-200 rounded-full h-2">
-                <div 
-                  className="h-2 rounded-full transition-all duration-300"
-                  style={{ 
-                    width: `${selectedPrinciple.score}%`,
-                    backgroundColor: selectedPrinciple.color 
-                  }}
-                />
+          {/* Radar polygon */}
+          <polygon
+            points={radarPoints}
+            fill="#1975d4"
+            fillOpacity="0.3"
+            stroke="#1975d4"
+            strokeWidth="2"
+          />
+          {/* Data points */}
+          {oecdPrinciples.map((principle, index) => {
+            const angle = (index * 2 * Math.PI) / oecdPrinciples.length - Math.PI / 2;
+            const distance = (principle.score / 100) * 60;
+            const x = 100 + distance * Math.cos(angle);
+            const y = 100 + distance * Math.sin(angle);
+            return (
+              <circle
+                key={index}
+                cx={x}
+                cy={y}
+                r="6"
+                fill={principle.color}
+                stroke="white"
+                strokeWidth="1"
+                className="cursor-pointer hover:r-8 transition-all"
+                onMouseEnter={() => setTooltip({ x, y, label: principle.name, value: principle.score })}
+                onMouseLeave={() => setTooltip(null)}
+              />
+            );
+          })}
+          {tooltip && (
+            <foreignObject x={tooltip.x - 60} y={tooltip.y - 50} width={120} height={40} style={{ pointerEvents: 'none' }}>
+              <div className="absolute bg-white border border-blue-200 rounded shadow p-2 z-10 text-center" style={{ fontSize: '9px', lineHeight: 1.2 }}>
+                <strong>{tooltip.label}</strong>: {tooltip.value}%
               </div>
-              <span className="text-xs font-bold">{selectedPrinciple.score}%</span>
-            </div>
-            <p className="text-xs text-blue-700">
-              {selectedPrinciple.score >= 80 
-                ? "Excellent compliance with this principle"
-                : selectedPrinciple.score >= 60
-                ? "Good compliance with room for improvement"
-                : "Needs attention to meet compliance requirements"
-              }
-            </p>
-          </div>
-        )}
+            </foreignObject>
+          )}
+        </svg>
+        <img
+          src="/icons/info.svg"
+          alt="Info"
+          className="absolute top-2 right-2 w-6 h-6 opacity-70"
+        />
       </div>
     </Card>
   );

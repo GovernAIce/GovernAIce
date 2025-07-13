@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Card from './Card';
 
 interface EURiskBarData {
@@ -30,15 +30,25 @@ const riskBarData: EURiskBarData[] = [
   },
 ];
 
-const maxScore = Math.max(...riskBarData.map(d => Math.max(d.riskScore, d.mitigationScore, 6)));
+const maxScore = 10; // Now the chart max is 10
+const chartWidth = 400; // width for the bar area (adjust as needed)
+const xStep = chartWidth / maxScore;
+const maxPossibleScore = 8;
+const totalScore = Math.round(
+  (riskBarData.reduce((sum, d) => sum + d.riskScore + d.mitigationScore, 0)) / maxPossibleScore
+);
+
+// Change vertical step from 40 to 48 for more spacing
+const yStep = 48;
+const leftMargin = 100; // Increased from 60 to 100 for more label space
 
 const EURiskLevelFrameworkWidget: React.FC = () => {
-  // Check if we have input data (for now, always show data, but this can be connected to actual input)
-  const hasInput = true; // This would be connected to actual document/country selection
+  const [hoveredLegend, setHoveredLegend] = useState<string | null>(null);
+  const hasInput = true;
 
   if (!hasInput) {
     return (
-      <Card className="custom-border relative p-4 h-full">
+      <Card className="custom-border relative p-2 h-full">
         <img
           src="/icons/info.svg"
           alt="Info"
@@ -58,71 +68,99 @@ const EURiskLevelFrameworkWidget: React.FC = () => {
   }
 
   return (
-    <Card className="custom-border relative p-4 h-full flex flex-row items-stretch">
-      {/* Left: Title and Legend */}
-      <div className="flex flex-col justify-between w-1/3 min-w-[180px] pr-4">
-        <div>
-          <h3 className="text-xl text-[#1975d4] font-bold mb-4">EU Risk Level Framework</h3>
-        </div>
-        <div className="flex flex-col gap-2 mt-2">
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-4 h-4 rounded-full" style={{ background: '#ffe082' }}></span>
-            <span className="text-xs text-gray-700">Risk Score</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-4 h-4 rounded-full" style={{ background: '#ff9800' }}></span>
-            <span className="text-xs text-gray-700">Mitigation Score</span>
-          </div>
-        </div>
+    <Card className="custom-border flex flex-row items-center p-4 h-full">
+      {/* Left: Title, Score, Description */}
+      <div className="flex-1 flex flex-col justify-center min-w-[220px]">
+        <h2 style={{ fontSize: '12', color: '#1975D4', fontWeight: 700 }}>
+          EU Risk Level<br />Framework <span className="ml-2" style={{ color: '#1975D4', fontWeight: 700 }}>{totalScore}/8</span>
+        </h2>
+        <p className="text-base mt-2" style={{ color: '#000000' }}>
+          Compare use case to the EU AI Risk and give overall scores about both of the risk and mitigation levels.
+        </p>
       </div>
-
-      {/* Right: Bar Chart */}
-      <div className="flex-1 flex flex-col justify-center">
-        <svg viewBox={`0 0 ${maxScore * 40 + 120} 220`} className="w-full h-56">
-          {/* Grid dots */}
-          {Array.from({ length: 7 }).map((_, i) => (
+      {/* Right: Chart */}
+      <div className="relative flex-1 flex flex-col justify-center items-center h-full">
+        {/* Info icon */}
+        <img
+          src="/icons/info.svg"
+          alt="Info"
+          className="absolute top-2 right-2 w-6 h-6 opacity-70"
+        />
+        {/* Legend */}
+        <div className="flex flex-row gap-4 mb-2 mt-2 items-center">
+          <div className="flex items-center gap-1">
+            <span className="inline-block w-4 h-4 rounded-full" style={{ background: '#ffe082' }}></span>
+            <span className="text-xs" style={{ color: '#000000' }}>Risk Score</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <span className="inline-block w-4 h-4 rounded-full" style={{ background: '#ff9800' }}></span>
+            <span className="text-xs" style={{ color: '#000000' }}>Mitigation Score</span>
+          </div>
+        </div>
+        {/* Bar Chart */}
+        <svg viewBox={`0 0 ${chartWidth + leftMargin + 20} ${riskBarData.length * yStep + 60}`} className="w-full" style={{ height: `${riskBarData.length * yStep + 60}px` }}>
+          {/* Dotted grid background */}
+          {Array.from({ length: 11 }).map((_, i) => (
             <g key={i}>
               <line
-                x1={60 + i * 40}
+                x1={leftMargin + i * xStep}
                 y1={20}
-                x2={60 + i * 40}
-                y2={200}
-                stroke="#e5e7eb"
+                x2={leftMargin + i * xStep}
+                y2={riskBarData.length * yStep + 20}
+                stroke="#000000"
                 strokeDasharray="2,4"
                 strokeWidth={1}
               />
             </g>
           ))}
-          {/* Y labels */}
-          {riskBarData.map((d, i) => (
-            <text
-              key={d.label}
-              x={0}
-              y={55 + i * 40}
-              fontSize={14}
-              fill="#222"
-              alignmentBaseline="middle"
-            >
-              {d.label}
-            </text>
+          {riskBarData.map((_, row) => (
+            Array.from({ length: 11 }).map((_, col) => (
+              <circle
+                key={`dot-${row}-${col}`}
+                cx={leftMargin + col * xStep}
+                cy={46 + row * yStep}
+                r={1.2}
+                fill="#000000"
+                opacity={0.5}
+              />
+            ))
           ))}
+          {/* Y labels */}
+          {riskBarData.map((d, i) => {
+            const [main, ...rest] = d.label.split('-');
+            return (
+              <text
+                key={d.label}
+                x={0}
+                y={55 + i * yStep}
+                fontSize={12}
+                fill="#000000"
+                alignmentBaseline="middle"
+              >
+                {main}
+                {rest.length > 0 && (
+                  <tspan x={0} dy={14}>{rest.join('-')}</tspan>
+                )}
+              </text>
+            );
+          })}
           {/* Bars */}
           {riskBarData.map((d, i) => (
             <g key={d.label}>
               {/* Risk Score Bar */}
               <rect
-                x={60}
-                y={40 + i * 40}
-                width={d.riskScore * 40}
+                x={leftMargin}
+                y={40 + i * yStep}
+                width={d.riskScore * xStep}
                 height={12}
                 fill="#ffe082"
                 rx={4}
               />
               {/* Mitigation Score Bar */}
               <rect
-                x={60}
-                y={54 + i * 40}
-                width={d.mitigationScore * 40}
+                x={leftMargin}
+                y={54 + i * yStep}
+                width={d.mitigationScore * xStep}
                 height={12}
                 fill="#ff9800"
                 rx={4}
@@ -130,13 +168,13 @@ const EURiskLevelFrameworkWidget: React.FC = () => {
             </g>
           ))}
           {/* X axis labels */}
-          {Array.from({ length: 7 }).map((_, i) => (
+          {Array.from({ length: 11 }).map((_, i) => (
             <text
               key={i}
-              x={60 + i * 40}
-              y={215}
+              x={leftMargin + i * xStep}
+              y={riskBarData.length * yStep + 30}
               fontSize={12}
-              fill="#888"
+              fill="#000000"
               textAnchor="middle"
             >
               {i}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { fetchCountries } from "../api/metadata";
 
 interface CountryDropdownProps {
@@ -19,8 +19,6 @@ const CountryDropdown: React.FC<CountryDropdownProps> = ({
   const [countries, setCountries] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -38,18 +36,6 @@ const CountryDropdown: React.FC<CountryDropdownProps> = ({
       })
       .finally(() => setLoading(false));
   }, []);
-
-  // Close dropdown on outside click
-  useEffect(() => {
-    if (!open) return;
-    const handleClick = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [open]);
 
   const handleMultipleChange = (country: string) => {
     const currentValues = Array.isArray(value) ? value : [];
@@ -75,59 +61,25 @@ const CountryDropdown: React.FC<CountryDropdownProps> = ({
     );
   }
 
-  if (multiple) {
-    const selectedCountries = Array.isArray(value) ? value : [];
-    return (
-      <div className={className + " relative"} ref={dropdownRef}>
-        <button
-          type="button"
-          className="px-3 py-2 border rounded bg-white shadow-sm text-sm text-gray-700 hover:bg-gray-50 w-full text-left focus:outline-none focus:ring-0"
-          onClick={() => setOpen((v) => !v)}
-        >
-          {selectedCountries.length === 0
-            ? "Select Countries to Compare"
-            : `${selectedCountries.length} countr${selectedCountries.length === 1 ? 'y' : 'ies'} selected`}
-        </button>
-        {open && (
-          <div className="absolute z-10 mt-2 w-64 max-h-56 overflow-y-auto bg-white border border-gray-200 rounded shadow-lg p-2" style={{ minWidth: 200 }}>
-            {countries.map(country => (
-              <label key={country} className="flex items-center space-x-2 p-1 hover:bg-gray-50 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={selectedCountries.includes(country)}
-                  onChange={() => handleMultipleChange(country)}
-                  className="rounded"
-                />
-                <span className="text-sm">{country}</span>
-              </label>
-            ))}
-            <div className="mt-2 flex justify-end">
-              <button
-                type="button"
-                className="text-xs text-blue-600 hover:underline px-2 py-1"
-                onClick={() => setOpen(false)}
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  // Single select fallback
+  // Always show as multi-checkbox list
+  const selectedCountries = Array.isArray(value) ? value : [];
   return (
-    <select
-      className={className}
-      value={Array.isArray(value) ? "" : value}
-      onChange={e => onChange(e.target.value)}
-    >
-      <option value="">{placeholder}</option>
-      {countries.map(country => (
-        <option key={country} value={country}>{country}</option>
-      ))}
-    </select>
+    <div className={className + " max-h-32 overflow-y-auto bg-white rounded-lg p-2 border-2 border-blue-400"}>
+      <div className="font-medium mb-1">Select Countries</div>
+      <div className="flex flex-wrap gap-2">
+        {countries.map(country => (
+          <label key={country} className="flex items-center gap-1 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={selectedCountries.includes(country)}
+              onChange={() => handleMultipleChange(country)}
+              className="rounded"
+            />
+            <span className="text-xs">{country}</span>
+          </label>
+        ))}
+      </div>
+    </div>
   );
 };
 

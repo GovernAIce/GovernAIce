@@ -5,9 +5,22 @@ import Button from './Button';
 import CountryDropdown from './CountryDropdown';
 import { useCountryContext } from '../contexts/CountryContext';
 
-const ExplorePolicyWidget: React.FC = () => {
+const DOMAINS = [
+  "Healthcare",
+  "Entertainment",
+  "Business",
+  "Beauty",
+  "Education",
+  "Finance",
+  "Transportation",
+  "Retail",
+  "Government",
+  "Legal"
+];
+
+const ExplorePolicyWidget: React.FC<{ onDomainChange?: (domains: string[]) => void }> = ({ onDomainChange }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDomain, setSelectedDomain] = useState('Domain');
+  const [selectedDomains, setSelectedDomains] = useState<string[]>([]);
   const { selectedCountries, setSelectedCountries, hasCountries } = useCountryContext();
 
   const handleCompare = () => {
@@ -15,14 +28,17 @@ const ExplorePolicyWidget: React.FC = () => {
       alert('Please select at least one country to compare');
       return;
     }
-    
-    console.log('Comparing policies for countries:', selectedCountries);
-    console.log('Search query:', searchQuery);
-    console.log('Domain:', selectedDomain);
-    
+    // Optionally notify parent of selected domains
+    if (onDomainChange) onDomainChange(selectedDomains);
     // TODO: Implement the comparison logic here
-    // You can make API calls to fetch policies for each selected country
-    // and then display the comparison results
+  };
+
+  const handleDomainChange = (domain: string) => {
+    setSelectedDomains(prev =>
+      prev.includes(domain)
+        ? prev.filter(d => d !== domain)
+        : [...prev, domain]
+    );
   };
 
   return (
@@ -32,17 +48,14 @@ const ExplorePolicyWidget: React.FC = () => {
         alt="Info"
         className="absolute top-1 right-1 w-3 h-3 cursor-pointer"
       />
-      
       <div className="flex flex-col h-full gap-1.5">
         <h3 className="text-lg text-[#1975d4] font-bold">Explore Policy</h3>
-        
         <Input
           placeholder="Search policies..."
           className="pl-8 pr-8 text-xs text-gray-800 bg-transparent outline-none"
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
         />
-        
         <CountryDropdown
           value={selectedCountries}
           onChange={(value: string | string[]) => setSelectedCountries(Array.isArray(value) ? value : [])}
@@ -50,16 +63,23 @@ const ExplorePolicyWidget: React.FC = () => {
           placeholder="Select countries to compare"
           className="custom-border rounded-lg p-1 text-xs w-full bg-transparent flex-1"
         />
-        
-        <select
-          className="custom-border rounded-lg p-1 text-xs w-full appearance-none bg-transparent"
-          value={selectedDomain}
-          onChange={e => setSelectedDomain(e.target.value)}
-        >
-          <option>Domain</option>
-          <option>New Domain</option>
-        </select>
-        
+        {/* Domain Dropdown */}
+        <div className="custom-border rounded-lg p-1 text-xs w-full bg-transparent flex-1 mt-1">
+          <div className="font-medium mb-1">Select Domains</div>
+          <div className="flex flex-wrap gap-2">
+            {DOMAINS.map(domain => (
+              <label key={domain} className="flex items-center gap-1 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={selectedDomains.includes(domain)}
+                  onChange={() => handleDomainChange(domain)}
+                  className="rounded"
+                />
+                <span className="text-xs">{domain}</span>
+              </label>
+            ))}
+          </div>
+        </div>
         <Button 
           className="w-full text-white text-xs mt-auto"
           onClick={handleCompare}

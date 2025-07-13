@@ -7,25 +7,22 @@ import NISTAILifestyleWidget from './NISTAILifestyleWidget';
 import EURiskLevelFrameworkWidget from './EURiskLevelFrameworkWidget';
 import ChatWithMeWidget from './ChatWithMeWidget';
 
-const Dashboard: React.FC = () => {
-  const [analysisResults, setAnalysisResults] = useState<any>(null);
-
-  const handleAnalysisComplete = (results: any) => {
-    setAnalysisResults(results);
-  };
+const ComplianceRiskAssessment:  React.FC = () => {
+    const [domain, setDomain] = useState<string | undefined>(undefined);
+    const [searchQuery, setSearchQuery] = useState<string | undefined>(undefined);
 
   return (
     <div className="flex-1 min-h-0 h-full">
-      <div className="grid grid-cols-3 gap-8 h-full">
-        <UploadProjectWidget onAnalysisComplete={handleAnalysisComplete} />
+      <div className="grid grid-cols-3 gap-4 h-full">
+        <UploadProjectWidget />
         <ExplorePolicyWidget />
-        <RelevantPoliciesWidget analysisResults={analysisResults} />
+        <RelevantPoliciesWidget />
         <OECDScoreWidget />
         <NISTAILifestyleWidget />
         <div className="w-full row-span-3">
           <ChatWithMeWidget />
         </div>
-        <div className="col-span-2 w-full row-span-2">
+        <div className="col-span-2 w-full row-span-3">
           <EURiskLevelFrameworkWidget />
         </div>
       </div>
@@ -33,4 +30,4 @@ const Dashboard: React.FC = () => {
   );
 };
 
-export default Dashboard; 
+export default ComplianceRiskAssessment; 

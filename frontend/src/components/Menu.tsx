@@ -1,23 +1,25 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useLocation } from 'react-router-dom';
 
 interface MenuProps {
   projectName: string;
+  onNavigate?: (path: string) => void;
 }
 
 const icons: Record<string, React.FC<{ className?: string }>> = {
   // SVG icon components can be imported or inlined here if needed
 };
 
-const Menu: React.FC<MenuProps> = ({ projectName }) => {
-  const [selected, setSelected] = useState<number | null>(null);
+const Menu: React.FC<MenuProps> = ({ projectName, onNavigate }) => {
+  const location = useLocation();
 
   const menuItems = [
     { type: 'header', label: 'Menu' },
-    { type: 'item', label: 'Home', icon: 'Home' },
+    { type: 'item', label: 'Home', icon: 'Home', path: '/' },
     { type: 'header', label: 'Tools' },
-    { type: 'item', label: 'Policy Analysis', icon: 'FileText' },
+    { type: 'item', label: 'Policy Analysis', icon: 'FileText', path: '/policy-analysis' },
     { type: 'item', label: 'Opportunity Identification', icon: 'Target' },
-    { type: 'item', label: 'Compliance Risk Assessment', icon: 'Shield' },
+    { type: 'item', label: 'Compliance Risk Assessment', icon: 'Shield', path: '/compliance-risk-assessment' },
     { type: 'item', label: 'Reports Generation', icon: 'BarChart3' },
     { type: 'item', label: 'Policy Engagement', icon: 'Users' },
     { type: 'item', label: 'Vendor Management', icon: 'Building' },
@@ -58,9 +60,11 @@ const Menu: React.FC<MenuProps> = ({ projectName }) => {
           ) : (
             <button
               key={index}
-              onClick={() => setSelected(index)}
+              onClick={() => {
+                if (item.path && onNavigate) onNavigate(item.path);
+              }}
               className={`w-full flex items-center gap-2 px-3 py-1 text-sm rounded-none ${
-                item.label === 'Home'
+                item.path && location.pathname === item.path
                   ? 'bg-gray-200 text-[#1975d4] font-bold'
                   : 'bg-transparent text-black hover:bg-gray-100'
               }`}
