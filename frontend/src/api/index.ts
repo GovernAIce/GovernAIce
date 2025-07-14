@@ -11,6 +11,7 @@ export const api = axios.create({
 // Upload API functions
 export const uploadAPI = {
   // Upload file for general compliance analysis
+
   uploadAndAnalyze: (file: File, countries: string[], policies?: string[]) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -26,9 +27,11 @@ export const uploadAPI = {
   },
 
   // Upload product info text for analysis
-  uploadProductInfo: (productInfo: string, countries: string[], policies?: string[]) => {
+  uploadProductInfo: (file: File, countries: string[], policies?: string[]) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('countries', JSON.stringify(countries));
     return api.post('/product-info-upload/', {
-      product_info: productInfo,
       countries: countries,
       policies: policies || []
     });
@@ -50,5 +53,22 @@ export const uploadAPI = {
     return api.post('/analyze-regulatory-product-info/', {
       product_info: productInfo
     });
+  }
+};
+
+// Policy API functions
+export const policyAPI = {
+  // Fetch relevant policies based on countries and search criteria
+  getRelevantPolicies: (countries: string[], domain?: string, searchQuery?: string) => {
+    return api.post('/api/policies/relevant', {
+      countries,
+      domain,
+      search: searchQuery
+    });
+  },
+
+  // Get all available policies for a country
+  getPoliciesByCountry: (country: string) => {
+    return api.get(`/metadata/policies/?country=${encodeURIComponent(country)}`);
   }
 };

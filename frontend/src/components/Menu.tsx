@@ -27,16 +27,16 @@ const Menu: React.FC<MenuProps> = ({ projectName, onNavigate }) => {
     { type: 'item', label: projectName, icon: 'Folder' },
     { type: 'item', label: 'UX@Berkeley', icon: 'Folder' },
     { type: 'header', label: 'Reports:' },
-    { type: 'item', label: 'Feb. 28th - 9:46am', icon: 'FileText' },
-    { type: 'item', label: 'Jan. 5th - 11:53am', icon: 'FileText' },
+    { type: 'item', label: 'July 13 - 2:46am', icon: 'FileText' },
+    { type: 'item', label: 'July 5th - 11:53am', icon: 'FileText' },
     { type: 'item', label: 'Jan. 7th - 12:11am', icon: 'FileText' },
     { type: 'item', label: 'Jan. 30th - 6:40pm', icon: 'FileText' },
     { type: 'header', label: 'Team Members' },
-    { type: 'item', label: 'Name Name', icon: 'User' },
-    { type: 'item', label: 'Name Name', icon: 'User' },
-    { type: 'item', label: 'Name Name', icon: 'User' },
-    { type: 'item', label: 'Name Name', icon: 'User' },
-    { type: 'item', label: 'Name Name', icon: 'User' },
+    { type: 'item', label: 'Yan', icon: 'User' },
+    { type: 'item', label: 'Heidy', icon: 'User' },
+    { type: 'item', label: 'Max', icon: 'User' },
+    { type: 'item', label: 'Smaran', icon: 'User' },
+    { type: 'item', label: 'Dhyan', icon: 'User' },
   ];
 
   return (

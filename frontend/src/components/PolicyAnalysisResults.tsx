@@ -1,20 +1,246 @@
 import React, { useState } from 'react';
 import Card from './Card';
+// import { uploadFile } from './UploadProjectWidget'; // Assuming this is where uploadFile is defined
+import { useCountryContext } from '../contexts/CountryContext';
+import { policyAPI } from '../api';
 
-interface PolicyInsight {
-  policy: string;
-  compliance_score: number;
-  policy_details: string;
-  excellent_points: string[];
-  major_gaps: string[];
+interface Policy {
+    title: string;
+    source?: string;
+    text?: string;
+    country?: string;
+    domain?: string;
+    excellent_points: string[];
+    major_gaps: string[];
+    compliance_score: number;
+    policy?: string;
+}
+  
+  interface ComplianceAnalysisWidgetProps {
+    domain?: string;
+    searchQuery?: string;
+    uploadedFile?: File | null;
+    insights: Policy[];
+    onClose?: () => void;
 }
 
-interface PolicyAnalysisResultsProps {
-  insights: PolicyInsight[];
-  onClose?: () => void;
-}
 
-const PolicyAnalysisResults: React.FC<PolicyAnalysisResultsProps> = ({ insights, onClose }) => {
+
+const ComplianceResults: React.FC<ComplianceAnalysisWidgetProps> =  ({ 
+    domain, 
+    searchQuery, 
+    uploadedFile,
+    insights,
+    onClose
+}) => {
+    const { selectedCountries, hasCountries } = useCountryContext();
+  const [policies, setPolicies] = useState<Policy[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [lastSearch, setLastSearch] = useState<string>('');
+
+  // Enhanced search query generation based on document analysis and countries
+  const generateSearchQuery = () => {
+    let query = searchQuery || '';
+    
+    // Add domain to search if available
+    if (domain) {
+      query += ` ${domain}`;
+    }
+    
+    // Add country-specific keywords based on selected countries
+    const countryKeywords = selectedCountries.map(country => {
+      const keywords = {
+        'USA': 'privacy data protection consumer rights',
+        'EU': 'GDPR data protection privacy rights',
+        'UK': 'data protection privacy consumer rights',
+        'Canada': 'PIPEDA privacy data protection',
+        'Australia': 'privacy data protection consumer',
+        'Japan': 'privacy data protection consumer',
+        'China': 'data security privacy protection',
+        'India': 'data protection privacy consumer',
+        'Brazil': 'LGPD privacy data protection',
+        'Singapore': 'privacy data protection consumer',
+        'South Korea': 'privacy data protection consumer',
+        'Saudi Arabia': 'data protection privacy consumer',
+        'UAE': 'data protection privacy consumer',
+        'Taiwan': 'privacy data protection consumer'
+      };
+      return keywords[country as keyof typeof keywords] || 'privacy data protection';
+    }).join(' ');
+    
+    query += ` ${countryKeywords}`;
+    
+
+    
+    // Add file-specific keywords based on file name
+    if (uploadedFile?.name) {
+      const fileName = uploadedFile.name.toLowerCase();
+      if (fileName.includes('privacy') || fileName.includes('data')) {
+        query += ' privacy data protection';
+      }
+      if (fileName.includes('security') || fileName.includes('cyber')) {
+        query += ' security cybersecurity';
+      }
+      if (fileName.includes('ai') || fileName.includes('artificial')) {
+        query += ' artificial intelligence AI';
+      }
+      if (fileName.includes('health') || fileName.includes('medical')) {
+        query += ' healthcare medical privacy';
+      }
+      if (fileName.includes('financial') || fileName.includes('bank')) {
+        query += ' financial banking compliance';
+      }
+    }
+    
+    return query.trim();
+  };
+
+  // Check if we have all required conditions to fetch policies
+  const canFetchPolicies = () => {
+    return hasCountries && uploadedFile;
+  };
+
+//   // Get the current status message
+//   const getStatusMessage = () => {
+//     if (!hasCountries && !uploadedFile) {
+//       return {
+//         type: 'warning',
+//         message: 'Please select countries and upload a document to view relevant policies.',
+//         icon: '⚠️'
+//       };
+//     }
+    
+//     if (!hasCountries) {
+//       return {
+//         type: 'warning',
+//         message: 'Please select countries in the Explore Policy section to view relevant policies.',
+//         icon: '🌍'
+//       };
+//     }
+    
+//     if (!uploadedFile) {
+//       return {
+//         type: 'info',
+//         message: 'Please upload a document to view relevant policies for your selected countries.',
+//         icon: '📄'
+//       };
+//     }
+    
+//     return null;
+//   };
+
+// //   // Test function to manually trigger API call
+// //   const testApiCall = async () => {
+// //     console.log('Testing API call manually...');
+// //     setLoading(true);
+// //     setError(null);
+    
+// //     try {
+// //       const response = await policyAPI.getRelevantPolicies(['USA'], 'AI', 'privacy');
+// //       console.log('Manual API test response:', response.data);
+// //       setPolicies(response.data.policies || []);
+// //     } catch (err) {
+// //       console.error('Manual API test error:', err);
+// //       setError('Manual test failed: ' + (err as any).message);
+// //     } finally {
+// //       setLoading(false);
+// //     }
+// //   };
+
+// //   useEffect(() => {
+// //     // Debug logging
+// //     console.log('ComplianceAnalysisWidget useEffect triggered:', {
+// //       hasCountries,
+// //       uploadedFile: uploadedFile?.name,
+// //       selectedCountries,
+// //       domain,
+// //       searchQuery,
+// //       analysisResults: !!analysisResults
+// //     });
+
+//     // Only fetch policies if we have both countries and uploaded file
+//     if (!canFetchPolicies()) {
+//       console.log('Cannot fetch policies - missing conditions:', {
+//         hasCountries,
+//         hasUploadedFile: !!uploadedFile
+//       });
+//       setPolicies([]);
+//       setError(null);
+//       return;
+//     }
+
+//     const currentSearchQuery = generateSearchQuery();
+//     const searchKey = `${selectedCountries.join(',')}-${currentSearchQuery}-${uploadedFile?.name}`;
+  
+
+//     console.log('Generated search query:', currentSearchQuery);
+//     console.log('Search key:', searchKey);
+//     console.log('Last search key:', lastSearch);
+    
+//     // Only fetch if search criteria changed
+//     if (searchKey === lastSearch) {
+//       console.log('Search criteria unchanged, skipping API call');
+//       return;
+//     }
+    
+//     console.log('Making API call to fetch policies...');
+//     setLoading(true);
+//     setError(null);
+//     setLastSearch(searchKey);
+
+//     policyAPI.getRelevantPolicies(selectedCountries, domain, currentSearchQuery)
+//       .then(response => {
+//         console.log('API response received:', response.data);
+//         const data = response.data;
+//         setPolicies(data.policies || []);
+//         setLoading(false);
+//       })
+//       .catch(err => {
+//         console.error('Error fetching policies:', err);
+//         setError('Failed to fetch relevant policies. Please try again.');
+//         setLoading(false);
+//       });
+//   }, [selectedCountries, domain, searchQuery, uploadedFile, analysisResults, hasCountries]);
+
+//   const getCountryBadge = (country: string) => {
+//     const colors = {
+//       'USA': 'bg-blue-100 text-blue-800',
+//       'EU': 'bg-purple-100 text-purple-800',
+//       'UK': 'bg-red-100 text-red-800',
+//       'Canada': 'bg-red-100 text-red-800',
+//       'Australia': 'bg-green-100 text-green-800',
+//       'Japan': 'bg-red-100 text-red-800',
+//       'China': 'bg-red-100 text-red-800',
+//       'India': 'bg-orange-100 text-orange-800',
+//       'Brazil': 'bg-green-100 text-green-800',
+//       'Singapore': 'bg-red-100 text-red-800',
+//       'South Korea': 'bg-blue-100 text-blue-800',
+//       'Saudi Arabia': 'bg-green-100 text-green-800',
+//       'UAE': 'bg-green-100 text-green-800',
+//       'Taiwan': 'bg-blue-100 text-blue-800'
+//     };
+    
+//     const colorClass = colors[country as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    
+//     return (
+//       <span className={`inline-block px-2 py-1 text-xs rounded-full ${colorClass}`}>
+//         {country}
+//       </span>
+//     );
+//   };
+
+//   const statusMessage = getStatusMessage();
+
+//   // Debug render logging
+//   console.log('ComplianceAnalysisWidget render:', {
+//     policies: policies.length,
+//     loading,
+//     error,
+//     canFetchPolicies: canFetchPolicies(),
+//     statusMessage: !!statusMessage
+//   });
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [expandedPolicy, setExpandedPolicy] = useState<string | null>(null);
 
@@ -73,6 +299,7 @@ const PolicyAnalysisResults: React.FC<PolicyAnalysisResultsProps> = ({ insights,
           </div>
         </div>
 
+
         {/* Policy Card */}
         <div className="flex-1 bg-white rounded-lg border border-gray-200 p-4">
           <div className="mb-3">
@@ -102,7 +329,7 @@ const PolicyAnalysisResults: React.FC<PolicyAnalysisResultsProps> = ({ insights,
             <div className="mb-3">
               <h5 className="text-sm font-medium text-gray-700 mb-1">Policy Overview</h5>
               <p className="text-xs text-gray-600 leading-relaxed">
-                {currentInsight.policy_details}
+                {currentInsight.policy}
               </p>
             </div>
 
@@ -177,4 +404,4 @@ const PolicyAnalysisResults: React.FC<PolicyAnalysisResultsProps> = ({ insights,
   );
 };
 
-export default PolicyAnalysisResults; 
+export default ComplianceResults; 

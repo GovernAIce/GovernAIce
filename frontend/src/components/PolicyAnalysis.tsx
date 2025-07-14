@@ -8,18 +8,14 @@ import ExcellenciesMajorGapsWidget from './ExcellenciesMajorGapsWidget';
 import ChatWithMeWidget from './ChatWithMeWidget';
 
 const PolicyAnalysis: React.FC = () => {
-  const [analysisResults, setAnalysisResults] = useState<any>(null);
-
-  const handleAnalysisComplete = (results: any) => {
-    setAnalysisResults(results);
-  };
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
   return (
     <div className="flex-1 min-h-0 h-full">
       <div className="grid grid-cols-3 gap-4 h-full">
-        <UploadProjectWidget onAnalysisComplete={handleAnalysisComplete} />
+        <UploadProjectWidget onFileUpload={setUploadedFile} />
         <ExplorePolicyWidget />
-        <ComplianceAnalysisWidget />
+        <ComplianceAnalysisWidget uploadedFile={uploadedFile} />
         <OECDScoreWidget />
         <NISTAILifestyleWidget />
         <div className="w-full row-span-3">

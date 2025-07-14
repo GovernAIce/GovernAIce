@@ -6,14 +6,15 @@ import { useCountryContext } from '../contexts/CountryContext';
 
 interface UploadProjectWidgetProps {
   onAnalysisComplete?: (results: any) => void;
+  onFileUpload?: (file: File) => void;
 }
 
-const UploadProjectWidget: React.FC<UploadProjectWidgetProps> = ({ onAnalysisComplete }) => {
+const UploadProjectWidget: React.FC<UploadProjectWidgetProps> = ({ onAnalysisComplete, onFileUpload }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [analysisType, setAnalysisType] = useState<'general' | 'regulatory'>('general');
+  const [analysisType, setAnalysisType] = useState('general');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { selectedCountries, hasCountries } = useCountryContext();
 
@@ -36,6 +37,11 @@ const UploadProjectWidget: React.FC<UploadProjectWidgetProps> = ({ onAnalysisCom
       
       setSelectedFile(file);
       setError(null);
+      
+      // Notify parent component about file upload
+      if (onFileUpload) {
+        onFileUpload(file);
+      }
     }
   };
 
@@ -61,6 +67,11 @@ const UploadProjectWidget: React.FC<UploadProjectWidgetProps> = ({ onAnalysisCom
       
       setSelectedFile(file);
       setError(null);
+      
+      // Notify parent component about file upload
+      if (onFileUpload) {
+        onFileUpload(file);
+      }
     }
   };
 
@@ -112,7 +123,8 @@ const UploadProjectWidget: React.FC<UploadProjectWidgetProps> = ({ onAnalysisCom
       if (onAnalysisComplete) {
         onAnalysisComplete({
           ...response.data,
-          analysisType
+          analysisType,
+          uploadedFile: selectedFile
         });
       }
       
@@ -155,21 +167,10 @@ const UploadProjectWidget: React.FC<UploadProjectWidgetProps> = ({ onAnalysisCom
               name="analysisType"
               value="general"
               checked={analysisType === 'general'}
-              onChange={(e) => setAnalysisType(e.target.value as 'general' | 'regulatory')}
+              onChange={(e) => setAnalysisType(e.target.value as 'general')}
               className="text-blue-600"
             />
             General Compliance
-          </label>
-          <label className="flex items-center gap-1 text-xs">
-            <input
-              type="radio"
-              name="analysisType"
-              value="regulatory"
-              checked={analysisType === 'regulatory'}
-              onChange={(e) => setAnalysisType(e.target.value as 'general' | 'regulatory')}
-              className="text-blue-600"
-            />
-            Regulatory (OECD/NIST/EU)
           </label>
         </div>
 
@@ -259,7 +260,7 @@ const UploadProjectWidget: React.FC<UploadProjectWidgetProps> = ({ onAnalysisCom
           onClick={handleUpload}
           disabled={!selectedFile || (analysisType === 'general' && !hasCountries) || isUploading}
         >
-          {isUploading ? 'Analyzing...' : 'Upload & Analyze'}
+          {isUploading ? 'Analyzing...' : 'Upload'}
         </Button>
       </div>
     </Card>

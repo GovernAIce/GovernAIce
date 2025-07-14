@@ -141,7 +141,7 @@ const RelevantPoliciesWidget: React.FC<RelevantPoliciesWidgetProps> = ({ analysi
         />
         <div className="flex flex-col h-full gap-5">
           <div className="flex justify-between items-center">
-            <h3 className="text-xl text-[#1975d4] font-bold">Major Risks Mentioned</h3>
+            <h3 className="text-xl text-[#1975d4] font-bold">Compliance Analysis</h3>
           </div>
           <p className="text-sm text-black">
             Upload a document to see compliance comparison and risk assessment...

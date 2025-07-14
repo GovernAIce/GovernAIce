@@ -33,6 +33,7 @@ const ExplorePolicyWidget: React.FC<{ onDomainChange?: (domains: string[]) => vo
     // TODO: Implement the comparison logic here
   };
 
+
   const handleDomainChange = (domain: string) => {
     setSelectedDomains(prev =>
       prev.includes(domain)
