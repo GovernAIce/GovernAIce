@@ -1,77 +1,38 @@
-import { useState, useEffect } from 'react';
-import Navbar from './components/Navbar';
-import UploadButton from './components/UploadButton';
-import ProjectCard from './components/ProjectCard';
-import GapAnalysis from './components/GapAnalysis';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+import Menu from './components/Menu';
+import Header from './components/Header';
+import PolicyAnalysis from './components/PolicyAnalysis';
+import ComplianceRiskAssessment from './components/ComplianceRiskAssessment';
+import { CountryProvider } from './contexts/CountryContext';
 
-function App() {
-  const [projects, setProjects] = useState([]);
-  const [selectedFramework, setSelectedFramework] = useState('EU_AI_ACT');
-
-  useEffect(() => {
-    fetchDocuments();
-  }, []);
-
-  const fetchDocuments = async () => {
-    try {
-      const response = await fetch('http://localhost:8000/api/documents/');
-      const data = await response.json();
-      setProjects(data.map(doc => ({
-        name: doc.title,
-        status: doc.framework_selections[0]?.analysis_status || 'Pending',
-        lastUpdate: new Date(doc.upload_date).toLocaleString(),
-        doc_id: doc.doc_id
-      })));
-    } catch (error) {
-      console.error('Error fetching documents:', error);
-    }
-  };
-
-  const handleUpload = async (file) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('frameworks', selectedFramework);
-    formData.append('frameworks', 'CPRA'); // Adding CPRA as per Postman example
-
-    try {
-      const response = await fetch('http://localhost:8000/api/upload-and-analyze/', {
-        method: 'POST',
-        body: formData,
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setProjects(prev => [...prev, {
-          name: data.filename,
-          status: 'Processing',
-          lastUpdate: new Date().toLocaleString(),
-          doc_id: data.doc_id
-        }]);
-      }
-    } catch (error) {
-      console.error('Upload failed:', error);
-    }
-  };
+const AppLayout = () => {
+  const [projectName, setProjectName] = useState('Project Name');
+  const navigate = useNavigate();
 
   return (
-    <div className="container">
-      <Navbar />
-      <h1 className="title">Stress test your AI for compliance, bias, and safety</h1>
-      <p className="subtitle">Actionable insights. Practical recommendations. All grounded in real-world benchmarks, regulations, and open-source tools.</p>
-      <UploadButton onUpload={handleUpload} setSelectedFramework={setSelectedFramework} />
-      <div className="grid">
-        <div className="projects-column">
-          <h2 className="section-title">Projects</h2>
-          {projects.map((project, index) => (
-            <ProjectCard key={index} {...project} />
-          ))}
-          <button className="view-report-btn" onClick={fetchDocuments}>Refresh</button>
+    <div className="flex h-screen bg-[#e6f0fa] p-4">
+      <Menu projectName={projectName} onNavigate={navigate} />
+      <div className="flex-1 flex flex-col ml-6 h-full">
+        <div className="w-full bg-white rounded-3xl shadow p-6 mb-4" style={{ flex: '0 0 auto' }}>
+          <Header projectName={projectName} setProjectName={setProjectName} />
         </div>
-        <div className="gap-analysis-column">
-          {projects.length > 0 && <GapAnalysis docId={projects[0].doc_id} framework={selectedFramework} />}
-        </div>
+        <Routes>
+          <Route path="/policy-analysis" element={<PolicyAnalysis />} />
+          <Route path="/compliance-risk-assessment" element={<ComplianceRiskAssessment />} />
+          <Route path="*" element={<Navigate to="/policy-analysis" replace />} />
+        </Routes>
       </div>
     </div>
   );
-}
+};
+
+const App = () => (
+  <CountryProvider>
+    <Router>
+      <AppLayout />
+    </Router>
+  </CountryProvider>
+);
 
 export default App;
