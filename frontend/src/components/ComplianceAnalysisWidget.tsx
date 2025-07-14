@@ -125,7 +125,7 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
     setLoading(true);
     setError(null);
     setLastSearch(searchKey);
-    policyAPI.getRelevantPolicies(selectedCountries, domain, currentSearch)
+    policyAPI.use_case_one(selectedCountries, domain, currentSearch)
       .then(response => {
         const data = response.data;
         setPolicies(data.policies || []);

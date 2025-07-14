@@ -22,3 +22,14 @@ export function updateItem(id: string, updates: Partial<Item>): Promise<AxiosRes
 export function deleteItem(id: string): Promise<AxiosResponse<any>> {
   return api.delete(`/items/${id}`);
 }
+
+// Analyze document for excellencies and major gaps
+export async function analyzeDocument(file: File, countries: string[]): Promise<any> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('countries', JSON.stringify(countries));
+  const response = await api.post('/upload-and-analyze/', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data;
+}

@@ -6,10 +6,12 @@ import NISTAILifestyleWidget from './NISTAILifestyleWidget';
 import ExcellenciesMajorGapsWidget from './ExcellenciesMajorGapsWidget';
 import ChatWithMeWidget from './ChatWithMeWidget';
 import ComplianceAnalysisWidget from './ComplianceAnalysisWidget';
+import { useCountryContext } from '../contexts/CountryContext';
 
 const PolicyAnalysis: React.FC = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [insights, setInsights] = useState<any[]>([]);
+  const { selectedCountries } = useCountryContext();
 
   const handleAnalysisComplete = (results: any) => {
     setUploadedFile(results.uploadedFile || null);
@@ -18,7 +20,7 @@ const PolicyAnalysis: React.FC = () => {
 
   return (
     <div className="flex-1 min-h-0 h-full">
-      <div className="grid grid-cols-3 gap-4 h-full">
+      <div className="grid grid-cols-3 gap-4 gap-y-1 h-full">
         <UploadProjectWidget onFileUpload={setUploadedFile} onAnalysisComplete={handleAnalysisComplete} />
         <ExplorePolicyWidget />
         <ComplianceAnalysisWidget
@@ -30,8 +32,16 @@ const PolicyAnalysis: React.FC = () => {
         <div className="w-full row-span-3">
           <ChatWithMeWidget />
         </div>
-        <div className="col-span-2 w-full row-span-3">
-          <ExcellenciesMajorGapsWidget />
+        <div className="col-span-2 w-full row-span-3 py-2">
+          <ExcellenciesMajorGapsWidget 
+            uploadedFile={uploadedFile}
+            selectedCountries={selectedCountries}
+            insights={insights.length > 0 ? insights.map(i => ({
+              policy: i.policy,
+              excellent_points: i.excellent_points || [],
+              major_gaps: i.major_gaps || []
+            })) : []}
+          />
         </div>
       </div>
     </div>

@@ -7,3 +7,4 @@ google-generativeai
 openai
 fastapi
 uvicorn
+sentence-transformers

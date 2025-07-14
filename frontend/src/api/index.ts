@@ -59,7 +59,7 @@ export const uploadAPI = {
 // Policy API functions
 export const policyAPI = {
   // Fetch relevant policies based on countries and search criteria
-  getRelevantPolicies: (countries: string[], domain?: string, searchQuery?: string) => {
+  use_case_one: (countries: string[], domain?: string, searchQuery?: string) => {
     return api.post('/api/policies/relevant', {
       countries,
       domain,
@@ -71,4 +71,12 @@ export const policyAPI = {
   getPoliciesByCountry: (country: string) => {
     return api.get(`/metadata/policies/?country=${encodeURIComponent(country)}`);
   }
+
+  // getUseCaseOne: (countries: string[], domain?: string, searchQuery?: string) => {
+  //   return api.post('/api/policies/use-case-one', {
+  //     countries,
+  //     domain,
+  //     search: searchQuery
+  //   });
+  // }
 };
