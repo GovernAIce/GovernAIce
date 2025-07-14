@@ -1,13 +1,16 @@
-// vite.config.js
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
+// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
+  server: {
+    proxy: {
+      '/chat': 'http://localhost:5001',
+      '/metadata': 'http://localhost:5001',
+      '/upload-and-analyze': 'http://localhost:5001',
+      '/api': 'http://localhost:5001',
+      // Add more endpoints as needed
     },
   },
-});
+})
