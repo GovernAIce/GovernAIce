@@ -17,7 +17,7 @@ const ComplianceRiskAssessment: React.FC = () => {
   
     return (
       <div className="flex-1 min-h-0 h-full">
-        <div className="grid grid-cols-3 gap-8 h-full">
+        <div className="grid grid-cols-3 gap-4 gap-y-1 h-full">
           <UploadProjectWidget onAnalysisComplete={handleAnalysisComplete} />
           <ExplorePolicyWidget />
           <RelevantPoliciesWidget analysisResults={analysisResults} />
@@ -26,7 +26,7 @@ const ComplianceRiskAssessment: React.FC = () => {
           <div className="w-full row-span-3">
             <ChatWithMeWidget />
           </div>
-          <div className="col-span-2 w-full row-span-2">
+          <div className="col-span-2 w-full row-span-2 py-2">
             <EURiskLevelFrameworkWidget />
           </div>
         </div>

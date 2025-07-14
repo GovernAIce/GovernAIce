@@ -15,18 +15,21 @@ interface ComplianceAnalysisWidgetProps {
   domain?: string;
   searchQuery?: string;
   uploadedFile: File | null;
+  policies?: Policy[];
 }
 
 const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({ 
   domain, 
   searchQuery, 
-  uploadedFile
+  uploadedFile,
+  policies: externalPolicies
 }) => {
   const { selectedCountries, hasCountries } = useCountryContext();
-  const [policies, setPolicies] = useState<Policy[]>([]);
+  const [policies, setPolicies] = useState<Policy[]>(externalPolicies || []);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastSearch, setLastSearch] = useState<string>('');
+  const [showAll, setShowAll] = useState(false);
 
   // Enhanced search query generation based on document analysis and countries
   const generateSearchQuery = () => {
@@ -105,6 +108,10 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
   };
 
   useEffect(() => {
+    if (externalPolicies) {
+      setPolicies(externalPolicies);
+      return;
+    }
     if (!canFetchPolicies()) {
       setPolicies([]);
       setError(null);
@@ -128,7 +135,7 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
         setError('Failed to fetch relevant policies. Please try again.');
         setLoading(false);
       });
-  }, [selectedCountries, domain, searchQuery, uploadedFile, hasCountries]);
+  }, [selectedCountries, domain, searchQuery, uploadedFile, hasCountries, externalPolicies]);
 
   const getCountryBadge = (country: string) => {
     const colors = {
@@ -156,6 +163,9 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
   };
 
   const statusMessage = getStatusMessage();
+
+  // Determine how many policies to show
+  const displayPolicies = showAll ? policies.slice(0, 10) : policies.slice(0, 5);
 
   return (
     <Card className="custom-border p-4 h-auto min-h-[200px]">
@@ -200,31 +210,54 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
           <span className="text-xs">Try selecting different countries or uploading a different document.</span>
         </div>
       )}
-      {!loading && !error && canFetchPolicies() && policies.length > 0 && (
-        <div className="space-y-3">
-          {policies.map((policy, idx) => (
-            <div key={idx} className="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition-colors">
-              <div className="flex items-center gap-2 mb-1">
-                <h4 className="font-semibold text-sm text-gray-900 flex-1">
-                  {policy.title}
-                </h4>
-                {policy.country && getCountryBadge(policy.country)}
-              </div>
-              <div className="flex items-center justify-between">
+      {!loading && !error && policies.length > 0 && (
+        <>
+          <div
+            className="space-y-2"
+            style={{
+              maxHeight: showAll ? '220px' : '120px',
+              overflowY: 'auto',
+            }}
+          >
+            {displayPolicies.map((policy, idx) => (
+              <div
+                key={idx}
+                className="flex items-center border border-gray-200 rounded px-2 py-1 bg-white text-xs gap-2 hover:bg-gray-50 transition-colors"
+                style={{ minHeight: '20px' }}
+              >
+                <span className="font-semibold text-gray-800" >{policy.title}</span>
+                {policy.country && (
+                  <span className="px-1 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100 text-xs font-medium">
+                  {policy.country}
+                </span>
+                )}
+                <div className="flex-1" />
                 {policy.source && (
-                  <a 
-                    href={policy.source} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="text-xs text-blue-600 hover:text-blue-800 underline"
+                  <a
+                    href={policy.source}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-2 text-blue-500 hover:text-blue-700 text-base"
+                    title="View Source"
+                    style={{ lineHeight: 1 }}
                   >
-                    View Source
+                    🔗
                   </a>
                 )}
               </div>
+            ))}
+          </div>
+          {policies.length > 5 && (
+            <div className="flex justify-center mt-2">
+              <button
+                className="text-xs text-blue-600 underline hover:text-blue-800"
+                onClick={() => setShowAll(v => !v)}
+              >
+                {showAll ? 'Show Top 5' : 'Show Top 10'}
+              </button>
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </Card>
   );

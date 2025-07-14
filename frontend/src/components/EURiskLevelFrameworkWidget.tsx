@@ -49,11 +49,11 @@ const EURiskLevelFrameworkWidget: React.FC = () => {
   if (!hasInput) {
     return (
       <Card className="custom-border relative p-2 h-full">
-        <img
+        {/* <img
           src="/icons/info.svg"
           alt="Info"
           className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-        />
+        /> */}
         <div className="flex flex-col items-center justify-center h-full text-center">
           <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
             <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -77,15 +77,6 @@ const EURiskLevelFrameworkWidget: React.FC = () => {
         <p className="text-base mt-2" style={{ color: '#000000' }}>
           Compare use case to the EU AI Risk and give overall scores about both of the risk and mitigation levels.
         </p>
-      </div>
-      {/* Right: Chart */}
-      <div className="relative flex-1 flex flex-col justify-center items-center h-full">
-        {/* Info icon */}
-        <img
-          src="/icons/info.svg"
-          alt="Info"
-          className="absolute top-2 right-2 w-6 h-6 opacity-70"
-        />
         {/* Legend */}
         <div className="flex flex-row gap-4 mb-2 mt-2 items-center">
           <div className="flex items-center gap-1">
@@ -97,6 +88,16 @@ const EURiskLevelFrameworkWidget: React.FC = () => {
             <span className="text-xs" style={{ color: '#000000' }}>Mitigation Score</span>
           </div>
         </div>
+      </div>
+      {/* Right: Chart */}
+      <div className="relative flex-1 flex flex-col justify-center items-center h-full">
+        {/* Info icon */}
+        {/* <img
+          src="/icons/info.svg"
+          alt="Info"
+          className="absolute top-2 right-2 w-6 h-6 opacity-70"
+        /> */}
+        
         {/* Bar Chart */}
         <svg viewBox={`0 0 ${chartWidth + leftMargin + 20} ${riskBarData.length * yStep + 60}`} className="w-full" style={{ height: `${riskBarData.length * yStep + 60}px` }}>
           {/* Dotted grid background */}

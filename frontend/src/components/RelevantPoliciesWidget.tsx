@@ -133,7 +133,7 @@ const RelevantPoliciesWidget: React.FC<RelevantPoliciesWidgetProps> = ({ analysi
 
   if (!analysisResults || !currentInsight) {
     return (
-      <Card className="custom-border relative p-3 h-[130px]">
+      <Card className="custom-border p-4 h-auto min-h-[200px]">
         <img
           src="/icons/info.svg"
           alt="Info"
@@ -169,7 +169,7 @@ const RelevantPoliciesWidget: React.FC<RelevantPoliciesWidgetProps> = ({ analysi
   }
 
   return (
-    <Card className="custom-border relative p-3 h-auto min-h-[280px] max-h-[400px] overflow-hidden">
+    <Card className="custom-border p-4 h-auto min-h-[200px]">
       <img
         src="/icons/info.svg"
         alt="Info"
