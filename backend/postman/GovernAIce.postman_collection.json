@@ -35,15 +35,12 @@
 					]
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/upload-and-analyze/",
+					"raw": "http://localhost:5001/upload-and-analyze/",
 					"protocol": "http",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"localhost"
 					],
-					"port": "5000",
+					"port": "5001",
 					"path": [
 						"upload-and-analyze",
 						""
@@ -81,15 +78,12 @@
 					]
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/upload-regulatory-compliance/",
+					"raw": "http://localhost:5001/upload-regulatory-compliance/",
 					"protocol": "http",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"localhost"
 					],
-					"port": "5000",
+					"port": "5001",
 					"path": [
 						"upload-regulatory-compliance",
 						""
@@ -107,15 +101,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:5000/documents/",
+					"raw": "http://localhost:5001/documents/",
 					"protocol": "http",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"localhost"
 					],
-					"port": "5000",
+					"port": "5001",
 					"path": [
 						"documents",
 						""
@@ -133,15 +124,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:5000/documents/?doc_id=2d75af5e-1704-4d3a-a0e1-88abf37c32e3",
+					"raw": "http://localhost:5001/documents/?doc_id=2d75af5e-1704-4d3a-a0e1-88abf37c32e3",
 					"protocol": "http",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"localhost"
 					],
-					"port": "5000",
+					"port": "5001",
 					"path": [
 						"documents",
 						""
@@ -165,15 +153,12 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://127.0.0.1:5000/documents/search/?query=AI Chatbot",
+					"raw": "http://localhost:5001/documents/search/?query=AI Chatbot",
 					"protocol": "http",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"localhost"
 					],
-					"port": "5000",
+					"port": "5001",
 					"path": [
 						"documents",
 						"search",
@@ -198,14 +183,13 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8000/api/upload-and-analyze/?doc_id=921769f5-8e77-446e-87e6-a73f75fd5573",
+					"raw": "http://localhost:5001/upload-and-analyze/?doc_id=921769f5-8e77-446e-87e6-a73f75fd5573",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8000",
+					"port": "5001",
 					"path": [
-						"api",
 						"upload-and-analyze",
 						""
 					],
@@ -234,15 +218,12 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/product-info-upload/",
+					"raw": "http://localhost:5001/product-info-upload/",
 					"protocol": "http",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"localhost"
 					],
-					"port": "5000",
+					"port": "5001",
 					"path": [
 						"product-info-upload",
 						""
@@ -266,15 +247,12 @@
 					}
 				},
 				"url": {
-					"raw": "http://127.0.0.1:5000/analyze-regulatory-product-info/",
+					"raw": "http://localhost:5001/analyze-regulatory-product-info/",
 					"protocol": "http",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"localhost"
 					],
-					"port": "5000",
+					"port": "5001",
 					"path": [
 						"analyze-regulatory-product-info",
 						""

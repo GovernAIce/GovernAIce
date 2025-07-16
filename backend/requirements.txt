@@ -1,5 +1,10 @@
 flask
+flask-cors
 pymongo
 PyPDF2
 python-dotenv
 google-generativeai
+openai
+fastapi
+uvicorn
+sentence-transformers

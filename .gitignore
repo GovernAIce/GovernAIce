@@ -1,2 +1,9 @@
 grobid-0.8.2/
+<<<<<<< HEAD
 .vscode/
+=======
+
+# Ignore all .env files everywhere
+.env
+**/.env
+>>>>>>> dfab21b9ab606bef9aae393aba8cefb32de97b9f

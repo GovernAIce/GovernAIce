@@ -6,6 +6,7 @@
 # TODO: Add authentication to protect endpoints in the future.
 
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from pymongo import MongoClient
 from bson import json_util
 import uuid
@@ -17,18 +18,23 @@ import os
 import re
 import google.generativeai as genai
 import logging
+from sentence_transformers import SentenceTransformer
+from pymongo.server_api import ServerApi
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 # Import model-agnostic LLM interface
 from llm_utils import analyze_policy
 
+
 # Initialize Flask app and load environment variables
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 load_dotenv()
 
 # Configure logging for debugging and error tracking
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
 
 # --- DATABASE CONNECTION ---
 # Helper function to connect to MongoDB using the URI from environment variables
@@ -36,7 +42,10 @@ logger = logging.getLogger(__name__)
 
 def get_mongo_client():
     try:
-        client = MongoClient(os.getenv("MONGO_URI"))
+        mongo_uri = os.getenv("MONGO_URI")
+        if not mongo_uri:
+            raise Exception("MONGO_URI not set in environment variables")
+        client = MongoClient(mongo_uri)
         client.server_info()  # Test connection
         logger.info("Successfully connected to MongoDB")
         return client
@@ -48,17 +57,64 @@ def get_mongo_client():
 # Fetches available countries and their policies from the Training database
 # Used for populating dropdowns in the frontend
 
+# Simple in-memory cache for country policies
+_country_policies_cache = None
+_cache_timestamp = None
+CACHE_DURATION = 300  # 5 minutes
+
 def get_country_policies():
+    global _country_policies_cache, _cache_timestamp
+    
+    # Check if cache is still valid
+    if (_country_policies_cache is not None and 
+        _cache_timestamp is not None and 
+        (datetime.now() - _cache_timestamp).seconds < CACHE_DURATION):
+        return _country_policies_cache
+    
     mongo_client = get_mongo_client()
     try:
         mongo_db = mongo_client['Training']
+        
+        # Check if we need to populate sample data
+        collections = mongo_db.list_collection_names()
+        if not collections:
+            # Populate with sample data for testing
+            sample_countries = [
+                "Canada", "UAE", "Taiwan", "Saudi Arabia", "Australia", 
+                "Singapore", "South Korea", "Europe", "Brazil", "India", 
+                "USA", "Japan", "UK", "China", "EU"
+            ]
+            
+            for country in sample_countries:
+                # Create a sample document for each country
+                sample_doc = {
+                    "title": f"Sample Policy for {country}",
+                    "source": f"https://example.com/{country.lower().replace(' ', '-')}",
+                    "text": f"This is a sample policy document for {country}."
+                }
+                mongo_db[country].insert_one(sample_doc)
+            
+            logger.info("Populated sample country data")
+        
         policies = {}
         for country in mongo_db.list_collection_names():
-            country_policies = mongo_db[country].find()
+            # Only fetch the 'title' field instead of entire documents
+            country_policies = mongo_db[country].find({}, {'title': 1, '_id': 0})
             policies[country] = [doc.get('title', '') for doc in country_policies if doc.get('title')]
+        
+        # Update cache
+        _country_policies_cache = policies
+        _cache_timestamp = datetime.now()
         return policies
     finally:
         mongo_client.close()
+
+def clear_country_policies_cache():
+    """Clear the country policies cache (for debugging/testing)."""
+    global _country_policies_cache, _cache_timestamp
+    _country_policies_cache = None
+    _cache_timestamp = None
+    logger.info("Country policies cache cleared")
 
 # --- PDF & LLM HELPERS ---
 # Extracts text from uploaded PDF files
@@ -73,6 +129,31 @@ def extract_text_from_pdf(file):
     except Exception as e:
         logger.error(f"Error extracting text: {str(e)}")
         return f"Error extracting text: {str(e)}"
+
+def sanitize_field_name(field_name):
+    """
+    Sanitize a field name for MongoDB by replacing invalid characters.
+    MongoDB field names cannot contain: ., $, or be empty.
+    """
+    if not field_name:
+        return "unnamed_field"
+    
+    # Replace problematic characters with underscores
+    sanitized = field_name.replace('.', '_').replace('$', '_').replace(':', '_').replace('—', '_').replace('-', '_')
+    sanitized = sanitized.replace(' ', '_').replace('/', '_').replace('\\', '_')
+    
+    # Remove any remaining special characters
+    sanitized = re.sub(r'[^a-zA-Z0-9_]', '_', sanitized)
+    
+    # Ensure it doesn't start with a number
+    if sanitized and sanitized[0].isdigit():
+        sanitized = 'field_' + sanitized
+    
+    # Ensure it's not empty
+    if not sanitized:
+        sanitized = "unnamed_field"
+    
+    return sanitized
 
 # Attempts to extract a JSON object from a string (e.g., LLM API response)
 def extract_json_from_response(response_text):
@@ -180,12 +261,33 @@ def analyze_document(text, countries, policies, doc_id, model="gemini"):
 # These endpoints provide lists of countries, domains, and policies for populating dropdowns in the frontend.
 # TODO: Add authentication in the future.
 
-@app.route('/metadata/countries/', methods=['GET'])
+@app.route('/metadata/country/', methods=['GET'])
 def get_countries():
     """Return a list of available countries for dropdowns."""
     # TODO: Add authentication (future)
-    # TODO: Implement logic to fetch countries from Training DB
-    return jsonify({'countries': []}), 200
+    countries = list(get_country_policies().keys())
+    return jsonify({'countries': countries}), 200
+
+@app.route('/debug/cache/clear/', methods=['POST'])
+def clear_cache():
+    """Clear the country policies cache (debug endpoint)."""
+    clear_country_policies_cache()
+    return jsonify({'message': 'Cache cleared successfully'}), 200
+
+@app.route('/debug/cache/status/', methods=['GET'])
+def cache_status():
+    """Get cache status (debug endpoint)."""
+    global _country_policies_cache, _cache_timestamp
+    if _country_policies_cache is None:
+        return jsonify({'cached': False, 'timestamp': None}), 200
+    else:
+        age_seconds = (datetime.now() - _cache_timestamp).seconds if _cache_timestamp else None
+        return jsonify({
+            'cached': True, 
+            'timestamp': _cache_timestamp.isoformat() if _cache_timestamp else None,
+            'age_seconds': age_seconds,
+            'cache_duration': CACHE_DURATION
+        }), 200
 
 @app.route('/metadata/domains/', methods=['GET'])
 def get_domains():
@@ -200,6 +302,135 @@ def get_policies():
     # TODO: Add authentication (future)
     # TODO: Implement logic to fetch policies by country
     return jsonify({'policies': []}), 200
+
+# @app.route('/api/policies/relevant', methods=['POST'])
+def get_relevant_policies():
+    """
+    Get relevant policies based on selected countries and uploaded file content.
+    Expects JSON body with 'countries' (list), 'domain' (optional), and 'search' (optional).
+    Returns: Array of relevant policy objects (limited to 5 most relevant).
+    """
+    import os
+    if os.environ.get('MOCK_POLICIES', '0') == '1':
+        # Return mock data for frontend testing
+        mock_policies = [
+            {
+                'title': 'Mock Privacy Policy',
+                'source': 'https://example.com/mock-privacy',
+                'text': 'This is a mock privacy policy for testing.',
+                'country': 'USA',
+                'domain': 'privacy'
+            },
+            {
+                'title': 'Mock Data Protection Act',
+                'source': 'https://example.com/mock-dpa',
+                'text': 'This is a mock data protection act for testing.',
+                'country': 'EU',
+                'domain': 'data protection'
+            },
+            {
+                'title': 'Mock AI Regulation',
+                'source': 'https://example.com/mock-ai',
+                'text': 'This is a mock AI regulation for testing.',
+                'country': 'UK',
+                'domain': 'AI'
+            },
+            {
+                'title': 'Mock Consumer Rights Law',
+                'source': 'https://example.com/mock-consumer',
+                'text': 'This is a mock consumer rights law for testing.',
+                'country': 'Canada',
+                'domain': 'consumer rights'
+            },
+            {
+                'title': 'Mock Cybersecurity Framework',
+                'source': 'https://example.com/mock-cyber',
+                'text': 'This is a mock cybersecurity framework for testing.',
+                'country': 'Australia',
+                'domain': 'cybersecurity'
+            }
+        ]
+        return jsonify({
+            'policies': mock_policies,
+            'total_count': len(mock_policies),
+            'countries_searched': ['MOCK'],
+            'domain': 'mock',
+            'search_query': 'mock',
+            'max_results': 5
+        }), 200
+    try:
+        data = request.get_json()
+        if not data or 'countries' not in data:
+            return jsonify({'error': 'Missing countries parameter'}), 400
+        
+        countries = data['countries']
+        
+        domain = data.get('domain', '')
+        search_query = data.get('search', '')
+        
+        if not isinstance(countries, list):
+            return jsonify({'error': 'Countries must be a list'}), 400
+        
+        # Get all policies for the selected countries
+        country_policies = get_country_policies()
+        relevant_policies = []
+        
+        for country in countries:
+            if country in country_policies:
+                policies = country_policies[country]
+                for policy in policies:
+                    # Calculate relevance score based on multiple factors
+                    relevance_score = 0
+                    
+                    # Base score for country match
+                    relevance_score += 10
+                    
+                    # Domain relevance
+                    if domain and domain.lower() in policy.lower():
+                        relevance_score += 5
+                    
+                    # Search query relevance
+                    if search_query:
+                        query_terms = search_query.lower().split()
+                        for term in query_terms:
+                            if term in policy.lower():
+                                relevance_score += 3
+                            if term in country.lower():
+                                relevance_score += 2
+                    
+                    # Create a policy object with metadata and relevance score
+                    policy_obj = {
+                        'title': policy,
+                        'source': f"https://example.com/{country.lower().replace(' ', '-')}",
+                        'text': f"Policy document for {country}: {policy}",
+                        'country': country,
+                        'domain': domain or 'general',
+                        'relevance_score': relevance_score
+                    }
+                    
+                    # Always include policies for selected countries, but score them
+                    relevant_policies.append(policy_obj)
+        
+        # Sort by relevance score (highest first) and limit to top 5
+        relevant_policies.sort(key=lambda x: x['relevance_score'], reverse=True)
+        relevant_policies = relevant_policies[:5]
+        
+        # Remove relevance_score from final response (internal use only)
+        for policy in relevant_policies:
+            policy.pop('relevance_score', None)
+        
+        return jsonify({
+            'policies': relevant_policies,
+            'total_count': len(relevant_policies),
+            'countries_searched': countries,
+            'domain': domain,
+            'search_query': search_query,
+            'max_results': 5
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Error fetching relevant policies: {str(e)}")
+        return jsonify({'error': str(e)}), 500
 
 # --- DOCUMENT ENDPOINTS ---
 # These endpoints handle document upload, analysis, listing, and search.
@@ -249,10 +480,11 @@ def document_upload():
         # Update document with compliance details
         for insight in insights:
             policy = insight.get('policy')
+            sanitized_policy_name = sanitize_field_name(policy)
             mongo_db.documents.update_one(
                 {'doc_id': doc_id},
                 {'$set': {
-                    f'compliance_scores.{policy}': {
+                    f'compliance_scores.{sanitized_policy_name}': {
                         'score': int(insight.get('compliance_score', 0)),
                         'excellent_points': insight.get('excellent_points', []),
                         'major_gaps': insight.get('major_gaps', [])
@@ -311,10 +543,11 @@ def product_info_upload():
             # Update document with compliance details
             for insight in insights:
                 policy = insight.get('policy')
+                sanitized_policy_name = sanitize_field_name(policy)
                 mongo_db.documents.update_one(
                     {'doc_id': doc_id},
                     {'$set': {
-                        f'compliance_scores.{policy}': {
+                        f'compliance_scores.{sanitized_policy_name}': {
                             'score': int(insight.get('compliance_score', 0)),
                             'excellent_points': insight.get('excellent_points', []),
                             'major_gaps': insight.get('major_gaps', [])
@@ -372,6 +605,7 @@ def document_detail(doc_id):
     finally:
         mongo_client.close()
 
+
 @app.route('/documents/search/', methods=['GET'])
 def document_search():
     """
@@ -392,7 +626,8 @@ def document_search():
         logger.error(f"Error searching documents: {str(e)}")
         return jsonify({'error': str(e)}), 500
     finally:
-        mongo_client.close()
+        mongo_client.close()    
+
 
 # --- REPORTS CRUD ---
 # Endpoints for creating, listing, updating, and deleting reports.
@@ -657,9 +892,10 @@ def upload_regulatory_compliance():
 
         # Store compliance scores
         for framework, data in insights.items():
+            sanitized_framework_name = sanitize_field_name(framework)
             mongo_db.documents.update_one(
                 {'doc_id': doc_id},
-                {'$set': {f'compliance_scores.{framework}': {'score': int(data['score'])}}}
+                {'$set': {f'compliance_scores.{sanitized_framework_name}': {'score': int(data['score'])}}}
             )
 
         response_data = {
@@ -709,9 +945,10 @@ def analyze_regulatory_product_info():
 
             # Store compliance scores
             for framework, data in insights.items():
+                sanitized_framework_name = sanitize_field_name(framework)
                 mongo_db.documents.update_one(
                     {'doc_id': doc_id},
-                    {'$set': {f'compliance_scores.{framework}': {'score': int(data['score'])}}}
+                    {'$set': {f'compliance_scores.{sanitized_framework_name}': {'score': int(data['score'])}}}
                 )
 
             response_data = {
@@ -733,6 +970,78 @@ def analyze_regulatory_product_info():
 
 # --- MAIN ENTRY POINT ---
 # Starts the Flask development server if this file is run directly.
+@app.route('/api/policies/relevant', methods=['POST'])
+def use_case_one(u_input, selected_country):
+    MONGO_URI = os.getenv("MONGO_URI")
+    if not MONGO_URI:
+        raise Exception("MONGO_URI not set in environment variables")
+    DATABASE_NAME = "chunked_data"
+    COLLECTION_NAME = "chunked_data"
+    VECTOR_FIELD = "plot_embedding"
+    INDEX_NAME = "vector_index"  # Must match your MongoDB Atlas vector index name
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
+    client = MongoClient(MONGO_URI, server_api=ServerApi('1'))
+    collection = client[DATABASE_NAME][COLLECTION_NAME]
+
+    # For Gemini API key, use os.getenv
+    import google.generativeai as genai
+    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    if not GEMINI_API_KEY:
+        raise Exception("GEMINI_API_KEY not set in environment variables")
+    genai.configure(api_key=GEMINI_API_KEY)
+
+    embedder = SentenceTransformer("sentence-transformers/paraphrase-multilingual-mpnet-base-v2")
+
+    def search_and_answer(user_input, country=None):
+        # Generate embedding
+        query_vector = embedder.encode(user_input).tolist()
+
+        # Build vector search stage with country filter if provided
+        vector_stage = {
+            "$vectorSearch": {
+                "index": "vector_index",
+                "filter": {"country" : {"$eq" :country}},
+                "path": "plot_embedding",
+                "queryVector": query_vector,
+                "numCandidates": 100,
+                "limit": 5
+            }
+        }
+
+        # Run aggregation
+        results = collection.aggregate([vector_stage])
+        retrieved_chunks = [doc["text"] for doc in results]
+        
+        # Prepare RAG prompt
+        context = "\n\n".join(retrieved_chunks)
+        prompt = f"""
+        You are an intelligent assistant. Use the context below to answer the user's question as concisely and informatively as possible. Your job is to provide a clean and
+        concise evaluation of the users proposed company / initiative based on the context you will be provided and, as a fallback, your background knowledge. The user will describe
+        their company/initiative and you will provide a risk asessment based on the guidelines set out in your context. Provide brief summaries of risk areas and compliance gaps.
+        Cite the names of the documents you are referencing with short direct quotes and provide analysis as to how they relate. Summarize relevant information only. Respond exclusively in english
+
+        Context:
+        {context}
+
+        Question: {user_input}
+
+        Answer:
+        """
+
+        # Use Gemini Pro to generate answer
+        model = genai.GenerativeModel("gemini-2.5-flash")
+        response = model.generate_content(prompt)
+        print("help")
+        return response.text
+
+    # ==== 4. Run example ====
+
+    answer = search_and_answer(u_input, selected_country)
+    return ("\nAnswer:\n", answer)
+
+
+# app.py  (or wherever you call app.run)
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=5000)
+
