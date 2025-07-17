@@ -1908,8 +1908,198 @@ def search_compliance_reports():
     finally:
         mongo_client.close()
 
+# --- USE CASE 5: POLICY FEEDBACK ---
+@app.route('/policy-feedback/submit/', methods=['POST'])
+def submit_policy_feedback():
+    """
+    Submit feedback on a policy during draft or public comment phase and generate a feedback report.
+    Expects JSON body with 'feedback_text', 'policy_name', 'country', 'company_philosophy' (string), and optional 'domain'.
+    Returns: feedback_id, confirmation message, and generated feedback report.
+    """
+    try:
+        data = request.get_json()
+        if not data or 'feedback_text' not in data or 'policy_name' not in data or 'country' not in data or 'company_philosophy' not in data:
+            return jsonify({'error': 'Missing required fields: feedback_text, policy_name, country, company_philosophy'}), 400
 
-# app.py  (or wherever you call app.run)
+        feedback_text = data['feedback_text']
+        policy_name = data['policy_name']
+        country = data['country']
+        company_philosophy = data['company_philosophy']
+        domain = data.get('domain', '')
+
+        if len(feedback_text) < 10 or len(company_philosophy) < 10:
+            return jsonify({'error': 'Feedback text and company philosophy must be at least 10 characters'}), 400
+
+        valid_countries = set(get_country_policies().keys())
+        if country not in valid_countries:
+            return jsonify({'error': 'Invalid country specified'}), 400
+
+        feedback_id = str(uuid.uuid4())
+        mongo_client = get_mongo_client()
+        try:
+            mongo_db = mongo_client['regulatory_mongo']
+
+            # Generate feedback report using LLM
+            prompt = f"""
+            You are an expert policy analyst. Analyze the following feedback for the {policy_name} policy in {country}, aligning it with the company philosophy. 
+            Identify policy opportunities and advantages in industry standard setting.
+            Feedback: {feedback_text}
+            Company Philosophy: {company_philosophy}
+            IMPORTANT: Return ONLY valid JSON in the exact format below, with no additional text, comments, or formatting:
+            {{
+                "summary": "string - brief summary of the feedback analysis",
+                "alignment_with_philosophy": "string - how feedback aligns with company philosophy",
+                "policy_opportunities": ["string - opportunity 1", "string - opportunity 2"],
+                "industry_advantages": ["string - advantage 1", "string - advantage 2"],
+                "recommendations": ["string - recommendation 1", "string - recommendation 2"]
+            }}
+            LIMIT TO 200 WORDS.
+            """
+            response_text = analyze_policy(prompt, model="gemini")
+            feedback_report = extract_json_from_response(response_text) or {
+                "summary": "Failed to generate report",
+                "alignment_with_philosophy": "N/A",
+                "policy_opportunities": [],
+                "industry_advantages": [],
+                "recommendations": [f"Analysis failed: {str(e)}" if 'e' in locals() else "N/A"]
+            }
+
+            # Store feedback and report
+            feedback_doc = {
+                'feedback_id': feedback_id,
+                'feedback_text': feedback_text,
+                'policy_name': policy_name,
+                'country': country,
+                'domain': domain,
+                'company_philosophy': company_philosophy,
+                'report': feedback_report,
+                'submitted_at': datetime.utcnow(),
+                'status': 'pending'
+            }
+            mongo_db.policy_feedback.insert_one(feedback_doc)
+
+            response_data = {
+                'feedback_id': feedback_id,
+                'message': 'Feedback submitted successfully',
+                'policy_name': policy_name,
+                'country': country,
+                'domain': domain,
+                'report': feedback_report
+            }
+            return jsonify(response_data), 201
+
+        except Exception as e:
+            logger.error(f"Error submitting policy feedback: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+        finally:
+            mongo_client.close()
+
+    except Exception as e:
+        logger.error(f"Error parsing request: {str(e)}")
+        return jsonify({'error': 'Invalid JSON data'}), 400
+
+# --- USE CASE 6: POLICY DEPARTMENT LIAISON ---
+@app.route('/policy-liaison/contacts/', methods=['POST'])
+def get_policy_liaison_contacts():
+    """
+    Get contact information and generate a detailed liaison report for relevant policy departments.
+    Expects JSON body with 'countries' (list), optional 'domain', and 'search'.
+    Returns: Contact details and liaison report.
+    """
+    try:
+        data = request.get_json()
+        if not data or 'countries' not in data:
+            return jsonify({'error': 'Missing countries parameter'}), 400
+
+        countries = data['countries']
+        domain = data.get('domain', '')
+        search_query = data.get('search', '')
+
+        if not isinstance(countries, list):
+            return jsonify({'error': 'Countries must be a list'}), 400
+
+        valid_countries = set(get_country_policies().keys())
+        if not all(c in valid_countries for c in countries):
+            return jsonify({'error': 'Invalid country specified'}), 400
+
+        mongo_client = get_mongo_client()
+        try:
+            mongo_db = mongo_client['regulatory_mongo']
+
+            # Populate sample contact data if not exists
+            if not mongo_db.policy_contacts.find_one():
+                sample_contacts = {
+                    'USA': {
+                        'department': 'Department of Labor and Employment',
+                        'email': 'contact@dol.gov',
+                        'phone': '+1-202-693-4650',
+                        'website': 'https://www.dol.gov'
+                    },
+                    'Japan': {
+                        'department': 'National Labor Administration',
+                        'email': 'info@mhlw.go.jp',
+                        'phone': '+81-3-5253-1111',
+                        'website': 'https://www.mhlw.go.jp'
+                    }
+                }
+                for country, contact in sample_contacts.items():
+                    mongo_db.policy_contacts.insert_one({'country': country, **contact})
+
+            # Fetch contacts
+            contacts_data = mongo_db.policy_contacts.find({'country': {'$in': countries}})
+            contacts = {doc['country']: doc for doc in contacts_data}
+
+            # Generate liaison report with policy context
+            liaison_report = {
+                'summary': f'Liaison report for policy contacts in {", ".join(countries)}',
+                'contacts': [
+                    {
+                        'country': country,
+                        'department': contacts.get(country, {}).get('department', 'Contact not available'),
+                        'email': contacts.get(country, {}).get('email', 'N/A'),
+                        'phone': contacts.get(country, {}).get('phone', 'N/A'),
+                        'website': contacts.get(country, {}).get('website', 'N/A'),
+                        'domain_relevance': domain if domain and country in contacts else 'N/A'
+                    } for country in countries if country in contacts
+                ]
+            }
+
+            # Enhance report with policy insights if domain is provided
+            if domain:
+                prompt = f"""
+                You are a policy liaison expert. Provide insights for liaison with departments in {', '.join(countries)} 
+                regarding {domain} policies. Base insights on general knowledge.
+                IMPORTANT: Return ONLY valid JSON in the exact format below, with no additional text, comments, or formatting:
+                {{
+                    "insights": ["string - insight 1", "string - insight 2"]
+                }}
+                LIMIT TO 100 WORDS.
+                """
+                response_text = analyze_policy(prompt, model="gemini")
+                insights = extract_json_from_response(response_text) or {'insights': ['No insights available']}
+                liaison_report['policy_insights'] = insights['insights']
+
+            response_data = {
+                'countries_searched': countries,
+                'domain': domain,
+                'search_query': search_query,
+                'liaison_report': liaison_report
+            }
+            return jsonify(response_data), 200
+
+        except Exception as e:
+            logger.error(f"Error fetching policy liaison contacts: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+        finally:
+            mongo_client.close()
+
+    except Exception as e:
+        logger.error(f"Error parsing request: {str(e)}")
+        return jsonify({'error': 'Invalid JSON data'}), 400
+
+# --- MAIN ENTRY POINT ---
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
+
+
 
