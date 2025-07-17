@@ -21,6 +21,18 @@
 <body>
   <div id="root"></div>
   <script type="text/babel">
+    // Suppress console warnings for CDN usage
+    const originalWarn = console.warn;
+    console.warn = (...args) => {
+      if (
+        args[0].includes('cdn.tailwindcss.com') ||
+        args[0].includes('in-browser Babel transformer')
+      ) {
+        return;
+      }
+      originalWarn(...args);
+    };
+
     const { useState, useEffect } = React;
 
     // Simulated Lucide Icons
@@ -42,6 +54,27 @@
       Building: ({ className }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" x2="9" y1="3" y2="21"/><line x1="15" x2="15" y1="3" y2="21"/><line x1="3" x2="21" y1="9" y2="9"/><line x1="3" x2="21" y1="15" y2="15"/></svg>,
       Folder: ({ className }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-6l-2-2H5a2 2 0 0 0-2 2Z"/></svg>,
       User: ({ className }) => <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    };
+
+    // API Utility
+    const apiRequest = async (method, url, data = null, isFormData = false) => {
+      try {
+        const options = {
+          method,
+          headers: isFormData ? {} : { 'Content-Type': 'application/json' },
+        };
+        if (data) {
+          options.body = isFormData ? data : JSON.stringify(data);
+        }
+        const response = await fetch(url, options);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return await response.json();
+      } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+      }
     };
 
     // Custom Components
@@ -76,65 +109,63 @@
 
       const menuItems = [
         { type: "header", label: "Menu" },
-        { type: "item", label: "Home", icon: "Home" },
+        { type: "item", label: "Home", icon: "Home", index: 0 },
         { type: "header", label: "Tools" },
-        { type: "item", label: "Policy Analysis", icon: "FileText" },
-        { type: "item", label: "Opportunity Identification", icon: "Target" },
-        { type: "item", label: "Compliance Risk Assessment", icon: "Shield" },
-        { type: "item", label: "Reports Generation", icon: "BarChart3" },
-        { type: "item", label: "Policy Engagement", icon: "Users" },
-        { type: "item", label: "Vendor Management", icon: "Building" },
+        { type: "item", label: "Use Case 1 Policy Analysis", icon: "FileText", index: 1 },
+        { type: "item", label: "Opportunity Identification", icon: "Target", index: 2 },
+        { type: "item", label: "Use Case 3 Compliance Risk Assessment", icon: "Shield", index: 3 },
+        { type: "item", label: "Reports Generation", icon: "BarChart3", index: 4 },
+        { type: "item", label: "Policy Engagement", icon: "Users", index: 5 },
+        { type: "item", label: "Vendor Management", icon: "Building", index: 6 },
+        { type: "item", label: "Use Case 4 Generate Compliance Report Suite", icon: "FileText", index: 7 },
+        { type: "item", label: "Use Case 5 and 6 Generate Policy Feedback & Liaison Report", icon: "Users", index: 8 },
+        { type: "item", label: "Use Case 2 - Policy Opportunity Discovery", icon: "Target", index: 9 },
         { type: "header", label: "Project Folders:" },
-        { type: "item", label: projectName, icon: "Folder" }, // Dynamic project name
-        { type: "item", label: "UX@Berkeley", icon: "Folder" },
+        { type: "item", label: projectName, icon: "Folder", index: 10 },
+        { type: "item", label: "UX@Berkeley", icon: "Folder", index: 11 },
         { type: "header", label: "Reports:" },
-        { type: "item", label: "Feb. 28th - 9:46am", icon: "FileText" },
-        { type: "item", label: "Jan. 5th - 11:53am", icon: "FileText" },
-        { type: "item", label: "Jan. 7th - 12:11am", icon: "FileText" },
-        { type: "item", label: "Jan. 30th - 6:40pm", icon: "FileText" },
+        { type: "item", label: "Feb. 28th - 9:46am", icon: "FileText", index: 12 },
+        { type: "item", label: "Jan. 5th - 11:53am", icon: "FileText", index: 13 },
+        { type: "item", label: "Jan. 7th - 12:11am", icon: "FileText", index: 14 },
+        { type: "item", label: "Jan. 30th - 6:40pm", icon: "FileText", index: 15 },
         { type: "header", label: "Team Members" },
-        { type: "item", label: "Name Name", icon: "User" },
-        { type: "item", label: "Name Name", icon: "User" },
-        { type: "item", label: "Name Name", icon: "User" },
-        { type: "item", label: "Name Name", icon: "User" },
-        { type: "item", label: "Name Name", icon: "User" },
+        { type: "item", label: "Name Name", icon: "User", index: 16 },
+        { type: "item", label: "Name Name", icon: "User", index: 17 },
+        { type: "item", label: "Name Name", icon: "User", index: 18 },
+        { type: "item", label: "Name Name", icon: "User", index: 19 },
+        { type: "item", label: "Name Name", icon: "User", index: 20 },
       ];
+
+      const handleSelect = (index) => {
+        setSelected(index);
+        onSelect(index);
+      };
 
       return (
         <div className="w-64 h-screen bg-white flex flex-col border-r border-[#d9d9d9] rounded-r-lg shadow-lg">
           <div className="px-4 py-4 border-b border-[#f0f0f0] flex items-center gap-2">
-            <img src="/icons/LogoVector.svg" alt="Logo" className="w-6 h-6" />
-            <span
-              className="text-[20.13px] text-[#1975d4] font-bold inline-block"
-              style={{ fontFamily: "'Libre Baskerville', serif", width: "123px" }}
-            >GovernAIce</span>
+            <img src="/public/icons/LogoVector.svg" alt="Logo" className="w-6 h-6" />
+            <span className="text-[20.13px] text-[#1975d4] font-bold" style={{ fontFamily: "'Libre Baskerville', serif", width: "123px" }}>
+              GovernAIce
+            </span>
           </div>
           <div className="flex-1 overflow-y-auto px-2 py-2">
             {menuItems.map((item, index) =>
               item.type === "header" ? (
-                <h3
-                  key={index}
-                  className="text-[#9ea2ae] text-xs font-semibold mt-4 mb-1 px-2"
-                >
+                <h3 key={index} className="text-[#9ea2ae] text-xs font-semibold mt-4 mb-1 px-2">
                   {item.label}
                 </h3>
               ) : (
                 <button
                   key={index}
-                  onClick={() => {
-                    setSelected(index);
-                    onSelect(index); // Notify parent of selection
-                  }}
+                  onClick={() => handleSelect(item.index)}
                   className={`w-full flex items-center gap-2 px-3 py-1 text-sm rounded-none ${
-                    selected === index
-                      ? "bg-gray-200 text-[#1975d4] font-bold"
-                      : "text-black hover:bg-gray-100"
+                    selected === item.index ? "bg-gray-200 text-[#1975d4] font-bold" : "text-black hover:bg-gray-100"
                   }`}
+                  disabled={item.type === "header"}
                 >
-                  {React.createElement(icons[item.icon], {
-                    className: `w-4 h-4 ${
-                      selected === index ? "text-[#1975d4]" : "text-black"
-                    }`,
+                  {item.icon && React.createElement(icons[item.icon], {
+                    className: `w-4 h-4 ${selected === item.index ? "text-[#1975d4]" : "text-black"}`,
                   })}
                   <span className="truncate">{item.label}</span>
                 </button>
@@ -143,9 +174,7 @@
           </div>
           <div className="p-4 border-t border-[#f0f0f0] flex items-center gap-2">
             <div className="w-8 h-8 bg-[#d9d9d9] rounded-full flex items-center justify-center">
-              {React.createElement(icons["User"], {
-                className: "w-4 h-4 text-[#9ea2ae]",
-              })}
+              {React.createElement(icons["User"], { className: "w-4 h-4 text-[#9ea2ae]" })}
             </div>
             <span className="text-sm text-[#000000] font-medium">Name Name</span>
           </div>
@@ -159,21 +188,26 @@
       const [currentTime, setCurrentTime] = useState("");
 
       useEffect(() => {
-        const now = new Date();
-        setCurrentTime(
-          now.toLocaleString("en-US", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-            timeZone: "Asia/Kolkata",
-          })
-        );
+        const updateTime = () => {
+          const now = new Date();
+          setCurrentTime(
+            now.toLocaleString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+              timeZone: "Asia/Kolkata",
+            })
+          );
+        };
+        updateTime();
+        const interval = setInterval(updateTime, 60000);
+        return () => clearInterval(interval);
       }, []);
 
       return (
         <div className="bg-white border-b border-[#d9d9d9] p-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-8">
+            <div className="flex flex items-center gap-8">
               <h2 className="text-[#1975d4] text-2xl font-semibold">Good Evening Yan</h2>
               {editMode ? (
                 <input
@@ -209,37 +243,164 @@
     };
 
     // UploadProjectWidget Component
-    const UploadProjectWidget = () => (
-      <Card className="custom-border relative p-4">
-        <img
-          src="/public/icons/info.svg"
-          alt="Info"
-          className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-        />
-        <div className="flex flex-col items-center gap-2.5">
-          <div className="w-28 h-32 custom-bg rounded-lg flex items-center justify-center">
-            <img
-              src="/public/icons/Upload.svg"
-              alt="Upload Icon"
-              className=""
-            />
-          </div>
-          <h3 className="text-xl text-[#1975d4] font-bold">Upload Project</h3>
-          <p className="text-sm text-black text-center">
-            Please upload your product illustration: doc, pdf, jpg...
-          </p>
-        </div>
-      </Card>
-    );
+    const UploadProjectWidget = ({ selectedMenuItem }) => {
+      const [file, setFile] = useState(null);
+      const [error, setError] = useState(null);
+      const [uploadStatus, setUploadStatus] = useState(null);
 
-    // New Score Widgets
+      const handleFileUpload = async (e) => {
+        const selectedFile = e.target.files[0];
+        setFile(selectedFile);
+        setError(null);
+        setUploadStatus(null);
+
+        if (!selectedFile) return;
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('countries', JSON.stringify(['EU', 'Canada']));
+        formData.append('policies', JSON.stringify(['General Data Protection Regulation', 'Canada Artificial Intelligence and Data Act (AIDA)-proposed']));
+        if (selectedMenuItem === 2 || selectedMenuItem === 9) {
+          formData.append('domains', JSON.stringify(['AI', 'Government Subsidies']));
+        } else if (selectedMenuItem === 7) {
+          formData.append('domains', JSON.stringify(['Healthcare', 'Technology']));
+        }
+
+        let endpoint;
+        switch (selectedMenuItem) {
+          case 1: endpoint = 'http://localhost:5001/upload-and-analyze/'; break;
+          case 3: endpoint = 'http://localhost:5001/upload-regulatory-compliance/'; break;
+          case 7: endpoint = 'http://localhost:5000/regulatory-reports/generate/upload/'; break;
+          case 9: endpoint = 'http://localhost:5000/policy-opportunities/upload/'; break;
+          default: endpoint = 'http://localhost:5001/upload-and-analyze/';
+        }
+
+        try {
+          const response = await apiRequest('POST', endpoint, formData, true);
+          setUploadStatus('Upload successful!');
+          console.log('API Response:', response);
+        } catch (err) {
+          setError('Upload failed. Please try again.');
+        }
+      };
+
+      return (
+        <Card className="custom-border relative p-4">
+          <img src="/public/icons/info.svg" alt="Info" className="absolute top-2 right-2 w-4 h-4 cursor-pointer" />
+          <div className="flex flex-col items-center gap-2.5">
+            <div className="w-28 h-32 custom-bg rounded-lg flex items-center justify-center">
+              <input
+                type="file"
+                accept=".doc,.pdf,.jpg"
+                onChange={handleFileUpload}
+                className="absolute opacity-0 w-full h-full cursor-pointer"
+              />
+              <img src="/public/icons/Upload.svg" alt="Upload Icon" />
+            </div>
+            <h3 className="text-xl text-[#1975d4] font-bold">Upload Project</h3>
+            <p className="text-sm text-black text-center">
+              Please upload your product illustration: doc, pdf, jpg...
+            </p>
+            {error && <p className="text-sm text-red-500">{error}</p>}
+            {uploadStatus && <p className="text-sm text-green-500">{uploadStatus}</p>}
+          </div>
+        </Card>
+      );
+    };
+
+    // ExplorePolicyWidget Component
+    const ExplorePolicyWidget = ({ selectedMenuItem }) => {
+      const [searchQuery, setSearchQuery] = useState('');
+      const [selectedCountry, setSelectedCountry] = useState('Country');
+      const [selectedDomain, setSelectedDomain] = useState('Domain');
+      const [results, setResults] = useState([]);
+
+      const handleSearch = async () => {
+        if (!searchQuery && selectedMenuItem !== 7) return;
+
+        let endpoint;
+        if (selectedMenuItem === 1) {
+          endpoint = `http://localhost:5001/documents/search/?query=${encodeURIComponent(searchQuery)}`;
+        } else if (selectedMenuItem === 7) {
+          endpoint = `http://localhost:5000/regulatory-reports/search/?country=${encodeURIComponent(selectedCountry)}&domain=${encodeURIComponent(selectedDomain)}`;
+        } else {
+          return;
+        }
+
+        try {
+          const response = await apiRequest('GET', endpoint);
+          setResults(Array.isArray(response) ? response : []);
+        } catch (err) {
+          console.error('Search Error:', err);
+        }
+      };
+
+      return (
+        <Card className="custom-border relative p-4">
+          <img src="/public/icons/info.svg" alt="Info" className="absolute top-2 right-2 w-4 h-4 cursor-pointer" />
+          <div className="flex flex-col gap-2.5">
+            <h3 className="text-xl text-[#1975d4] font-bold">Explore Policy</h3>
+            <div className="relative">
+              {React.createElement(icons["Search"], { className: "absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#9ea2ae]" })}
+              <Input
+                placeholder="Search"
+                className="pl-10 pr-10 text-sm text-gray-800 bg-transparent outline-none"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              />
+              {searchQuery && (
+                React.createElement(icons["X"], {
+                  className: "absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#9ea2ae] cursor-pointer",
+                  onClick: () => setSearchQuery('')
+                })
+              )}
+            </div>
+            <select
+              className="custom-border rounded-lg p-2 text-sm w-full appearance-none bg-transparent"
+              value={selectedCountry}
+              onChange={(e) => setSelectedCountry(e.target.value)}
+            >
+              <option>Country</option>
+              <option>EU</option>
+              <option>Canada</option>
+              <option>USA</option>
+              <option>Japan</option>
+            </select>
+            <select
+              className="custom-border rounded-lg p-2 text-sm w-full appearance-none bg-transparent"
+              value={selectedDomain}
+              onChange={(e) => setSelectedDomain(e.target.value)}
+            >
+              <option>Domain</option>
+              <option>AI</option>
+              <option>Healthcare</option>
+              <option>Autonomous Vehicles</option>
+              <option>Government Subsidies</option>
+              <option>Transportation</option>
+            </select>
+            <Button className="w-full text-white text-sm" onClick={handleSearch}>
+              Compare
+            </Button>
+            {results.length > 0 && (
+              <div className="mt-4">
+                <h4 className="text-sm text-[#1975d4] font-bold">Results</h4>
+                <ul className="list-disc pl-5 text-sm text-black">
+                  {results.map((result, index) => (
+                    <li key={index}>{result.title || result.id || 'Untitled'}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </Card>
+      );
+    };
+
+    // Other Components
     const OECDScoreWidget = () => (
       <Card className="custom-border relative p-4">
-        <img
-          src="/public/icons/info.svg"
-          alt="Info"
-          className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-        />
+        <img src="/public/icons/info.svg" alt="Info" className="absolute top-2 right-2 w-4 h-4 cursor-pointer" />
         <div className="flex flex-col gap-2.5 items-center">
           <h3 className="text-xl text-[#1975d4] font-bold">OECD Score: 80</h3>
           <p className="text-sm text-black">
@@ -267,11 +428,7 @@
 
     const NISTAILifecycleWidget = () => (
       <Card className="custom-border relative p-4">
-        <img
-          src="/public/icons/info.svg"
-          alt="Info"
-          className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-        />
+        <img src="/public/icons/info.svg" alt="Info" className="absolute top-2 right-2 w-4 h-4 cursor-pointer" />
         <div className="flex flex-col gap-2.5 items-center">
           <h3 className="text-xl text-[#f9844a] font-bold">NIST AI Lifecycle: 60/75</h3>
           <p className="text-sm text-black">
@@ -298,128 +455,66 @@
     );
 
     const EURiskLevelFrameworkWidget = () => (
-  <Card className="custom-border relative p-4">
-    <img
-      src="/public/icons/info.svg"
-      alt="Info"
-      className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-    />
-    <div className="flex flex-col gap-2.5 items-center">
-      <h3 className="text-xl text-[#f9c74f] font-bold">EU Risk Level Framework: 5/8</h3>
-      <p className="text-sm text-black">
-        Compare use case to the EU AI Risk Framework and give overall score about the risk and mitigation levels
-      </p>
-      <div className="w-full h-70 flex items-center">
-        <div className="relative w-full h-full p-4">
-          <div className="flex items-end justify-center h-full gap-2">
-            <div className="flex flex-col items-center gap-1">
-              <div className="flex gap-1">
-                <div className="w-4 h-16 bg-[#f9c74f] rounded-t"></div>
-                <div className="w-4 h-12 bg-[#f9c74f] rounded-t"></div>
-                <div className="w-4 h-20 bg-[#f9c74f] rounded-t"></div>
+      <Card className="custom-border relative p-4">
+        <img src="/public/icons/info.svg" alt="Info" className="absolute top-2 right-2 w-4 h-4 cursor-pointer" />
+        <div className="flex flex-col gap-2.5 items-center">
+          <h3 className="text-xl text-[#f9c74f] font-bold">EU Risk Level Framework: 5/8</h3>
+          <p className="text-sm text-black">
+            Compare use case to the EU AI Risk Framework and give overall score about the risk and mitigation levels
+          </p>
+          <div className="w-full h-70 flex items-center">
+            <div className="relative w-full h-full p-4">
+              <div className="flex items-end justify-center h-full gap-2">
+                <div className="flex flex-col items-center gap-1">
+                  <div className="flex gap-1">
+                    <div className="w-4 h-16 bg-[#f9c74f] rounded-t"></div>
+                    <div className="w-4 h-12 bg-[#f9c74f] rounded-t"></div>
+                    <div className="w-4 h-20 bg-[#f9c74f] rounded-t"></div>
+                  </div>
+                  <span className="text-xs text-[#9ea2ae]">Figma</span>
+                </div>
+                <div className="flex flex-col items-center gap-1">
+                  <div className="flex gap-1">
+                    <div className="w-4 h-20 bg-[#f9c74f] rounded-t"></div>
+                    <div className="w-4 h-16 bg-[#f9c74f] rounded-t"></div>
+                    <div className="w-4 h-24 bg-[#f9c74f] rounded-t"></div>
+                  </div>
+                  <span className="text-xs text-[#9ea2ae]">AI</span>
+                </div>
               </div>
-              <span className="text-xs text-[#9ea2ae]">Figma</span>
-            </div>
-            <div className="flex flex-col items-center gap-1">
-              <div className="flex gap-1">
-                <div className="w-4 h-20 bg-[#f9c74f] rounded-t"></div>
-                <div className="w-4 h-16 bg-[#f9c74f] rounded-t"></div>
-                <div className="w-4 h-24 bg-[#f9c74f] rounded-t"></div>
-              </div>
-              <span className="text-xs text-[#9ea2ae]">AI</span>
-            </div>
-          </div>
-          <div className="absolute bottom-0 right-0 text-xs">
-            <div className="flex flex-wrap gap-2">
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-[#f9c74f] rounded"></div>
-                <span className="text-[#9ea2ae]">2020</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-[#f9c74f] rounded"></div>
-                <span className="text-[#9ea2ae]">2021</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-[#f9c74f] rounded"></div>
-                <span className="text-[#9ea2ae]">2022</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-[#f9c74f] rounded"></div>
-                <span className="text-[#9ea2ae]">2023</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-3 h-3 bg-[#f9c74f] rounded"></div>
-                <span className="text-[#9ea2ae]">2024</span>
+              <div className="absolute bottom-0 right-0 text-xs">
+                <div className="flex flex-wrap gap-2">
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-[#f9c74f] rounded"></div>
+                    <span className="text-[#9ea2ae]">2020</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-[#f9c74f] rounded"></div>
+                    <span className="text-[#9ea2ae]">2021</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-[#f9c74f] rounded"></div>
+                    <span className="text-[#9ea2ae]">2022</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-[#f9c74f] rounded"></div>
+                    <span className="text-[#9ea2ae]">2023</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-[#f9c74f] rounded"></div>
+                    <span className="text-[#9ea2ae]">2024</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-  </Card>
-);
+      </Card>
+    );
 
-
-    // ExplorePolicyWidget Component
-    const ExplorePolicyWidget = () => {
-      const [searchQuery, setSearchQuery] = useState("");
-      const [selectedCountry, setSelectedCountry] = useState("Country");
-      const [selectedDomain, setSelectedDomain] = useState("Domain");
-
-      return (
-        <Card className="custom-border relative p-4">
-          <img
-            src="/public/icons/info.svg"
-            alt="Info"
-            className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-          />
-          <div className="flex flex-col gap-2.5">
-            <h3 className="text-xl text-[#1975d4] font-bold">Explore Policy</h3>
-            <div className="relative">
-              {React.createElement(icons["Search"], { className: "absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#9ea2ae]" })}
-              <Input
-                placeholder="Search"
-                className="pl-10 pr-10 text-sm text-gray-800 bg-transparent outline-none"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              {searchQuery && (
-                <X
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#9ea2ae] cursor-pointer"
-                  onClick={() => setSearchQuery("")}
-                />
-              )}
-            </div>
-            <select
-              className="custom-border rounded-lg p-2 text-sm w-full appearance-none bg-transparent"
-              value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
-            >
-              <option>Country</option>
-              <option>New Country</option>
-            </select>
-            <select
-              className="custom-border rounded-lg p-2 text-sm w-full appearance-none bg-transparent"
-              value={selectedDomain}
-              onChange={(e) => setSelectedDomain(e.target.value)}
-            >
-              <option>Domain</option>
-              <option>New Domain</option>
-            </select>
-            <Button className="w-full text-white text-sm">Compare</Button>
-          </div>
-        </Card>
-      );
-    };
-
-    // RelevantPoliciesWidget Component
     const RelevantPoliciesWidget = () => (
       <Card className="custom-border relative p-4">
-        <img
-          src="/public/icons/info.svg"
-          alt="Info"
-          className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-        />
+        <img src="/public/icons/info.svg" alt="Info" className="absolute top-2 right-2 w-4 h-4 cursor-pointer" />
         <div className="flex flex-col gap-5">
           <div className="flex justify-between items-center">
             <h3 className="text-xl text-[#1975d4] font-bold">Relevant Policies & Regulators</h3>
@@ -428,39 +523,21 @@
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...
           </p>
           <div className="flex justify-center items-center gap-4">
-            <button>
-              <img
-                src="/public/icons/arrow11.svg"
-                alt="Left Arrow"
-                style={{ width: '24px', height: '24px', cursor: 'pointer' }}
-              />
+            <button aria-label="Previous policy">
+              <img src="/public/icons/arrow11.svg" alt="Left Arrow" style={{ width: '24px', height: '24px', cursor: 'pointer' }} />
             </button>
             <Button className="w-72 text-white text-sm">View Full Policy Document</Button>
-            <button>
-              <img
-                src="/public/icons/arrow11.svg"
-                alt="Right Arrow"
-                style={{
-                  width: '24px',
-                  height: '24px',
-                  cursor: 'pointer',
-                  transform: 'rotate(180deg)',
-                }}
-              />
+            <button aria-label="Next policy">
+              <img src="/public/icons/arrow11.svg" alt="Right Arrow" style={{ width: '24px', height: '24px', cursor: 'pointer', transform: 'rotate(180deg)' }} />
             </button>
           </div>
         </div>
       </Card>
     );
 
-    // OverallScoreWidget Component
     const OverallScoreWidget = () => (
       <Card className="custom-border relative p-4">
-        <img
-          src="/public/icons/info.svg"
-          alt="Info"
-          className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-        />
+        <img src="/public/icons/info.svg" alt="Info" className="absolute top-2 right-2 w-4 h-4 cursor-pointer" />
         <div className="flex flex-col gap-2.5 items-center">
           <h3 className="text-xl text-[#1975d4] font-bold">Overall Score: 85</h3>
           <p className="text-sm text-black">Compare use case to the target policies and give an overall score about the compliance level</p>
@@ -484,14 +561,9 @@
       </Card>
     );
 
-    // PoliciesRegulatorsWidget Component
     const PoliciesRegulatorsWidget = () => (
       <Card className="custom-border relative p-4">
-        <img
-          src="/public/icons/info.svg"
-          alt="Info"
-          className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-        />
+        <img src="/public/icons/info.svg" alt="Info" className="absolute top-2 right-2 w-4 h-4 cursor-pointer" />
         <div className="flex flex-col gap-2.5">
           <h3 className="text-xl text-[#1975d4] font-bold">Relevant Policies & Regulators</h3>
           <p className="text-sm text-black">(pop up relevant information)</p>
@@ -549,17 +621,12 @@
       </Card>
     );
 
-    // ChatWithMeWidget Component
     const ChatWithMeWidget = () => {
       const [message, setMessage] = useState('');
 
       return (
         <Card className="custom-border relative p-4 h-full flex flex-col justify-between">
-          <img
-            src="/icons/info.svg"
-            alt="Info"
-            className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
-          />
+          <img src="/public/icons/info.svg" alt="Info" className="absolute top-2 right-2 w-4 h-4 cursor-pointer" />
           <div className="flex flex-col gap-2.5">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 bg-[#1975d4] rounded-full flex items-center justify-center">
@@ -584,14 +651,9 @@
       );
     };
 
-    // ExcellenciesMajorGapsWidget Component
     const ExcellenciesMajorGapsWidget = () => (
       <Card className="relative p-6 border-2 border-[#1975d4] rounded-xl">
-        <img
-          src="/icons/info.svg"
-          alt="Info"
-          className="absolute top-3 right-3 w-4 h-4 cursor-pointer"
-        />
+        <img src="/public/icons/info.svg" alt="Info" className="absolute top-3 right-3 w-4 h-4 cursor-pointer" />
         <div className="flex flex-row gap-10">
           <div className="flex-1">
             <h3 className="text-[#1975d4] text-xl font-bold mb-2">Excellencies</h3>
@@ -612,41 +674,330 @@
       </Card>
     );
 
-    // Dashboard Component
-    const Dashboard = ({ selectedMenuItem }) => (
-  <div className="grid grid-cols-3 gap-4 p-6">
-    {selectedMenuItem === 5 ? (
-      <>
-        <UploadProjectWidget />
-        <ExplorePolicyWidget />
-        <RelevantPoliciesWidget />
-        <OECDScoreWidget />
-        <NISTAILifecycleWidget />
-        <EURiskLevelFrameworkWidget />
-        <ExcellenciesMajorGapsWidget />
-        <ChatWithMeWidget />
-        
-      </>
-    ) : (
-      <>
-      <UploadProjectWidget />
-      <ExplorePolicyWidget />
-      <RelevantPoliciesWidget />
-      <OverallScoreWidget />
-      <PoliciesRegulatorsWidget />
-        
-        
-        <ChatWithMeWidget />
-        <ExcellenciesMajorGapsWidget />
-        
-        
-        
-      </>
-    )}
-  </div>
-);
+    const RiskChecklistWidget = () => (
+      <Card className="custom-border p-4">
+        {React.createElement(icons["Info"], { className: "absolute top-2 right-2 w-4 h-4 cursor-pointer" })}
+        <div className="flex flex-col gap-2.5">
+          <h3 className="text-xl text-[#1975d4] font-bold">Risk Checklist based on NIST Risk Management</h3>
+          <p className="text-sm text-black">
+            This HR product is at the pilot stage. According to the NIST Risk Management Framework, this product’s life cycle includes four stages and six major risks. Here is the list for checking:
+            <ul className="list-disc pl-5 mt-2">
+              <li>Plan and design</li>
+              <li>Collect data</li>
+              <li>Build the model</li>
+            </ul>
+          </p>
+        </div>
+      </Card>
+    );
 
-    // App Component
+    const StrategyArchitectureWidget = () => (
+      <Card className="custom-border p-4">
+        {React.createElement(icons["Info"], { className: "absolute top-2 right-2 w-4 h-4 cursor-pointer" })}
+        <div className="flex flex-col gap-2.5 items-center">
+          <h3 className="text-xl text-[#1975d4] font-bold">Strategy Architecture</h3>
+          <div className="w-full h-64 flex items-center justify-center">
+            <svg viewBox="0 0 200 200" className="w-full h-full">
+              <circle cx="100" cy="100" r="80" fill="#e0f2fe" />
+              <circle cx="100" cy="100" r="60" fill="#bae6fd" />
+              <circle cx="100" cy="100" r="40" fill="#7dd3fc" />
+              <text x="100" y="95" textAnchor="middle" fontSize="12" fill="#000">People and Planet</text>
+              <path d="M100 20 A80 80 0 0 1 160 100" stroke="#89c4f4" strokeWidth="20" fill="none" />
+              <text x="140" y="60" textAnchor="middle" fontSize="10" fill="#000">Collect and present data</text>
+              <path d="M160 100 A80 80 0 0 1 100 180" stroke="#6ee7b7" strokeWidth="20" fill="none" />
+              <text x="140" y="140" textAnchor="middle" fontSize="10" fill="#000">Deploy and Use</text>
+              <path d="M100 180 A80 80 0 0 1 40 100" stroke="#a3e4db" strokeWidth="20" fill="none" />
+              <text x="60" y="140" textAnchor="middle" fontSize="10" fill="#000">Verify and validate</text>
+              <path d="M40 100 A80 80 0 0 1 100 20" stroke="#93c5fd" strokeWidth="20" fill="none" />
+              <text x="60" y="60" textAnchor="middle" fontSize="10" fill="#000">Plan and Design</text>
+            </svg>
+          </div>
+        </div>
+      </Card>
+    );
+
+    const RelevantRegulatorsWidget = () => (
+      <Card className="custom-border p-4">
+        {React.createElement(icons["Info"], { className: "absolute top-2 right-2 w-4 h-4 cursor-pointer" })}
+        <div className="flex flex-col gap-2.5">
+          <h3 className="text-xl text-[#1975d4] font-bold">Relevant Regulators</h3>
+          <p className="text-sm text-black">
+            The U.S.A.
+            <ul className="list-disc pl-5 mt-2">
+              <li>Department of Labor and Employment</li>
+              <li>State Labor Development Commission</li>
+            </ul>
+            EU
+            <ul className="list-disc pl-5 mt-2">
+              <li>Labor Development Bureau</li>
+            </ul>
+            Japan
+            <ul className="list-disc pl-5 mt-2">
+              <li>National Labor Administration</li>
+            </ul>
+          </p>
+        </div>
+      </Card>
+    );
+
+    const ContactsWidget = () => (
+      <Card className="custom-border p-4">
+        {React.createElement(icons["Info"], { className: "absolute top-2 right-2 w-4 h-4 cursor-pointer" })}
+        <div className="flex flex-col gap-2.5">
+          <h3 className="text-xl text-[#1975d4] font-bold">Contacts</h3>
+          <p className="text-sm text-black">
+            These are the official contact information...
+            <br /><br />
+            You can also use these channels to provide policy feedback and consultations...
+            <br /><br />
+            X: ...
+            <br />
+            TikTok: ...
+            <br />
+            Website: ...
+          </p>
+        </div>
+      </Card>
+    );
+
+    const GenerateConsultationFeedbackWidget = () => (
+      <Card className="custom-border p-4">
+        {React.createElement(icons["Info"], { className: "absolute top-2 right-2 w-4 h-4 cursor-pointer" })}
+        <div className="flex flex-col gap-2.5">
+          <h3 className="text-xl text-[#1975d4] font-bold">Generate Consultation/Feedback</h3>
+          <p className="text-sm text-black">
+            National Institute of Standards and Technology
+            <br /><br />
+            To whom it may concern,
+            <br /><br />
+            Casual is an AI startup committed to facilitating talent discovery, hiring, and development. Today, we are writing as the compliance team to provide an opinion on the NIST's recent industry standards consultation. Specifically, today we will be responding to section 1(a) of the policy, concerning "privacy analysis of the AI..."
+          </p>
+        </div>
+      </Card>
+    );
+
+    const ComplianceReportWidget = ({ isOpen, onClose, selectedMenuItem }) => {
+      const [reports, setReports] = useState([]);
+
+      useEffect(() => {
+        if (isOpen && selectedMenuItem === 7) {
+          const fetchReports = async () => {
+            try {
+              const response = await apiRequest('GET', 'http://localhost:5000/regulatory-reports/');
+              setReports(Array.isArray(response) ? response : []);
+            } catch (err) {
+              console.error('Error fetching reports:', err);
+            }
+          };
+          fetchReports();
+        }
+      }, [isOpen, selectedMenuItem]);
+
+      if (!isOpen) return null;
+
+      return (
+        <Card className="custom-border fixed inset-0 bg-white bg-opacity-90 z-50 p-6 overflow-y-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl text-[#1975d4] font-bold">Compliance Report Suite</h3>
+            <button onClick={onClose} className="text-[#9ea2ae] hover:text-[#000000] text-2xl">
+              ×
+            </button>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <UploadProjectWidget selectedMenuItem={selectedMenuItem} />
+            <ExplorePolicyWidget selectedMenuItem={selectedMenuItem} />
+            <RelevantPoliciesWidget />
+            <div>
+              <Card className="custom-border p-4">
+                <h3 className="text-xl text-[#1975d4] font-bold">Compliance Report Based on the EU AI Act</h3>
+                {reports.length > 0 ? (
+                  <ul className="list-disc pl-5 mt-2 text-sm text-black">
+                    {reports.map((report, index) => (
+                      <li key={index}>{report.title || `Report ${index + 1}`}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-black">
+                    This HR product does not include Level 3 - High Risk and Level 4 - Unacceptable Risk. However, it may contain Level 2 - Limited Risk given its features such as...
+                    <br /><br />
+                    Thus, the following measures should be taken into consideration...
+                    <br /><br />
+                    The EU AI Office also requires AI companies to get these certifications before full launch, including...
+                  </p>
+                )}
+              </Card>
+            </div>
+            <RiskChecklistWidget />
+            <StrategyArchitectureWidget />
+          </div>
+        </Card>
+      );
+    };
+
+    const PolicyFeedbackLiaisonReportWidget = ({ isOpen, onClose, selectedMenuItem }) => {
+      const [feedback, setFeedback] = useState(null);
+
+      const generateFeedback = async () => {
+        const data = {
+          project_description: 'An autonomous vehicle project focused on developing self-driving technology for urban environments.',
+          countries: ['USA', 'Canada'],
+          domains: ['AI', 'Autonomous Vehicles'],
+        };
+        try {
+          const response = await apiRequest('POST', 'http://localhost:5000/regulatory-reports/generate/text/', data);
+          setFeedback(response);
+        } catch (err) {
+          console.error('Error generating feedback:', err);
+        }
+      };
+
+      if (!isOpen) return null;
+
+      return (
+        <Card className="custom-border fixed inset-0 bg-white bg-opacity-90 z-50 p-6 overflow-y-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl text-[#1975d4] font-bold">Policy Feedback & Liaison Report</h3>
+            <button onClick={onClose} className="text-[#9ea2ae] hover:text-[#000000] text-2xl">
+              ×
+            </button>
+          </div>
+          <div className="grid grid-cols-3 gap-4">
+            <UploadProjectWidget selectedMenuItem={selectedMenuItem} />
+            <ExplorePolicyWidget selectedMenuItem={selectedMenuItem} />
+            <RelevantPoliciesWidget />
+            <RelevantRegulatorsWidget />
+            <ContactsWidget />
+            <div>
+              <Card className="p-4">
+                <h4 className="text-[#1975d4] font-bold">Generated Feedback</h4>
+                {feedback ? (
+                  <p className="text-sm text-black">{feedback.summary || 'Feedback generated successfully.'}</p>
+                ) : (
+                  <Button onClick={generateFeedback} className="w-full text-white text-sm">
+                    Generate Feedback
+                  </Button>
+                )}
+              </Card>
+            </div>
+          </div>
+        </Card>
+      );
+    };
+
+    // Dashboard Component (Your Provided Version with Backend Integration)
+    const Dashboard = ({ selectedMenuItem }) => {
+      return (
+        <div className="grid grid-cols-3 gap-4 p-6">
+          {selectedMenuItem === 0 ? ( // Home
+            <>
+              <UploadProjectWidget selectedMenuItem={selectedMenuItem} />
+              <ExplorePolicyWidget selectedMenuItem={selectedMenuItem} />
+              <RelevantPoliciesWidget />
+              <OverallScoreWidget />
+              <PoliciesRegulatorsWidget />
+              <ChatWithMeWidget />
+              <ExcellenciesMajorGapsWidget />
+            </>
+          ) : selectedMenuItem === 3 ? ( // Compliance Risk Assessment
+            <>
+              <UploadProjectWidget selectedMenuItem={selectedMenuItem} />
+              <ExplorePolicyWidget selectedMenuItem={selectedMenuItem} />
+              <RelevantPoliciesWidget />
+              <OECDScoreWidget />
+              <NISTAILifecycleWidget />
+              <EURiskLevelFrameworkWidget />
+              <ExcellenciesMajorGapsWidget />
+              <ChatWithMeWidget />
+            </>
+          ) : selectedMenuItem === 7 ? ( // Generate Compliance Report Suite
+            <>
+              <UploadProjectWidget selectedMenuItem={selectedMenuItem} />
+              <ExplorePolicyWidget selectedMenuItem={selectedMenuItem} />
+              <RelevantPoliciesWidget />
+              <div>
+                <Card className="custom-border p-4">
+                  <h3 className="text-xl text-[#1975d4] font-bold">Compliance Report Based on the EU AI Act</h3>
+                  <p className="text-sm text-black">
+                    This HR product does not include Level 3 - High Risk and Level 4 - Unacceptable Risk. However, it may contain Level 2 - Limited Risk given its features such as...
+                    <br /><br />
+                    Thus, the following measures should be taken into consideration...
+                    <br /><br />
+                    The EU AI Office also requires AI companies to get these certifications before full launch, including...
+                  </p>
+                </Card>
+              </div>
+              <RiskChecklistWidget />
+              <StrategyArchitectureWidget />
+            </>
+          ) : selectedMenuItem === 8 ? ( // Generate Policy Feedback & Liaison Report
+            <>
+              <UploadProjectWidget selectedMenuItem={selectedMenuItem} />
+              <ExplorePolicyWidget selectedMenuItem={selectedMenuItem} />
+              <RelevantPoliciesWidget />
+              <RelevantRegulatorsWidget />
+              <ContactsWidget />
+              <GenerateConsultationFeedbackWidget />
+            </>
+          ) : selectedMenuItem === 9 ? ( // Use Case 2 - Policy Opportunity Discovery
+            <>
+              <div className="col-span-3 grid grid-cols-2 gap-4 bg-[#cde8ff] p-4 rounded-xl">
+                <UploadProjectWidget selectedMenuItem={selectedMenuItem} />
+                <ExplorePolicyWidget selectedMenuItem={selectedMenuItem} />
+              </div>
+              <div className="col-span-3 mt-4">
+                <Card className="bg-white rounded-xl p-4">
+                  <h3 className="text-xl text-[#1975d4] font-bold mb-4">Results</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-[#f5f9ff] p-4 rounded-lg">
+                      <h4 className="text-[#1975d4] font-bold text-lg mb-2">Government-led Incentives</h4>
+                      <p className="text-sm text-black">
+                        <strong>Subsidies:</strong>
+                        <ul className="list-disc pl-5 mt-1">
+                          <li>State Labor Development Commission - Career Development Subsidies</li>
+                        </ul>
+                        <br />
+                        <strong>Investment:</strong>
+                        <ul className="list-disc pl-5 mt-1">
+                          <li>Federal and Cal launched investment</li>
+                        </ul>
+                        <br />
+                        <strong>National Strategies:</strong>
+                        <ul className="list-disc pl-5 mt-1">
+                          <li>Singapore listed Employment as one of its core domains to adopt AI</li>
+                          <li>UK listed Labor Development as one of its pilot initiatives for AI development</li>
+                        </ul>
+                      </p>
+                    </div>
+                    <div className="bg-[#f5f9ff] p-4 rounded-lg">
+                      <h4 className="text-[#1975d4] font-bold text-lg mb-2">Application Support</h4>
+                      <p className="text-sm text-black">
+                        Based on these government-led business opportunities, Cuscal could develop the following strategies to apply for these fundings and credits:
+                        <ol className="list-decimal pl-5 mt-2">
+                          <li>Engage with state labor commissions for career development grants.</li>
+                          <li>Apply for federal investment programs in workforce development.</li>
+                          <li>Align product strategy with Singapore and UK’s national AI goals for international eligibility.</li>
+                        </ol>
+                      </p>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            </>
+          ) : (
+            <>
+              <UploadProjectWidget selectedMenuItem={selectedMenuItem} />
+              <ExplorePolicyWidget selectedMenuItem={selectedMenuItem} />
+              <RelevantPoliciesWidget />
+              <OverallScoreWidget />
+              <PoliciesRegulatorsWidget />
+              <ChatWithMeWidget />
+              <ExcellenciesMajorGapsWidget />
+            </>
+          )}
+        </div>
+      );
+    };
+
     const App = () => {
       const [projectName, setProjectName] = useState("Project Name");
       const [selectedMenuItem, setSelectedMenuItem] = useState(null);
@@ -662,7 +1013,6 @@
       );
     };
 
-    // Render the App
     ReactDOM.render(<App />, document.getElementById('root'));
   </script>
 </body>
