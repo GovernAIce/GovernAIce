@@ -519,6 +519,76 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Use Case 5",
+			"item": [
+				{
+					"name": "Policy Feedback",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"feedback_text\": \"We believe the policy could benefit from stronger data protection standards.\",\r\n  \"policy_name\": \"Data Privacy Regulation Draft\",\r\n  \"country\": \"USA\",\r\n  \"company_philosophy\": \"Our company is committed to user privacy and compliance with international data laws.\",\r\n  \"domain\": \"Cybersecurity\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/policy-feedback/submit/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"policy-feedback",
+								"submit",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Use Case 6",
+			"item": [
+				{
+					"name": "Policy Liaison Contacts",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"countries\": [\"USA\", \"Japan\"],\r\n  \"domain\": \"Labor Laws\",\r\n  \"search\": \"employment standards\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/policy-liaison/contacts/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"policy-liaison",
+								"contacts",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
