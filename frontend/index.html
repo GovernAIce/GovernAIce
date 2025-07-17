@@ -309,93 +309,127 @@
     };
 
     // ExplorePolicyWidget Component
-    const ExplorePolicyWidget = ({ selectedMenuItem }) => {
-      const [searchQuery, setSearchQuery] = useState('');
-      const [selectedCountry, setSelectedCountry] = useState('Country');
-      const [selectedDomain, setSelectedDomain] = useState('Domain');
-      const [results, setResults] = useState([]);
+  const ExplorePolicyWidget = ({ selectedMenuItem }) => {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("Country");
+  const [selectedDomain, setSelectedDomain] = useState("Domain");
+  const [results, setResults] = useState([]);
 
-      const handleSearch = async () => {
-        if (!searchQuery && selectedMenuItem !== 7) return;
+  const [countries, setCountries] = useState([]);
+  const [domains, setDomains] = useState([]);
 
-        let endpoint;
-        if (selectedMenuItem === 1) {
-          endpoint = `http://localhost:5001/documents/search/?query=${encodeURIComponent(searchQuery)}`;
-        } else if (selectedMenuItem === 7) {
-          endpoint = `http://localhost:5000/regulatory-reports/search/?country=${encodeURIComponent(selectedCountry)}&domain=${encodeURIComponent(selectedDomain)}`;
-        } else {
-          return;
-        }
+  // ✅ Fetch dropdown values on component mount
+  useEffect(() => {
+    const fetchMetadata = async () => {
+      try {
+        // const countryResponse = await fetch("http://localhost:5002/metadata/countries/");
+        // const countryData = await countryResponse.json();
+        // setCountries(countryData?.countries || []);
 
-        try {
-          const response = await apiRequest('GET', endpoint);
-          setResults(Array.isArray(response) ? response : []);
-        } catch (err) {
-          console.error('Search Error:', err);
-        }
-      };
-
-      return (
-        <Card className="custom-border relative p-4">
-          <img src="/public/icons/info.svg" alt="Info" className="absolute top-2 right-2 w-4 h-4 cursor-pointer" />
-          <div className="flex flex-col gap-2.5">
-            <h3 className="text-xl text-[#1975d4] font-bold">Explore Policy</h3>
-            <div className="relative">
-              {React.createElement(icons["Search"], { className: "absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#9ea2ae]" })}
-              <Input
-                placeholder="Search"
-                className="pl-10 pr-10 text-sm text-gray-800 bg-transparent outline-none"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              />
-              {searchQuery && (
-                React.createElement(icons["X"], {
-                  className: "absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#9ea2ae] cursor-pointer",
-                  onClick: () => setSearchQuery('')
-                })
-              )}
-            </div>
-            <select
-              className="custom-border rounded-lg p-2 text-sm w-full appearance-none bg-transparent"
-              value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
-            >
-              <option>Country</option>
-              <option>EU</option>
-              <option>Canada</option>
-              <option>USA</option>
-              <option>Japan</option>
-            </select>
-            <select
-              className="custom-border rounded-lg p-2 text-sm w-full appearance-none bg-transparent"
-              value={selectedDomain}
-              onChange={(e) => setSelectedDomain(e.target.value)}
-            >
-              <option>Domain</option>
-              <option>AI</option>
-              <option>Healthcare</option>
-              <option>Autonomous Vehicles</option>
-              <option>Government Subsidies</option>
-              <option>Transportation</option>
-            </select>
-            <Button className="w-full text-white text-sm" onClick={handleSearch}>
-              Compare
-            </Button>
-            {results.length > 0 && (
-              <div className="mt-4">
-                <h4 className="text-sm text-[#1975d4] font-bold">Results</h4>
-                <ul className="list-disc pl-5 text-sm text-black">
-                  {results.map((result, index) => (
-                    <li key={index}>{result.title || result.id || 'Untitled'}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        </Card>
-      );
+        const domainResponse = await fetch("http://localhost:5002/metadata/domains/");
+        const domainData = await domainResponse.json();
+        setDomains(domainData?.domains || []);
+      } catch (err) {
+        console.error("Failed to fetch metadata:", err);
+      }
     };
+
+    fetchMetadata();
+  }, []);
+
+  const handleSearch = async () => {
+    if (!searchQuery && selectedMenuItem !== 7) return;
+
+    let endpoint;
+    if (selectedMenuItem === 1) {
+      endpoint = `http://localhost:5002/documents/search/?query=${encodeURIComponent(searchQuery)}`;
+    } else if (selectedMenuItem === 7) {
+      endpoint = `http://localhost:5002/regulatory-reports/search/?country=${encodeURIComponent(selectedCountry)}&domain=${encodeURIComponent(selectedDomain)}`;
+    } else {
+      return;
+    }
+
+    try {
+      const response = await fetch(endpoint);
+      const data = await response.json();
+      setResults(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Search Error:", err);
+    }
+  };
+
+  return (
+    <Card className="custom-border relative p-4">
+      <img src="/public/icons/info.svg" alt="Info" className="absolute top-2 right-2 w-4 h-4 cursor-pointer" />
+      <div className="flex flex-col gap-2.5">
+        <h3 className="text-xl text-[#1975d4] font-bold">Explore Policy</h3>
+
+        {/* Search Bar */}
+        <div className="relative">
+          {React.createElement(icons["Search"], {
+            className: "absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#9ea2ae]",
+          })}
+          <Input
+            placeholder="Search"
+            className="pl-10 pr-10 text-sm text-gray-800 bg-transparent outline-none"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={(e) => e.key === "Enter" && handleSearch()}
+          />
+          {searchQuery && React.createElement(icons["X"], {
+            className: "absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#9ea2ae] cursor-pointer",
+            onClick: () => setSearchQuery(""),
+          })}
+        </div>
+
+        {/* Country Dropdown */}
+        <select
+          className="custom-border rounded-lg p-2 text-sm w-full appearance-none bg-transparent"
+          value={selectedCountry}
+          onChange={(e) => setSelectedCountry(e.target.value)}
+        >
+          <option>Country</option>
+          {countries.map((country, index) => (
+            <option key={index} value={country}>
+              {country}
+            </option>
+          ))}
+        </select>
+
+        {/* ✅ Fixed Domain Dropdown */}
+        <select
+          className="custom-border rounded-lg p-2 text-sm w-full appearance-none bg-transparent"
+          value={selectedDomain}
+          onChange={(e) => setSelectedDomain(e.target.value)}
+        >
+          <option>Domain</option>
+          {domains.map((domain, index) => (
+            <option key={index} value={domain}>
+              {domain}
+            </option>
+          ))}
+        </select>
+
+        <Button className="w-full text-white text-sm" onClick={handleSearch}>
+          Compare
+        </Button>
+
+        {/* Results Section */}
+        {results.length > 0 && (
+          <div className="mt-4">
+            <h4 className="text-sm text-[#1975d4] font-bold">Results</h4>
+            <ul className="list-disc pl-5 text-sm text-black">
+              {results.map((result, index) => (
+                <li key={index}>{result.title || result.id || "Untitled"}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+};
+
 
     // Other Components
     const OECDScoreWidget = () => (
@@ -622,34 +656,81 @@
     );
 
     const ChatWithMeWidget = () => {
-      const [message, setMessage] = useState('');
+  const [message, setMessage] = useState('');
+  const [response, setResponse] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-      return (
-        <Card className="custom-border relative p-4 h-full flex flex-col justify-between">
-          <img src="/public/icons/info.svg" alt="Info" className="absolute top-2 right-2 w-4 h-4 cursor-pointer" />
-          <div className="flex flex-col gap-2.5">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-[#1975d4] rounded-full flex items-center justify-center">
-                <span className="text-white text-sm">😊</span>
-              </div>
-              <h3 className="text-xl text-[#1975d4] font-bold">Chat with Me</h3>
-            </div>
-            <p className="text-sm text-black">
-              I am Govii, how can I help you with compliance project today?
-            </p>
+  const sendMessage = async () => {
+    if (!message.trim()) return;
+
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch('http://localhost:5002/chat/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await res.json();
+      if (res.ok) {
+        setResponse(data.reply);
+      } else {
+        setError('Error: ' + (data.detail || 'Something went wrong.'));
+      }
+    } catch (err) {
+      setError('Network error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  };
+
+  return (
+    <Card className="custom-border relative p-4 h-full flex flex-col justify-between">
+      <img src="/public/icons/info.svg" alt="Info" className="absolute top-2 right-2 w-4 h-4 cursor-pointer" />
+      <div className="flex flex-col gap-2.5">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 bg-[#1975d4] rounded-full flex items-center justify-center">
+            <span className="text-white text-sm">😊</span>
           </div>
-          <div className="flex items-center border-2 border-gray-300 rounded-full p-2 mt-4">
-            <Input
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="Type Here"
-              className="flex-1 text-sm text-gray-700 bg-transparent outline-none"
-            />
-            {React.createElement(icons["Send"], { className: "w-5 h-5 text-[#1975d4]" })}
+          <h3 className="text-xl text-[#1975d4] font-bold">Chat with Me</h3>
+        </div>
+        <p className="text-sm text-black">I am Govii, how can I help you with compliance project today?</p>
+        {response && (
+          <div className="text-sm text-green-700 mt-2 border border-green-300 rounded p-2 bg-green-50">
+            <strong>Govii:</strong> {response}
           </div>
-        </Card>
-      );
-    };
+        )}
+        {error && (
+          <div className="text-sm text-red-600 mt-2 border border-red-300 rounded p-2 bg-red-50">
+            {error}
+          </div>
+        )}
+      </div>
+      <div className="flex items-center border-2 border-gray-300 rounded-full p-2 mt-4">
+        <Input
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Type Here"
+          className="flex-1 text-sm text-gray-700 bg-transparent outline-none"
+        />
+        <button onClick={sendMessage} className="ml-2">
+          {React.createElement(icons["Send"], { className: "w-5 h-5 text-[#1975d4]" })}
+        </button>
+      </div>
+    </Card>
+  );
+};
 
     const ExcellenciesMajorGapsWidget = () => (
       <Card className="relative p-6 border-2 border-[#1975d4] rounded-xl">
@@ -1017,3 +1098,5 @@
   </script>
 </body>
 </html>
+
+
