@@ -26,7 +26,7 @@ const ChatWithMeWidget: React.FC<ChatWithMeWidgetProps> = ({ className = '' }) =
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/chat/', {
+      const res = await fetch('http://localhost:5001/chat/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message })

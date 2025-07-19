@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from './Card';
 
 interface NISTLifecycleStage {
@@ -8,24 +8,31 @@ interface NISTLifecycleStage {
 }
 
 const NISTAILifestyleWidget: React.FC = () => {
-  // Example dynamic data (replace with props or context as needed)
-  const nistStages: NISTLifecycleStage[] = [
-    { name: 'Plan & Design', riskLevel: 7, mitigabilityLevel: 5 },
-    { name: 'Collect & Process Data', riskLevel: 10, mitigabilityLevel: 8 },
-    { name: 'Build & Use Model', riskLevel: 9, mitigabilityLevel: 7 },
-    { name: 'Verify & Validate', riskLevel: 6, mitigabilityLevel: 4 },
-    { name: 'Deploy and Use', riskLevel: 3, mitigabilityLevel: 2 },
-    { name: 'Operate & Monitor', riskLevel: 5, mitigabilityLevel: 6 },
-  ];
+  const [nistStages, setNistStages] = useState<NISTLifecycleStage[]>([]);
 
-  const size = 250; // px (figure size)
+  useEffect(() => {
+    const fetchNistStages = async () => {
+      try {
+        const res = await fetch('http://localhost:5001/api/nist-lifecycle-scores');
+        const data = await res.json();
+        setNistStages(data);
+      } catch (err) {
+        console.error('Error fetching NIST data:', err);
+      }
+    };
+
+    fetchNistStages();
+  }, []);
+
+  if (nistStages.length === 0) return null;
+
+  const size = 250;
   const center = size / 2;
   const radius = 90;
   const levels = 5;
   const maxValue = 10;
   const angleStep = (2 * Math.PI) / nistStages.length;
 
-  // Dotted background
   const dots = [];
   for (let x = 0; x < size; x += 20) {
     for (let y = 0; y < size; y += 20) {
@@ -33,7 +40,6 @@ const NISTAILifestyleWidget: React.FC = () => {
     }
   }
 
-  // Grid lines (cube effect)
   const gridLines = [];
   for (let l = 1; l <= levels; l++) {
     const r = (radius * l) / levels;
@@ -45,7 +51,6 @@ const NISTAILifestyleWidget: React.FC = () => {
         center + r * Math.sin(angle),
       ]);
     }
-    // Connect points
     for (let i = 0; i < points.length; i++) {
       const [x1, y1] = points[i];
       const [x2, y2] = points[(i + 1) % points.length];
@@ -64,7 +69,6 @@ const NISTAILifestyleWidget: React.FC = () => {
     }
   }
 
-  // Axes
   const axes = nistStages.map((stage, i) => {
     const angle = i * angleStep - Math.PI / 2;
     return (
@@ -80,7 +84,6 @@ const NISTAILifestyleWidget: React.FC = () => {
     );
   });
 
-  // Labels
   const labelRadius = radius + 12;
   const labels = nistStages.map((stage, i) => {
     const angle = i * angleStep - Math.PI / 2;
@@ -105,7 +108,6 @@ const NISTAILifestyleWidget: React.FC = () => {
     );
   });
 
-  // Polygons
   const getPolygonPoints = (levels: number[]) =>
     levels
       .map((val, i) => {
@@ -118,30 +120,25 @@ const NISTAILifestyleWidget: React.FC = () => {
   const riskPoints = getPolygonPoints(nistStages.map(s => s.riskLevel));
   const mitigabilityPoints = getPolygonPoints(nistStages.map(s => s.mitigabilityLevel));
 
-  // Calculate overall score (example)
   const overallScore = Math.round(
     nistStages.reduce((sum, s) => sum + s.riskLevel, 0) / nistStages.length * 10
   );
 
   return (
     <Card className="custom-border flex flex-row items-center p-4 h-full">
-      {/* Left: Score and description */}
       <div className="flex-1 flex flex-col justify-center">
-        <h2 style={{ fontSize: '12', color: '#1975D4', fontWeight: 700 }}>NIST AI Lifecycle: {overallScore}</h2>
+        <h2 style={{ fontSize: '12', color: '#1975D4', fontWeight: 700 }}>
+          NIST AI Lifecycle: {overallScore}
+        </h2>
         <p className="text-base mt-2">
-          Compare use case rto the NIST AI Lifecycle framework and give overall scores about both of the risk and mitigation levels
+          Compare use case to the NIST AI Lifecycle framework and give overall scores about both of the risk and mitigation levels
         </p>
       </div>
-      {/* Right: Chart */}
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size}>
-          {/* Dotted background */}
           {dots}
-          {/* Grid lines */}
           {gridLines}
-          {/* Axes */}
           {axes}
-          {/* Polygons */}
           <polygon
             points={riskPoints}
             fill="#4fd1c5"
@@ -156,11 +153,9 @@ const NISTAILifestyleWidget: React.FC = () => {
             stroke="#63b3ed"
             strokeWidth={3}
           />
-          {/* Labels */}
           {labels}
-          {/* Grid value labels */}
-          {[...Array(levels + 1)].map((_, l) => (
-            l > 0 && (
+          {[...Array(levels + 1)].map((_, l) =>
+            l > 0 ? (
               <text
                 key={`value-label-${l}`}
                 x={center}
@@ -172,8 +167,8 @@ const NISTAILifestyleWidget: React.FC = () => {
               >
                 {l * (maxValue / levels)}
               </text>
-            )
-          ))}
+            ) : null
+          )}
         </svg>
         <img
           src="/icons/info.svg"
