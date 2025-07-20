@@ -968,6 +968,7 @@ def analyze_regulatory_product_info():
         logger.error(f"Error parsing request: {str(e)}")
         return jsonify({'error': 'Invalid JSON data'}), 400
 
+
 # --- MAIN ENTRY POINT ---
 # Starts the Flask development server if this file is run directly.
 @app.route('/api/policies/relevant', methods=['POST'])
