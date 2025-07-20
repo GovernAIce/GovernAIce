@@ -1,10 +1,16 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> cd4bb56c766d7bca6f05cf4fb692e6bd07dec2ce
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+<<<<<<< HEAD
 >>>>>>> dfab21b9ab606bef9aae393aba8cefb32de97b9f
+=======
+>>>>>>> cd4bb56c766d7bca6f05cf4fb692e6bd07dec2ce
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -74,11 +80,17 @@ button:focus-visible {
   }
 }
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> cd4bb56c766d7bca6f05cf4fb692e6bd07dec2ce
 
 .sidebar-item { @apply text-left p-2 rounded hover:bg-gray-200; }
 .selected { @apply bg-blue-200; }
 .custom-border { @apply border-2 border-[#1975d4]; }
 .custom-bg { @apply bg-[#e6f0fa]; }
 .custom-button { background: linear-gradient(180deg, #9fd8ff, #1975d4); }
+<<<<<<< HEAD
 >>>>>>> dfab21b9ab606bef9aae393aba8cefb32de97b9f
+=======
+>>>>>>> cd4bb56c766d7bca6f05cf4fb692e6bd07dec2ce

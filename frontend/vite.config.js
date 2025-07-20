@@ -5,7 +5,10 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> cd4bb56c766d7bca6f05cf4fb692e6bd07dec2ce
   server: {
     proxy: {
       '/chat': 'http://localhost:5001',
@@ -15,5 +18,8 @@ export default defineConfig({
       // Add more endpoints as needed
     },
   },
+<<<<<<< HEAD
 >>>>>>> dfab21b9ab606bef9aae393aba8cefb32de97b9f
+=======
+>>>>>>> cd4bb56c766d7bca6f05cf4fb692e6bd07dec2ce
 })

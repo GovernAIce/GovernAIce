@@ -26,7 +26,11 @@ const ChatWithMeWidget: React.FC<ChatWithMeWidgetProps> = ({ className = '' }) =
     setLoading(true);
     setError(null);
     try {
+<<<<<<< HEAD
       const res = await fetch('/chat/', {
+=======
+      const res = await fetch('http://localhost:5001/chat/', {
+>>>>>>> cd4bb56c766d7bca6f05cf4fb692e6bd07dec2ce
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message })
