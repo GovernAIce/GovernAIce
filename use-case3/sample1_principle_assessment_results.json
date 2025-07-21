@@ -1,0 +1,61 @@
+{
+  "timestamp": "2025-07-22T00:40:16.088619",
+  "methodology": "Principle extraction + logical compliance analysis",
+  "document_analyzed": "C:\\Users\\dhyan\\Projects_All\\Personal\\UC-Berkley-GovernanceAI\\trial3\\sampletrial\\sample1.txt",
+  "overall_risk": "CRITICAL RISK - Major principle deficiencies across frameworks",
+  "cross_framework_insights": {
+    "overall_maturity_level": "BASIC",
+    "cross_framework_alignment": "MEDIUM",
+    "common_strengths": [
+      "Assessment in progress"
+    ],
+    "common_gaps": [
+      "Detailed analysis required"
+    ],
+    "framework_conflicts": [],
+    "prioritized_actions": [
+      "Complete principle-based assessment"
+    ],
+    "risk_level": "MEDIUM",
+    "business_impact": "Requires detailed review"
+  },
+  "oecd_analysis": {
+    "overall_score": 3.4999999999999996,
+    "status": "CRITICAL",
+    "principles_count": 3,
+    "principle_titles": [
+      "Responsible Stewardship of Trustworthy AI",
+      "Multi-Stakeholder and Inclusive Dialogue",
+      "Structured and Transparent Legal Frameworking"
+    ]
+  },
+  "nist_analysis": {
+    "overall_score": 3.4892307692307694,
+    "status": "CRITICAL",
+    "principles_count": 6,
+    "principle_titles": [
+      "Adaptability and Continuous Improvement",
+      "NIST Principle 2",
+      "Professional Responsibility and Trustworthy AI Development",
+      "Collaborative and Transparent Governance",
+      "Balanced Tradeoffs in AI Trustworthiness",
+      "Transparency, Explainability, and Interpretability"
+    ]
+  },
+  "eu_analysis": {
+    "overall_score": 3.76605504587156,
+    "status": "CRITICAL",
+    "principles_count": 6,
+    "principle_titles": [
+      "Harmonized and Trustworthy AI Framework",
+      "Responsible Data Management and Governance",
+      "Collaborative Governance and Multi-Stakeholder Coordination",
+      "Necessity and Proportionality in Biometric Surveillance",
+      "Transparency and Explainability",
+      "Regulatory Adaptability and Continuous Improvement"
+    ]
+  },
+  "strategic_recommendations": [
+    "Complete principle-based assessment"
+  ]
+}

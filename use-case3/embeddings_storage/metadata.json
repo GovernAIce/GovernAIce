@@ -1,0 +1,39 @@
+{
+  "created_at": "2025-07-21T19:00:37.971050",
+  "model_name": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+  "embedding_dim": 768,
+  "total_documents": 3,
+  "total_chunks": 67,
+  "processing_history": [
+    {
+      "timestamp": "2025-07-21T19:26:39.655681",
+      "stats": {
+        "files_processed": 1,
+        "chunks_created": 11,
+        "embeddings_generated": 11,
+        "errors": [],
+        "processing_time": 2.615207
+      }
+    },
+    {
+      "timestamp": "2025-07-21T19:28:01.609717",
+      "stats": {
+        "files_processed": 1,
+        "chunks_created": 20,
+        "embeddings_generated": 20,
+        "errors": [],
+        "processing_time": 2.337448
+      }
+    },
+    {
+      "timestamp": "2025-07-21T19:28:30.960540",
+      "stats": {
+        "files_processed": 1,
+        "chunks_created": 36,
+        "embeddings_generated": 36,
+        "errors": []
+      }
+    }
+  ],
+  "last_updated": "2025-07-21T19:28:30.960540"
+}
