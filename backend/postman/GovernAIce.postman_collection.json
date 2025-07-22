@@ -255,12 +255,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/analyze-regulatory-product-info/",
+							"raw": "http://localhost:5001/analyze-regulatory-product-info/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "5000",
+							"port": "5001",
 							"path": [
 								"analyze-regulatory-product-info",
 								""
@@ -289,12 +289,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/policy-opportunities/analyze/",
+							"raw": "http://localhost:5001/policy-opportunities/analyze/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "5000",
+							"port": "5001",
 							"path": [
 								"policy-opportunities",
 								"analyze",
@@ -407,12 +407,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/regulatory-reports/generate/text/",
+							"raw": "http://localhost:5001/regulatory-reports/generate/text/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "5000",
+							"port": "5001",
 							"path": [
 								"regulatory-reports",
 								"generate",
@@ -538,12 +538,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/policy-feedback/submit/",
+							"raw": "http://localhost:5001/policy-feedback/submit/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "5000",
+							"port": "5001",
 							"path": [
 								"policy-feedback",
 								"submit",
@@ -573,16 +573,88 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/policy-liaison/contacts/",
+							"raw": "http://localhost:5001/policy-liaison/contacts/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "5000",
+							"port": "5001",
 							"path": [
 								"policy-liaison",
 								"contacts",
 								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Relevant policy api",
+			"item": [
+				{
+					"name": "relevant policy",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"countries\": [\"USA\", \"EU\"],\r\n  \"domain\": \"privacy\",\r\n  \"search\": \"data protection\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/api/policies/relevant",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"policies",
+								"relevant"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "view policy document",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5001/api/policies/document?policy_title=California%20Consumer%20Privacy%20Act%20(CCPA)&country=USA",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"api",
+								"policies",
+								"document"
+							],
+							"query": [
+								{
+									"key": "policy_title",
+									"value": "California%20Consumer%20Privacy%20Act%20(CCPA)"
+								},
+								{
+									"key": "country",
+									"value": "USA"
+								}
 							]
 						}
 					},
