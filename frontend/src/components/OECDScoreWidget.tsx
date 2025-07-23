@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from './Card';
 
 interface OECDScoreWidgetProps {
@@ -17,15 +17,25 @@ const OECDScoreWidget: React.FC<OECDScoreWidgetProps> = ({ hasInput = true }) =>
   const [tooltip, setTooltip] = useState<{ x: number; y: number; label: string; value: number } | null>(null);
 
   // OECD AI Principles with sample scores (these would come from analysis results)
-  const oecdPrinciples: OECDPrinciple[] = [
-    { name: 'Inclusive Growth & Sustainability', score: 85, color: '#4CAF50' },
-    { name: 'Fairness & Privacy', score: 78, color: '#2196F3' },
-    { name: 'Transparency & Explainability', score: 72, color: '#FF9800' },
-    { name: 'Robustness, Security & Safety', score: 88, color: '#9C27B0' },
-    { name: 'Accountability', score: 81, color: '#F44336' }
-  ];
+ const [oecdPrinciples, setOecdPrinciples] = useState<OECDPrinciple[]>([]);
 
-  const overallScore = Math.round(oecdPrinciples.reduce((sum, p) => sum + p.score, 0) / oecdPrinciples.length);
+useEffect(() => {
+  const fetchScores = async () => {
+    try {
+      const response = await fetch('http://localhost:5001/api/oecd-scores');
+      const data = await response.json();
+      setOecdPrinciples(data);
+    } catch (error) {
+      console.error("Error fetching OECD scores:", error);
+    }
+  };
+
+  fetchScores();
+}, []);
+
+  const overallScore = Math.round(
+  oecdPrinciples.reduce((sum, p) => sum + p.score, 0) / oecdPrinciples.length
+);
 
   // Calculate radar chart points
   const calculateRadarPoints = (scores: number[]) => {

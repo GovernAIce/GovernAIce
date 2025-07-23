@@ -968,6 +968,116 @@ def analyze_regulatory_product_info():
         logger.error(f"Error parsing request: {str(e)}")
         return jsonify({'error': 'Invalid JSON data'}), 400
 
+@app.route('/api/oecd-scores', methods=['GET'])
+def get_oecd_scores():
+    """
+    Returns OECD Principle scores and colors.
+    """
+    oecd_scores = [
+        {"name": "Inclusive Growth & Sustainability", "score": 85, "color": "#4CAF50"},
+        {"name": "Fairness & Privacy", "score": 78, "color": "#2196F3"},
+        {"name": "Transparency & Explainability", "score": 72, "color": "#FF9800"},
+        {"name": "Robustness, Security & Safety", "score": 88, "color": "#9C27B0"},
+        {"name": "Accountability", "score": 81, "color": "#F44336"}
+    ]
+    return jsonify(oecd_scores), 200
+
+@app.route('/api/nist-lifecycle-scores', methods=['GET'])
+def get_nist_scores():
+    """
+    Returns NIST Lifecycle stages with risk and mitigability levels.
+    """
+    data = [
+        {"name": "Plan & Design", "riskLevel": 7, "mitigabilityLevel": 5},
+        {"name": "Collect & Process Data", "riskLevel": 10, "mitigabilityLevel": 8},
+        {"name": "Build & Use Model", "riskLevel": 9, "mitigabilityLevel": 7},
+        {"name": "Verify & Validate", "riskLevel": 6, "mitigabilityLevel": 4},
+        {"name": "Deploy and Use", "riskLevel": 3, "mitigabilityLevel": 2},
+        {"name": "Operate & Monitor", "riskLevel": 5, "mitigabilityLevel": 6},
+    ]
+    return jsonify(data), 200
+
+@app.route('/api/eu-risk-level', methods=['GET'])
+def eu_risk_level():
+    """
+    GET: Returns risk and mitigation data for EU AI Risk Framework.
+    """
+    try:
+        data = [
+            {
+                "label": "Level 1-Minimal / No Risk",
+                "riskScore": 5.5,
+                "mitigationScore": 6
+            },
+            {
+                "label": "Level 2-Limited Risk",
+                "riskScore": 3,
+                "mitigationScore": 5
+            },
+            {
+                "label": "Level 3-High Risk",
+                "riskScore": 2,
+                "mitigationScore": 2
+            },
+            {
+                "label": "Level 4-Unacceptable Risk",
+                "riskScore": 0,
+                "mitigationScore": 0
+            }
+        ]
+        return jsonify({"data": data}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+@app.route('/api/relevant-policies', methods=['GET'])
+def get_relevant_policies():
+    """
+    GET: Returns hardcoded policy data for the bar chart.
+    """
+    chart_data = [
+        {
+            "label": "Figma",
+            "values": {
+                "2020": 30,
+                "2021": 70,
+                "2022": 30,
+                "2023": 30,
+                "2024": 90,
+                "2025": 45
+            }
+        },
+        {
+            "label": "AI",
+            "values": {
+                "2020": 60,
+                "2021": 65,
+                "2022": 70,
+                "2023": 10,
+                "2024": 75,
+                "2025": 45
+            }
+        }
+    ]
+    return jsonify(chart_data), 200
+
+
+@app.route('/api/radar-data', methods=['GET'])
+def get_radar_data():
+    """
+    GET: Returns radar chart data with policy compliance values for each year.
+    """
+    radar_data = [
+        { "category": "Inclusive and Sustainability", "2020": 80, "2021": 100, "2022": 60 },
+        { "category": "Fairness and Privacy", "2020": 95, "2021": 80, "2022": 90 },
+        { "category": "Transparency and explainability", "2020": 50, "2021": 60, "2022": 65 },
+        { "category": "Robustness, security, and safety", "2020": 100, "2021": 75, "2022": 55 },
+        { "category": "AI", "2020": 90, "2021": 90, "2022": 40 },
+        { "category": "Accountability", "2020": 80, "2021": 70, "2022": 35 }
+    ]
+    return jsonify(radar_data), 200
+
+
 # --- MAIN ENTRY POINT ---
 # Starts the Flask development server if this file is run directly.
 @app.route('/api/policies/relevant', methods=['POST'])
