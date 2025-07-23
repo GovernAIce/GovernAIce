@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import React, { useState } from 'react';
 =======
 import React, { useState, useEffect } from 'react';
 >>>>>>> cd4bb56c766d7bca6f05cf4fb692e6bd07dec2ce
+=======
+import React, { useState, useEffect } from 'react';
+>>>>>>> 2099d2ab72d563e21a301b42b5806ca017ccf9c2
 import Card from './Card';
 
 interface OECDScoreWidgetProps {
@@ -22,6 +26,7 @@ const OECDScoreWidget: React.FC<OECDScoreWidgetProps> = ({ hasInput = true }) =>
 
   // OECD AI Principles with sample scores (these would come from analysis results)
 <<<<<<< HEAD
+<<<<<<< HEAD
   const oecdPrinciples: OECDPrinciple[] = [
     { name: 'Inclusive Growth & Sustainability', score: 85, color: '#4CAF50' },
     { name: 'Fairness & Privacy', score: 78, color: '#2196F3' },
@@ -34,6 +39,10 @@ const OECDScoreWidget: React.FC<OECDScoreWidgetProps> = ({ hasInput = true }) =>
 =======
  const [oecdPrinciples, setOecdPrinciples] = useState<OECDPrinciple[]>([]);
 
+=======
+ const [oecdPrinciples, setOecdPrinciples] = useState<OECDPrinciple[]>([]);
+
+>>>>>>> 2099d2ab72d563e21a301b42b5806ca017ccf9c2
 useEffect(() => {
   const fetchScores = async () => {
     try {
@@ -51,7 +60,10 @@ useEffect(() => {
   const overallScore = Math.round(
   oecdPrinciples.reduce((sum, p) => sum + p.score, 0) / oecdPrinciples.length
 );
+<<<<<<< HEAD
 >>>>>>> cd4bb56c766d7bca6f05cf4fb692e6bd07dec2ce
+=======
+>>>>>>> 2099d2ab72d563e21a301b42b5806ca017ccf9c2
 
   // Calculate radar chart points
   const calculateRadarPoints = (scores: number[]) => {

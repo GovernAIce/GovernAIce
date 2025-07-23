@@ -7,6 +7,8 @@ import ExcellenciesMajorGapsWidget from './ExcellenciesMajorGapsWidget';
 import ChatWithMeWidget from './ChatWithMeWidget';
 import ComplianceAnalysisWidget from './ComplianceAnalysisWidget';
 import { useCountryContext } from '../contexts/CountryContext';
+import RadarChartComponent from './RadarChartComponent'
+import RegulatoryPolicy from './RegulatoryPolicy'
 
 const PolicyAnalysis: React.FC = () => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -27,8 +29,8 @@ const PolicyAnalysis: React.FC = () => {
           uploadedFile={uploadedFile}
           policies={insights.length > 0 ? insights.map(i => ({ ...i, title: i.policy })) : []}
         />        
-      <OECDScoreWidget />
-        <NISTAILifestyleWidget />
+      <RadarChartComponent />
+        <RegulatoryPolicy />
         <div className="w-full row-span-3">
           <ChatWithMeWidget />
         </div>
