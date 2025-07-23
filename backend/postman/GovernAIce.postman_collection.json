@@ -611,14 +611,13 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5001/api/policies/relevant",
+							"raw": "http://localhost:5001/policies/relevant",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "5001",
 							"path": [
-								"api",
 								"policies",
 								"relevant"
 							]

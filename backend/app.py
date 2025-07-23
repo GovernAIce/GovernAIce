@@ -65,7 +65,6 @@ CACHE_DURATION = 300  # 5 minutes
 def get_country_policies():
     global _country_policies_cache, _cache_timestamp
     
-    # Check if cache is still valid
     if (_country_policies_cache is not None and 
         _cache_timestamp is not None and 
         (datetime.now() - _cache_timestamp).seconds < CACHE_DURATION):
@@ -75,10 +74,8 @@ def get_country_policies():
     try:
         mongo_db = mongo_client['Training']
         
-        # Check if we need to populate sample data
         collections = mongo_db.list_collection_names()
         if not collections:
-            # Populate with sample data for testing
             sample_countries = [
                 "Canada", "UAE", "Taiwan", "Saudi Arabia", "Australia", 
                 "Singapore", "South Korea", "Europe", "Brazil", "India", 
@@ -86,11 +83,21 @@ def get_country_policies():
             ]
             
             for country in sample_countries:
-                # Create a sample document for each country
                 sample_doc = {
                     "title": f"Sample Policy for {country}",
                     "source": f"https://example.com/{country.lower().replace(' ', '-')}",
-                    "text": f"This is a sample policy document for {country}."
+                    "text": f"This is a sample policy document for {country}.",
+                    "metadata": {
+                        "country": country,
+                        "regulator": f"Sample Regulator for {country}",
+                        "year": "2023",
+                        "legally_binding": "yes",
+                        "date": "01/01/2023",
+                        "type": "Regulation",
+                        "status": "enacted",
+                        "language": "EN",
+                        "use_cases": "[1,2,3]"
+                    }
                 }
                 mongo_db[country].insert_one(sample_doc)
             
@@ -98,11 +105,14 @@ def get_country_policies():
         
         policies = {}
         for country in mongo_db.list_collection_names():
-            # Only fetch the 'title' field instead of entire documents
-            country_policies = mongo_db[country].find({}, {'title': 1, '_id': 0})
-            policies[country] = [doc.get('title', '') for doc in country_policies if doc.get('title')]
+            country_policies = mongo_db[country].find({}, {
+                'title': 1,
+                'source': 1,
+                'metadata': 1,
+                '_id': 0
+            })
+            policies[country] = list(country_policies)
         
-        # Update cache
         _country_policies_cache = policies
         _cache_timestamp = datetime.now()
         return policies
@@ -303,7 +313,7 @@ def get_policies():
     # TODO: Implement logic to fetch policies by country
     return jsonify({'policies': []}), 200
 
-@app.route('/api/policies/relevant', methods=['POST'])
+@app.route('/policies/relevant', methods=['POST'])
 def get_relevant_policies():
     """
     Get relevant policies based on selected countries and uploaded file content.
@@ -311,6 +321,7 @@ def get_relevant_policies():
     Returns: Array of relevant policy objects (limited to 5 most relevant).
     """
     try:
+        
         data = request.get_json()
         if not data or 'countries' not in data:
             return jsonify({'error': 'Missing countries parameter'}), 400
@@ -322,7 +333,6 @@ def get_relevant_policies():
         if not isinstance(countries, list):
             return jsonify({'error': 'Countries must be a list'}), 400
         
-        # Get all policies for the selected countries
         country_policies = get_country_policies()
         relevant_policies = []
         
@@ -330,33 +340,30 @@ def get_relevant_policies():
             if country in country_policies:
                 policies = country_policies[country]
                 for policy in policies:
-                    relevance_score = 0
-                    relevance_score += 10  # Base score for country match
-                    if domain and domain.lower() in policy.lower():
+                    relevance_score = 10  # Base score for country match
+                    if domain and domain.lower() in policy['title'].lower():
                         relevance_score += 5
                     if search_query:
                         query_terms = search_query.lower().split()
                         for term in query_terms:
-                            if term in policy.lower():
+                            if term in policy['title'].lower():
                                 relevance_score += 3
                             if term in country.lower():
                                 relevance_score += 2
                     
                     policy_obj = {
-                        'title': policy,
-                        'source': f"https://example.com/{country.lower().replace(' ', '-')}",
-                        'text': f"Policy document for {country}: {policy}",
+                        'title': policy['title'],
+                        'source': policy['source'],
+                        'regulator': policy['metadata'].get('regulator', 'N/A'),
                         'country': country,
                         'domain': domain or 'general',
                         'relevance_score': relevance_score
                     }
                     relevant_policies.append(policy_obj)
         
-        # Sort by relevance score (highest first) and limit to top 5
         relevant_policies.sort(key=lambda x: x['relevance_score'], reverse=True)
         relevant_policies = relevant_policies[:5]
         
-        # Remove relevance_score from final response
         for policy in relevant_policies:
             policy.pop('relevance_score', None)
         
@@ -971,7 +978,7 @@ def get_nist_scores():
 
 # --- MAIN ENTRY POINT ---
 # Starts the Flask development server if this file is run directly.
-# @app.route('/api/policies/relevant', methods=['POST'])
+@app.route('/api/policies/relevant', methods=['POST'])
 def use_case_one(u_input, selected_country):
     MONGO_URI = os.getenv("MONGO_URI")
     if not MONGO_URI:
