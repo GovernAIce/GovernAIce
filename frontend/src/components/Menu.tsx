@@ -20,6 +20,7 @@ const Menu: React.FC<MenuProps> = ({ projectName, onNavigate }) => {
     { type: 'item', label: 'Policy Analysis', icon: 'FileText', path: '/policy-analysis' },
     { type: 'item', label: 'Opportunity Identification', icon: 'Target' },
     { type: 'item', label: 'Compliance Risk Assessment', icon: 'Shield', path: '/compliance-risk-assessment' },
+    { type: 'item', label: 'ML Test Widget', icon: 'Cpu', path: '/ml-test-widget' },
     { type: 'item', label: 'Reports Generation', icon: 'BarChart3' },
     { type: 'item', label: 'Policy Engagement', icon: 'Users' },
     { type: 'item', label: 'Vendor Management', icon: 'Building' },

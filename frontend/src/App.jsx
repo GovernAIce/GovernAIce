@@ -4,6 +4,7 @@ import Menu from './components/Menu';
 import Header from './components/Header';
 import PolicyAnalysis from './components/PolicyAnalysis';
 import ComplianceRiskAssessment from './components/ComplianceRiskAssessment';
+import MLTestWidget from './components/MLTestWidget';
 import { CountryProvider } from './contexts/CountryContext';
 
 const AppLayout = () => {
@@ -20,6 +21,7 @@ const AppLayout = () => {
         <Routes>
           <Route path="/policy-analysis" element={<PolicyAnalysis />} />
           <Route path="/compliance-risk-assessment" element={<ComplianceRiskAssessment />} />
+          <Route path="/ml-test-widget" element={<MLTestWidget />} />
           <Route path="*" element={<Navigate to="/policy-analysis" replace />} />
         </Routes>
       </div>
