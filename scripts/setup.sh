@@ -85,6 +85,9 @@ install_python_deps() {
     
     pip install -r requirements.txt
     
+    print_status "Installing development dependencies..."
+    pip install pytest jupyter ipykernel
+    
     print_success "Python dependencies installed"
 }
 
