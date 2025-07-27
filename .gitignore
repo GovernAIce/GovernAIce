@@ -1,3 +1,5 @@
+grobid-0.8.2/
+
 # Ignore all .env files everywhere
 .env
 **/.env
