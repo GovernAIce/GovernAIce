@@ -99,12 +99,22 @@ def get_country_policies():
             
             logger.info("Populated sample country data")
         
+        # policies = {}
+        # for country in mongo_db.list_collection_names():
+        #     # Only fetch the 'title' field instead of entire documents
+        #     country_policies = mongo_db[country].find({}, {'title': 1, '_id': 0})
+        #     policies[country] = [doc.get('title', '') for doc in country_policies if doc.get('title')]
         policies = {}
         for country in mongo_db.list_collection_names():
-            # Only fetch the 'title' field instead of entire documents
-            country_policies = mongo_db[country].find({}, {'title': 1, '_id': 0})
-            policies[country] = [doc.get('title', '') for doc in country_policies if doc.get('title')]
-        
+            country_policies = mongo_db[country].find({}, {
+                'title': 1,
+                'source': 1,
+                'text': 1,
+                'metadata': 1,
+                '_id': 0
+            })
+            policies[country] = list(country_policies)
+            
         # Update cache
         _country_policies_cache = policies
         _cache_timestamp = datetime.now()
@@ -1309,24 +1319,77 @@ def get_ml_analysis(doc_id):
 @app.route('/api/policies/relevant', methods=['POST'])
 def get_relevant_policies_and_assessment():
     """
-    Get relevant policies with full text based on selected countries, domain, and search query.
-    Expects JSON body with 'countries' (list), 'domain' (optional), and 'search' (optional).
-    Returns: Array of relevant policy objects (limited to 5 most relevant) including full text.
+    Get relevant policies with full text and perform a risk assessment based on user input and selected countries.
+    Expects JSON body with 'countries' (list), 'domain' (optional), 'search' (optional), and 'user_input' (for risk assessment).
+    Returns: Array of relevant policy objects (limited to 5 most relevant) including full text and a risk assessment.
     """
-    client = get_mongo_client()  # Initialize client before try block
     try:
         data = request.get_json()
-        if not data or 'countries' not in data:
-            return jsonify({'error': 'Missing countries parameter'}), 400
+        if not data or 'countries' not in data or 'user_input' not in data:
+            return jsonify({'error': 'Missing countries or user_input parameter'}), 400
 
         countries = data['countries']
         domain = data.get('domain', '')
         search_query = data.get('search', '')
+        user_input = data['user_input']
 
         if not isinstance(countries, list):
             return jsonify({'error': 'Countries must be a list'}), 400
 
-        # Get policies
+        # MongoDB setup for vector search
+        MONGO_URI = os.getenv("MONGO_URI")
+        if not MONGO_URI:
+            raise Exception("MONGO_URI not set in environment variables")
+        DATABASE_NAME = "chunked_data"
+        COLLECTION_NAME = "chunked_data"
+        VECTOR_FIELD = "plot_embedding"
+        INDEX_NAME = "vector_index"
+
+        client = get_mongo_client()
+        collection = client[DATABASE_NAME][COLLECTION_NAME]
+        training_db = client['Training']
+
+        # Gemini API setup
+        GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+        if not GEMINI_API_KEY:
+            raise Exception("GEMINI_API_KEY not set in environment variables")
+        genai.configure(api_key=GEMINI_API_KEY)
+
+        # Sentence Transformer setup
+        embedder = SentenceTransformer("sentence-transformers/paraphrase-multilingual-mpnet-base-v2")
+
+        def search_and_answer(user_input, country=None):
+            query_vector = embedder.encode(user_input).tolist()
+            vector_stage = {
+                "$vectorSearch": {
+                    "index": INDEX_NAME,
+                    "filter": {"country": {"$eq": country}} if country else {},
+                    "path": VECTOR_FIELD,
+                    "queryVector": query_vector,
+                    "numCandidates": 100,
+                    "limit": 5
+                }
+            }
+            results = collection.aggregate([vector_stage])
+            retrieved_chunks = [doc["text"] for doc in results]
+            context = "\n\n".join(retrieved_chunks)
+            prompt = f"""
+            You are an intelligent assistant. Use the context below to answer the user's question as concisely and informatively as possible. Your job is to provide a clean and
+            concise evaluation of the user's proposed company/initiative based on the context and, as a fallback, your background knowledge. Provide brief summaries of risk areas
+            and compliance gaps. Cite document names with short direct quotes and provide analysis. Summarize relevant information only. Respond exclusively in English.
+
+            Context:
+            {context}
+
+            Question: {user_input}
+
+            Answer:
+            """
+            model = genai.GenerativeModel("gemini-2.5-flash")
+            response = model.generate_content(prompt)
+            return response.text
+
+        # Get policies (assuming get_country_policies is defined elsewhere)
         country_policies = get_country_policies()
         relevant_policies = []
 
@@ -1334,8 +1397,9 @@ def get_relevant_policies_and_assessment():
             if country in country_policies:
                 policies = country_policies[country]
                 for policy in policies:
-                    # Full text is already included in get_country_policies
-                    policy_text = policy.get('text', '')
+                    # Fetch full document text from Training database
+                    document = training_db[country].find_one({'title': policy['title']})
+                    policy_text = document.get('text', '') if document else ''
 
                     relevance_score = 10  # Base score for country match
                     if domain and domain.lower() in policy['title'].lower():
@@ -1367,8 +1431,14 @@ def get_relevant_policies_and_assessment():
         for policy in relevant_policies:
             policy.pop('relevance_score', None)
 
+        # Perform risk assessment for each country
+        risk_assessments = {}
+        for country in countries:
+            risk_assessments[country] = search_and_answer(user_input, country)
+
         return jsonify({
             'policies': relevant_policies,
+            'risk_assessments': risk_assessments,
             'total_count': len(relevant_policies),
             'countries_searched': countries,
             'domain': domain,
@@ -1379,13 +1449,7 @@ def get_relevant_policies_and_assessment():
     except Exception as e:
         logger.error(f"Error processing request: {str(e)}")
         return jsonify({'error': str(e)}), 500
-    finally:
-        client.close()
-
-    # ==== 4. Run example ====
-
-    answer = search_and_answer(u_input, selected_country)
-    return ("\nAnswer:\n", answer)
+    
 
 
 # app.py  (or wherever you call app.run)
