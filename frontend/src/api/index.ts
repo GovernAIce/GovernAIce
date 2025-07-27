@@ -58,25 +58,10 @@ export const uploadAPI = {
 
 // Policy API functions
 export const policyAPI = {
-  // Fetch relevant policies based on countries and search criteria
-  use_case_one: (countries: string[], domain?: string, searchQuery?: string) => {
-    return api.post('/api/policies/relevant', {
-      countries,
-      domain,
-      search: searchQuery
-    });
-  },
-
-  // Get all available policies for a country
-  getPoliciesByCountry: (country: string) => {
-    return api.get(`/metadata/policies/?country=${encodeURIComponent(country)}`);
-  }
-
-  // getUseCaseOne: (countries: string[], domain?: string, searchQuery?: string) => {
-  //   return api.post('/api/policies/use-case-one', {
-  //     countries,
-  //     domain,
-  //     search: searchQuery
-  //   });
-  // }
+  use_case_one: (countries: string[], domain: string | undefined, search: string) =>
+    axios.post('http://localhost:5001/api/policies/relevant', { countries, domain, search }),
+  get_policy_document: (policy_title: string, country: string) =>
+    axios.get('http://localhost:5001/api/policies/document', {
+      params: { policy_title, country },
+    }),
 };

@@ -30,7 +30,10 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [lastSearch, setLastSearch] = useState<string>('');
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showFullText, setShowFullText] = useState(false); // <-- NEW
+  const [showFullText, setShowFullText] = useState(false);
+  const [fullPolicyText, setFullPolicyText] = useState<string | null>(null); // Store full policy text
+  const [fullPolicyLoading, setFullPolicyLoading] = useState(false); // Loading state for full policy
+  const [fullPolicyError, setFullPolicyError] = useState<string | null>(null); // Error state for full policy
 
   const generateSearchQuery = () => {
     let query = searchQuery || '';
@@ -79,6 +82,7 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
     return null;
   };
 
+  // Fetch relevant policies
   useEffect(() => {
     if (externalPolicies) {
       setPolicies(externalPolicies);
@@ -104,7 +108,9 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
         const data = response.data;
         setPolicies(data.policies || []);
         setCurrentIndex(0);
-        setShowFullText(false); // reset when new fetch happens
+        setShowFullText(false);
+        setFullPolicyText(null); // Reset full policy text
+        setFullPolicyError(null); // Reset full policy error
         setLoading(false);
       })
       .catch(() => {
@@ -113,23 +119,58 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
       });
   }, [selectedCountries, domain, searchQuery, uploadedFile, hasCountries, externalPolicies]);
 
+  // Fetch full policy document
+  const fetchFullPolicy = async () => {
+    if (!policies[currentIndex]?.country || !policies[currentIndex]?.title) return;
+
+    setFullPolicyLoading(true);
+    setFullPolicyError(null);
+    setFullPolicyText(null);
+
+    try {
+      const response = await policyAPI.get_policy_document(
+        policies[currentIndex].title, // Uses parent_title from /api/policies/relevant
+        policies[currentIndex].country!
+      );
+      setFullPolicyText(response.data.text || 'No content available.');
+    } catch (err) {
+      setFullPolicyError('Failed to fetch full policy document. Please try again.');
+    } finally {
+      setFullPolicyLoading(false);
+    }
+  };
+
+  // Handle View Full Policy button click
+  const handleViewFullPolicy = () => {
+    if (showFullText) {
+      setShowFullText(false);
+      setFullPolicyText(null); // Clear full policy text when hiding
+      setFullPolicyError(null); // Clear errors
+    } else {
+      setShowFullText(true);
+      fetchFullPolicy(); // Fetch full policy when showing
+    }
+  };
+
   const statusMessage = getStatusMessage();
 
   return (
     <Card className="custom-border p-4 h-auto min-h-[200px]">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-lg text-[#1975d4] font-bold">Relevant Policies</h3>
-        <div className="text-xs text-gray-500">
+        <h3 className="text-lg text-[#1975d4] rubik-bold">Relevant Policies</h3>
+        <div className="text-xs text-gray-500 rubik-regular">
           {policies.length > 0 && `${currentIndex + 1}/${policies.length} policies`}
         </div>
       </div>
 
       {statusMessage && (
-        <div className={`text-sm p-3 rounded-lg mb-3 ${
-          statusMessage.type === 'warning'
-            ? 'bg-amber-50 text-amber-700 border border-amber-200'
-            : 'bg-blue-50 text-blue-700 border border-blue-200'
-        }`}>
+        <div
+          className={`text-sm p-3 rounded-lg mb-3 ${
+            statusMessage.type === 'warning'
+              ? 'bg-amber-50 text-amber-700 border border-amber-200'
+              : 'bg-blue-50 text-blue-700 border border-blue-200'
+          }`}
+        >
           <div className="flex items-center gap-2">
             <span className="text-lg">{statusMessage.icon}</span>
             <span>{statusMessage.message}</span>
@@ -145,13 +186,11 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
       )}
 
       {error && (
-        <div className="text-red-500 text-sm p-3 bg-red-50 rounded-lg">
-          ❌ {error}
-        </div>
+        <div className="text-red-500 text-sm p-3 bg-red-50 rounded-lg rubik-regular">❌ {error}</div>
       )}
 
       {!loading && !error && policies.length === 0 && (
-        <div className="text-gray-500 text-sm p-4 text-center">
+        <div className="text-gray-500 text-sm p-4 text-center rubik-regular">
           <div className="mb-2">📋</div>
           No relevant policies found.
           <br />
@@ -162,20 +201,32 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
       {!loading && !error && policies.length > 0 && (
         <div className="space-y-2">
           <div className="border border-gray-200 rounded px-4 py-2 bg-white text-sm">
-            <div className="font-bold text-[#1975d4] text-base mb-1">
+            <div className="font-bold text-[#1975d4] text-base mb-1 rubik-bold">
               {policies[currentIndex].title}
             </div>
-            <div className="text-gray-700 text-sm mb-2 whitespace-pre-line">
-              {showFullText
-                ? policies[currentIndex].text || 'No content available.'
-                : (policies[currentIndex].text?.slice(0, 300) || 'No content available.') + '...'}
+            <div className="text-gray-700 text-sm mb-2 whitespace-pre-line rubik-regular">
+              {showFullText ? (
+                fullPolicyLoading ? (
+                  <div className="flex items-center justify-center py-4">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                    <span className="ml-2 text-gray-600">Loading full policy document...</span>
+                  </div>
+                ) : fullPolicyError ? (
+                  <div className="text-red-500 text-sm rubik-regular">❌ {fullPolicyError}</div>
+                ) : (
+                  fullPolicyText || 'No content available.'
+                )
+              ) : (
+                (policies[currentIndex].text?.slice(0, 300) || 'No content available.') + '...'
+              )}
             </div>
 
             {/* View Full Policy Button */}
             <div className="flex justify-center mb-3">
               <button
-                onClick={() => setShowFullText(!showFullText)}
-                className="bg-gradient-to-r from-[#2196f3] to-[#21cbf3] text-white px-4 py-2 rounded-full text-sm font-medium shadow hover:opacity-90"
+                onClick={handleViewFullPolicy}
+                className="bg-gradient-to-r from-[#2196f3] to-[#21cbf3] text-white px-4 py-2 rounded-full text-sm font-medium shadow hover:opacity-90 rubik-medium"
+                disabled={fullPolicyLoading}
               >
                 {showFullText ? 'Hide Full Policy' : 'View Full Policy Document'}
               </button>
@@ -187,22 +238,26 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
                 disabled={currentIndex === 0}
                 onClick={() => {
                   setCurrentIndex((prev) => prev - 1);
-                  setShowFullText(false); // reset on navigation
+                  setShowFullText(false);
+                  setFullPolicyText(null); // Reset full policy text
+                  setFullPolicyError(null); // Reset full policy error
                 }}
-                className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded disabled:opacity-50"
+                className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded disabled:opacity-50 rubik-medium"
               >
                 ⬅️ Previous
               </button>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500 rubik-regular">
                 {currentIndex + 1} / {policies.length}
               </span>
               <button
                 disabled={currentIndex === policies.length - 1}
                 onClick={() => {
                   setCurrentIndex((prev) => prev + 1);
-                  setShowFullText(false); // reset on navigation
+                  setShowFullText(false);
+                  setFullPolicyText(null); // Reset full policy text
+                  setFullPolicyError(null); // Reset full policy error
                 }}
-                className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded disabled:opacity-50"
+                className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded disabled:opacity-50 rubik-medium"
               >
                 Next ➡️
               </button>

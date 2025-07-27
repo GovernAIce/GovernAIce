@@ -303,68 +303,19 @@ def get_policies():
     # TODO: Implement logic to fetch policies by country
     return jsonify({'policies': []}), 200
 
-# @app.route('/api/policies/relevant', methods=['POST'])
+#@app.route('/api/policies/relevant', methods=['POST'])
 def get_relevant_policies():
     """
     Get relevant policies based on selected countries and uploaded file content.
     Expects JSON body with 'countries' (list), 'domain' (optional), and 'search' (optional).
     Returns: Array of relevant policy objects (limited to 5 most relevant).
     """
-    import os
-    if os.environ.get('MOCK_POLICIES', '0') == '1':
-        # Return mock data for frontend testing
-        mock_policies = [
-            {
-                'title': 'Mock Privacy Policy',
-                'source': 'https://example.com/mock-privacy',
-                'text': 'This is a mock privacy policy for testing.',
-                'country': 'USA',
-                'domain': 'privacy'
-            },
-            {
-                'title': 'Mock Data Protection Act',
-                'source': 'https://example.com/mock-dpa',
-                'text': 'This is a mock data protection act for testing.',
-                'country': 'EU',
-                'domain': 'data protection'
-            },
-            {
-                'title': 'Mock AI Regulation',
-                'source': 'https://example.com/mock-ai',
-                'text': 'This is a mock AI regulation for testing.',
-                'country': 'UK',
-                'domain': 'AI'
-            },
-            {
-                'title': 'Mock Consumer Rights Law',
-                'source': 'https://example.com/mock-consumer',
-                'text': 'This is a mock consumer rights law for testing.',
-                'country': 'Canada',
-                'domain': 'consumer rights'
-            },
-            {
-                'title': 'Mock Cybersecurity Framework',
-                'source': 'https://example.com/mock-cyber',
-                'text': 'This is a mock cybersecurity framework for testing.',
-                'country': 'Australia',
-                'domain': 'cybersecurity'
-            }
-        ]
-        return jsonify({
-            'policies': mock_policies,
-            'total_count': len(mock_policies),
-            'countries_searched': ['MOCK'],
-            'domain': 'mock',
-            'search_query': 'mock',
-            'max_results': 5
-        }), 200
     try:
         data = request.get_json()
         if not data or 'countries' not in data:
             return jsonify({'error': 'Missing countries parameter'}), 400
         
         countries = data['countries']
-        
         domain = data.get('domain', '')
         search_query = data.get('search', '')
         
@@ -379,17 +330,10 @@ def get_relevant_policies():
             if country in country_policies:
                 policies = country_policies[country]
                 for policy in policies:
-                    # Calculate relevance score based on multiple factors
                     relevance_score = 0
-                    
-                    # Base score for country match
-                    relevance_score += 10
-                    
-                    # Domain relevance
+                    relevance_score += 10  # Base score for country match
                     if domain and domain.lower() in policy.lower():
                         relevance_score += 5
-                    
-                    # Search query relevance
                     if search_query:
                         query_terms = search_query.lower().split()
                         for term in query_terms:
@@ -398,7 +342,6 @@ def get_relevant_policies():
                             if term in country.lower():
                                 relevance_score += 2
                     
-                    # Create a policy object with metadata and relevance score
                     policy_obj = {
                         'title': policy,
                         'source': f"https://example.com/{country.lower().replace(' ', '-')}",
@@ -407,15 +350,13 @@ def get_relevant_policies():
                         'domain': domain or 'general',
                         'relevance_score': relevance_score
                     }
-                    
-                    # Always include policies for selected countries, but score them
                     relevant_policies.append(policy_obj)
         
         # Sort by relevance score (highest first) and limit to top 5
         relevant_policies.sort(key=lambda x: x['relevance_score'], reverse=True)
         relevant_policies = relevant_policies[:5]
         
-        # Remove relevance_score from final response (internal use only)
+        # Remove relevance_score from final response
         for policy in relevant_policies:
             policy.pop('relevance_score', None)
         
@@ -431,6 +372,37 @@ def get_relevant_policies():
     except Exception as e:
         logger.error(f"Error fetching relevant policies: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+# New endpoint to view full document content
+@app.route('/api/policies/document', methods=['GET'])
+def get_policy_document():
+    policy_title = request.args.get('policy_title')
+    country = request.args.get('country')
+    if not policy_title or not country:
+        return jsonify({'error': 'Missing policy_title or country parameter'}), 400
+    
+    mongo_client = get_mongo_client()
+    try:
+        mongo_db = mongo_client['Training']
+        document = mongo_db[country].find_one({'title': policy_title})
+        
+        if not document:
+            return jsonify({'error': f"Policy '{policy_title}' not found for country '{country}'"}), 404
+        
+        response_data = {
+            'title': document.get('title', ''),
+            'source': document.get('source', ''),
+            'text': document.get('text', ''),
+            'country': country,
+            'domain': document.get('domain', 'general')
+        }
+        
+        return jsonify(response_data), 200
+    except Exception as e:
+        logger.error(f"Error fetching policy document '{policy_title}' for country '{country}': {str(e)}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        mongo_client.close()
 
 # --- DOCUMENT ENDPOINTS ---
 # These endpoints handle document upload, analysis, listing, and search.
@@ -1149,6 +1121,8 @@ def use_case_one(u_input, selected_country):
 
     answer = search_and_answer(u_input, selected_country)
     return ("\nAnswer:\n", answer)
+
+
 
 
 # app.py  (or wherever you call app.run)
