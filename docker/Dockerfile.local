@@ -4,6 +4,13 @@ FROM python:3.9-slim
 # Set working directory
 WORKDIR /app
 
+# Install system dependencies for ML models
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy requirements file from root
 COPY ../requirements.txt .
 
@@ -28,6 +35,7 @@ EXPOSE 5000
 # Set environment variables
 ENV FLASK_APP=backend/app.py
 ENV FLASK_ENV=development
+ENV PYTHONPATH=/app
 
 # Run the Flask application
 CMD ["python", "backend/app.py"]

@@ -1,24 +1,46 @@
-import json
 import os
-from together import Together
+import sys
+import logging
+import json
+import re
+from typing import Dict, Any, List, Optional
+from dataclasses import dataclass
+from pathlib import Path
+
+# Add the project root to the path for imports
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
+
+try:
+    from ml.config.settings import MLConfig
+except ImportError:
+    # Fallback if ml module is not available
+    class MLConfig:
+        TOGETHER_API_KEY = os.getenv('TOGETHER_API_KEY')
+        MONGODB_URI = os.getenv('MONGODB_URI')
+        DEFAULT_EMBEDDING_MODEL = "all-MiniLM-L6-v2"
+        LEGAL_EMBEDDING_MODEL = "joelniklaus/legal-xlm-roberta-large"
+        DEEPSEEK_MODEL = "deepseek-ai/DeepSeek-R1-Distill-Llama-70B"
+
 import pandas as pd
 import numpy as np
-from typing import List, Dict, Any, Tuple
-import re
 from collections import defaultdict
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-import logging
-from dataclasses import dataclass
-from datetime import datetime
 
 # MongoDB Integration (unchanged as requested)
 from pymongo import MongoClient
 from transformers import AutoTokenizer, AutoModel
 import torch
 
+# Together AI import
+try:
+    from together import Together
+except ImportError:
+    # Fallback if together package is not available
+    Together = None
+
 # Import configuration and utilities
-from ml.config.settings import MLConfig
 from ml.utils.db_connection import search_global_chunks
 
 # Configure logging

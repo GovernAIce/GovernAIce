@@ -8,3 +8,6 @@ openai
 fastapi
 uvicorn
 sentence-transformers
+matplotlib
+seaborn
+together

@@ -1,17 +1,31 @@
 import os
+import sys
+import logging
 import json
+import re
+from typing import Dict, Any, List, Optional
+from dataclasses import dataclass
+from pathlib import Path
+
+# Add the project root to the path for imports
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root))
+
+try:
+    from ml.config.settings import MLConfig
+except ImportError:
+    # Fallback if ml module is not available
+    class MLConfig:
+        TOGETHER_API_KEY = os.getenv('TOGETHER_API_KEY')
+        MONGODB_URI = os.getenv('MONGODB_URI')
+        DEFAULT_EMBEDDING_MODEL = "all-MiniLM-L6-v2"
+        LEGAL_EMBEDDING_MODEL = "joelniklaus/legal-xlm-roberta-large"
+        DEEPSEEK_MODEL = "deepseek-ai/DeepSeek-R1-Distill-Llama-70B"
+
 import numpy as np
-from typing import List, Dict, Any, Tuple
-import requests
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
-import logging
-from dataclasses import dataclass
 from datetime import datetime
-import re
-
-# Import configuration
-from ml.config.settings import MLConfig
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
