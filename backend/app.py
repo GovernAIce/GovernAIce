@@ -25,6 +25,9 @@ from dotenv import load_dotenv
 # Import model-agnostic LLM interface
 from llm_utils import analyze_policy
 
+# Import ML service layer
+from ml_service import ml_service
+
 
 # Initialize Flask app and load environment variables
 app = Flask(__name__)
@@ -1078,6 +1081,229 @@ def get_radar_data():
     return jsonify(radar_data), 200
 
 
+# --- ML MODEL ENDPOINTS ---
+# These endpoints use the advanced ML models for comprehensive analysis.
+
+@app.route('/ml/status/', methods=['GET'])
+def ml_model_status():
+    """
+    GET: Check status of ML models and API keys.
+    Returns: Status of all ML models and configuration.
+    """
+    try:
+        status = ml_service.get_model_status()
+        return jsonify(status), 200
+    except Exception as e:
+        logger.error(f"Error getting ML model status: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/ml/compliance-analysis/', methods=['POST'])
+def ml_compliance_analysis():
+    """
+    POST: Advanced compliance analysis using ML models.
+    Expects JSON body with 'document_text', 'country', and optional 'input_type'.
+    Returns: Comprehensive compliance analysis results.
+    """
+    try:
+        data = request.get_json()
+        if not data or 'document_text' not in data or 'country' not in data:
+            return jsonify({'error': 'Missing document_text or country'}), 400
+        
+        document_text = data['document_text']
+        country = data['country']
+        input_type = data.get('input_type', 'text')
+        
+        if len(document_text) < 10:
+            return jsonify({'error': 'Document text must be at least 10 characters'}), 400
+        
+        # Run ML compliance analysis
+        result = ml_service.analyze_compliance(document_text, country, input_type)
+        
+        # Generate document ID for storage
+        doc_id = str(uuid.uuid4())
+        
+        # Store results in MongoDB
+        mongo_client = get_mongo_client()
+        try:
+            mongo_db = mongo_client['regulatory_mongo']
+            document = {
+                'doc_id': doc_id,
+                'content': document_text,
+                'country': country,
+                'analysis_type': 'ml_compliance',
+                'ml_results': result,
+                'timestamp': datetime.now().isoformat()
+            }
+            mongo_db.documents.insert_one(document)
+            
+            response_data = {
+                'doc_id': doc_id,
+                'country': country,
+                'analysis_type': 'ml_compliance',
+                'results': result
+            }
+            return jsonify(response_data), 201
+            
+        except Exception as e:
+            logger.error(f"Error storing ML compliance results: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+        finally:
+            mongo_client.close()
+            
+    except Exception as e:
+        logger.error(f"Error in ML compliance analysis: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/ml/policy-comparison/', methods=['POST'])
+def ml_policy_comparison():
+    """
+    POST: Policy comparison using ML models.
+    Expects JSON body with 'user_document', 'reference_file', and optional 'country'.
+    Returns: Policy comparison results.
+    """
+    try:
+        data = request.get_json()
+        if not data or 'user_document' not in data or 'reference_file' not in data:
+            return jsonify({'error': 'Missing user_document or reference_file'}), 400
+        
+        user_document = data['user_document']
+        reference_file = data['reference_file']
+        country = data.get('country')
+        
+        if len(user_document) < 10:
+            return jsonify({'error': 'User document must be at least 10 characters'}), 400
+        
+        # Run ML policy comparison
+        result = ml_service.compare_policies(user_document, reference_file, country)
+        
+        # Generate document ID for storage
+        doc_id = str(uuid.uuid4())
+        
+        # Store results in MongoDB
+        mongo_client = get_mongo_client()
+        try:
+            mongo_db = mongo_client['regulatory_mongo']
+            document = {
+                'doc_id': doc_id,
+                'user_document': user_document,
+                'reference_file': reference_file,
+                'country': country,
+                'analysis_type': 'ml_policy_comparison',
+                'ml_results': result,
+                'timestamp': datetime.now().isoformat()
+            }
+            mongo_db.documents.insert_one(document)
+            
+            response_data = {
+                'doc_id': doc_id,
+                'reference_file': reference_file,
+                'country': country,
+                'analysis_type': 'ml_policy_comparison',
+                'results': result
+            }
+            return jsonify(response_data), 201
+            
+        except Exception as e:
+            logger.error(f"Error storing ML policy comparison results: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+        finally:
+            mongo_client.close()
+            
+    except Exception as e:
+        logger.error(f"Error in ML policy comparison: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/ml/principle-assessment/', methods=['POST'])
+def ml_principle_assessment():
+    """
+    POST: Principle assessment using ML models.
+    Expects JSON body with 'document_path' and 'embeddings_file'.
+    Returns: Principle assessment results.
+    """
+    try:
+        data = request.get_json()
+        if not data or 'document_path' not in data or 'embeddings_file' not in data:
+            return jsonify({'error': 'Missing document_path or embeddings_file'}), 400
+        
+        document_path = data['document_path']
+        embeddings_file = data['embeddings_file']
+        
+        # Validate file paths
+        if not os.path.exists(document_path):
+            return jsonify({'error': f'Document file not found: {document_path}'}), 400
+        
+        if not os.path.exists(embeddings_file):
+            return jsonify({'error': f'Embeddings file not found: {embeddings_file}'}), 400
+        
+        # Run ML principle assessment
+        result = ml_service.assess_principles(document_path, embeddings_file)
+        
+        # Generate document ID for storage
+        doc_id = str(uuid.uuid4())
+        
+        # Store results in MongoDB
+        mongo_client = get_mongo_client()
+        try:
+            mongo_db = mongo_client['regulatory_mongo']
+            document = {
+                'doc_id': doc_id,
+                'document_path': document_path,
+                'embeddings_file': embeddings_file,
+                'analysis_type': 'ml_principle_assessment',
+                'ml_results': result,
+                'timestamp': datetime.now().isoformat()
+            }
+            mongo_db.documents.insert_one(document)
+            
+            response_data = {
+                'doc_id': doc_id,
+                'document_path': document_path,
+                'embeddings_file': embeddings_file,
+                'analysis_type': 'ml_principle_assessment',
+                'results': result
+            }
+            return jsonify(response_data), 201
+            
+        except Exception as e:
+            logger.error(f"Error storing ML principle assessment results: {str(e)}")
+            return jsonify({'error': str(e)}), 500
+        finally:
+            mongo_client.close()
+            
+    except Exception as e:
+        logger.error(f"Error in ML principle assessment: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/ml/analysis/<doc_id>/', methods=['GET'])
+def get_ml_analysis(doc_id):
+    """
+    GET: Retrieve ML analysis results by document ID.
+    Returns: ML analysis results for the specified document.
+    """
+    mongo_client = get_mongo_client()
+    try:
+        mongo_db = mongo_client['regulatory_mongo']
+        document = mongo_db.documents.find_one({'doc_id': doc_id})
+        
+        if not document:
+            return jsonify({'error': 'Document not found'}), 404
+        
+        # Return ML results
+        response_data = {
+            'doc_id': doc_id,
+            'analysis_type': document.get('analysis_type'),
+            'timestamp': document.get('timestamp'),
+            'results': document.get('ml_results', {})
+        }
+        return jsonify(response_data), 200
+        
+    except Exception as e:
+        logger.error(f"Error retrieving ML analysis {doc_id}: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        mongo_client.close()
+
+
 # --- MAIN ENTRY POINT ---
 # Starts the Flask development server if this file is run directly.
 @app.route('/api/policies/relevant', methods=['POST'])
@@ -1095,7 +1321,7 @@ def use_case_one(u_input, selected_country):
     collection = client[DATABASE_NAME][COLLECTION_NAME]
 
     # For Gemini API key, use os.getenv
-    import google.generativeai as genai
+    import os
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
     if not GEMINI_API_KEY:
         raise Exception("GEMINI_API_KEY not set in environment variables")
