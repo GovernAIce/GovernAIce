@@ -1,0 +1,23 @@
+# Use Node.js 18 as base image
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY ../frontend/package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy frontend source code
+COPY ../frontend/ .
+
+# Expose port 5173 (Vite default)
+EXPOSE 5173
+
+# Set environment variables
+ENV VITE_API_URL=http://localhost:5001
+
+# Start development server
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"] 

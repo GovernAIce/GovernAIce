@@ -4,16 +4,30 @@ FROM python:3.9-slim
 # Set working directory
 WORKDIR /app
 
-# Copy requirements file
-COPY requirements.txt .
+# Copy requirements file from root
+COPY ../requirements.txt .
 
-# Install dependencies
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code and .env file
-COPY . .
+# Copy backend application code
+COPY ../backend/ ./backend/
+
+# Copy ML modules
+COPY ../ml/ ./ml/
+
+# Copy main entry point
+COPY ../main.py .
+
+# Copy environment file (if exists)
+COPY ../.env* ./
 
 # Expose port 5000
 EXPOSE 5000
 
-CMD ["python", "app.py"]
+# Set environment variables
+ENV FLASK_APP=backend/app.py
+ENV FLASK_ENV=development
+
+# Run the Flask application
+CMD ["python", "backend/app.py"]
