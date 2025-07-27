@@ -307,133 +307,133 @@ def get_policies():
     return jsonify({'policies': []}), 200
 
 # @app.route('/api/policies/relevant', methods=['POST'])
-def get_relevant_policies():
-    """
-    Get relevant policies based on selected countries and uploaded file content.
-    Expects JSON body with 'countries' (list), 'domain' (optional), and 'search' (optional).
-    Returns: Array of relevant policy objects (limited to 5 most relevant).
-    """
-    import os
-    if os.environ.get('MOCK_POLICIES', '0') == '1':
-        # Return mock data for frontend testing
-        mock_policies = [
-            {
-                'title': 'Mock Privacy Policy',
-                'source': 'https://example.com/mock-privacy',
-                'text': 'This is a mock privacy policy for testing.',
-                'country': 'USA',
-                'domain': 'privacy'
-            },
-            {
-                'title': 'Mock Data Protection Act',
-                'source': 'https://example.com/mock-dpa',
-                'text': 'This is a mock data protection act for testing.',
-                'country': 'EU',
-                'domain': 'data protection'
-            },
-            {
-                'title': 'Mock AI Regulation',
-                'source': 'https://example.com/mock-ai',
-                'text': 'This is a mock AI regulation for testing.',
-                'country': 'UK',
-                'domain': 'AI'
-            },
-            {
-                'title': 'Mock Consumer Rights Law',
-                'source': 'https://example.com/mock-consumer',
-                'text': 'This is a mock consumer rights law for testing.',
-                'country': 'Canada',
-                'domain': 'consumer rights'
-            },
-            {
-                'title': 'Mock Cybersecurity Framework',
-                'source': 'https://example.com/mock-cyber',
-                'text': 'This is a mock cybersecurity framework for testing.',
-                'country': 'Australia',
-                'domain': 'cybersecurity'
-            }
-        ]
-        return jsonify({
-            'policies': mock_policies,
-            'total_count': len(mock_policies),
-            'countries_searched': ['MOCK'],
-            'domain': 'mock',
-            'search_query': 'mock',
-            'max_results': 5
-        }), 200
-    try:
-        data = request.get_json()
-        if not data or 'countries' not in data:
-            return jsonify({'error': 'Missing countries parameter'}), 400
+# def get_relevant_policies():
+#     """
+#     Get relevant policies based on selected countries and uploaded file content.
+#     Expects JSON body with 'countries' (list), 'domain' (optional), and 'search' (optional).
+#     Returns: Array of relevant policy objects (limited to 5 most relevant).
+#     """
+#     import os
+#     if os.environ.get('MOCK_POLICIES', '0') == '1':
+#         # Return mock data for frontend testing
+#         mock_policies = [
+#             {
+#                 'title': 'Mock Privacy Policy',
+#                 'source': 'https://example.com/mock-privacy',
+#                 'text': 'This is a mock privacy policy for testing.',
+#                 'country': 'USA',
+#                 'domain': 'privacy'
+#             },
+#             {
+#                 'title': 'Mock Data Protection Act',
+#                 'source': 'https://example.com/mock-dpa',
+#                 'text': 'This is a mock data protection act for testing.',
+#                 'country': 'EU',
+#                 'domain': 'data protection'
+#             },
+#             {
+#                 'title': 'Mock AI Regulation',
+#                 'source': 'https://example.com/mock-ai',
+#                 'text': 'This is a mock AI regulation for testing.',
+#                 'country': 'UK',
+#                 'domain': 'AI'
+#             },
+#             {
+#                 'title': 'Mock Consumer Rights Law',
+#                 'source': 'https://example.com/mock-consumer',
+#                 'text': 'This is a mock consumer rights law for testing.',
+#                 'country': 'Canada',
+#                 'domain': 'consumer rights'
+#             },
+#             {
+#                 'title': 'Mock Cybersecurity Framework',
+#                 'source': 'https://example.com/mock-cyber',
+#                 'text': 'This is a mock cybersecurity framework for testing.',
+#                 'country': 'Australia',
+#                 'domain': 'cybersecurity'
+#             }
+#         ]
+#         return jsonify({
+#             'policies': mock_policies,
+#             'total_count': len(mock_policies),
+#             'countries_searched': ['MOCK'],
+#             'domain': 'mock',
+#             'search_query': 'mock',
+#             'max_results': 5
+#         }), 200
+#     try:
+#         data = request.get_json()
+#         if not data or 'countries' not in data:
+#             return jsonify({'error': 'Missing countries parameter'}), 400
         
-        countries = data['countries']
+#         countries = data['countries']
         
-        domain = data.get('domain', '')
-        search_query = data.get('search', '')
+#         domain = data.get('domain', '')
+#         search_query = data.get('search', '')
         
-        if not isinstance(countries, list):
-            return jsonify({'error': 'Countries must be a list'}), 400
+#         if not isinstance(countries, list):
+#             return jsonify({'error': 'Countries must be a list'}), 400
         
-        # Get all policies for the selected countries
-        country_policies = get_country_policies()
-        relevant_policies = []
+#         # Get all policies for the selected countries
+#         country_policies = get_country_policies()
+#         relevant_policies = []
         
-        for country in countries:
-            if country in country_policies:
-                policies = country_policies[country]
-                for policy in policies:
-                    # Calculate relevance score based on multiple factors
-                    relevance_score = 0
+#         for country in countries:
+#             if country in country_policies:
+#                 policies = country_policies[country]
+#                 for policy in policies:
+#                     # Calculate relevance score based on multiple factors
+#                     relevance_score = 0
                     
-                    # Base score for country match
-                    relevance_score += 10
+#                     # Base score for country match
+#                     relevance_score += 10
                     
-                    # Domain relevance
-                    if domain and domain.lower() in policy.lower():
-                        relevance_score += 5
+#                     # Domain relevance
+#                     if domain and domain.lower() in policy.lower():
+#                         relevance_score += 5
                     
-                    # Search query relevance
-                    if search_query:
-                        query_terms = search_query.lower().split()
-                        for term in query_terms:
-                            if term in policy.lower():
-                                relevance_score += 3
-                            if term in country.lower():
-                                relevance_score += 2
+#                     # Search query relevance
+#                     if search_query:
+#                         query_terms = search_query.lower().split()
+#                         for term in query_terms:
+#                             if term in policy.lower():
+#                                 relevance_score += 3
+#                             if term in country.lower():
+#                                 relevance_score += 2
                     
-                    # Create a policy object with metadata and relevance score
-                    policy_obj = {
-                        'title': policy,
-                        'source': f"https://example.com/{country.lower().replace(' ', '-')}",
-                        'text': f"Policy document for {country}: {policy}",
-                        'country': country,
-                        'domain': domain or 'general',
-                        'relevance_score': relevance_score
-                    }
+#                     # Create a policy object with metadata and relevance score
+#                     policy_obj = {
+#                         'title': policy,
+#                         'source': f"https://example.com/{country.lower().replace(' ', '-')}",
+#                         'text': f"Policy document for {country}: {policy}",
+#                         'country': country,
+#                         'domain': domain or 'general',
+#                         'relevance_score': relevance_score
+#                     }
                     
-                    # Always include policies for selected countries, but score them
-                    relevant_policies.append(policy_obj)
+#                     # Always include policies for selected countries, but score them
+#                     relevant_policies.append(policy_obj)
         
-        # Sort by relevance score (highest first) and limit to top 5
-        relevant_policies.sort(key=lambda x: x['relevance_score'], reverse=True)
-        relevant_policies = relevant_policies[:5]
+#         # Sort by relevance score (highest first) and limit to top 5
+#         relevant_policies.sort(key=lambda x: x['relevance_score'], reverse=True)
+#         relevant_policies = relevant_policies[:5]
         
-        # Remove relevance_score from final response (internal use only)
-        for policy in relevant_policies:
-            policy.pop('relevance_score', None)
+#         # Remove relevance_score from final response (internal use only)
+#         for policy in relevant_policies:
+#             policy.pop('relevance_score', None)
         
-        return jsonify({
-            'policies': relevant_policies,
-            'total_count': len(relevant_policies),
-            'countries_searched': countries,
-            'domain': domain,
-            'search_query': search_query,
-            'max_results': 5
-        }), 200
+#         return jsonify({
+#             'policies': relevant_policies,
+#             'total_count': len(relevant_policies),
+#             'countries_searched': countries,
+#             'domain': domain,
+#             'search_query': search_query,
+#             'max_results': 5
+#         }), 200
         
-    except Exception as e:
-        logger.error(f"Error fetching relevant policies: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+#     except Exception as e:
+#         logger.error(f"Error fetching relevant policies: {str(e)}")
+#         return jsonify({'error': str(e)}), 500
 
 # --- DOCUMENT ENDPOINTS ---
 # These endpoints handle document upload, analysis, listing, and search.
@@ -1307,69 +1307,80 @@ def get_ml_analysis(doc_id):
 # --- MAIN ENTRY POINT ---
 # Starts the Flask development server if this file is run directly.
 @app.route('/api/policies/relevant', methods=['POST'])
-def use_case_one(u_input, selected_country):
-    MONGO_URI = os.getenv("MONGO_URI")
-    if not MONGO_URI:
-        raise Exception("MONGO_URI not set in environment variables")
-    DATABASE_NAME = "chunked_data"
-    COLLECTION_NAME = "chunked_data"
-    VECTOR_FIELD = "plot_embedding"
-    INDEX_NAME = "vector_index"  # Must match your MongoDB Atlas vector index name
+def get_relevant_policies_and_assessment():
+    """
+    Get relevant policies with full text based on selected countries, domain, and search query.
+    Expects JSON body with 'countries' (list), 'domain' (optional), and 'search' (optional).
+    Returns: Array of relevant policy objects (limited to 5 most relevant) including full text.
+    """
+    client = get_mongo_client()  # Initialize client before try block
+    try:
+        data = request.get_json()
+        if not data or 'countries' not in data:
+            return jsonify({'error': 'Missing countries parameter'}), 400
 
+        countries = data['countries']
+        domain = data.get('domain', '')
+        search_query = data.get('search', '')
 
-    client = MongoClient(MONGO_URI, server_api=ServerApi('1'))
-    collection = client[DATABASE_NAME][COLLECTION_NAME]
+        if not isinstance(countries, list):
+            return jsonify({'error': 'Countries must be a list'}), 400
 
-    # For Gemini API key, use os.getenv
-    import os
-    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-    if not GEMINI_API_KEY:
-        raise Exception("GEMINI_API_KEY not set in environment variables")
-    genai.configure(api_key=GEMINI_API_KEY)
+        # Get policies
+        country_policies = get_country_policies()
+        relevant_policies = []
 
-    embedder = SentenceTransformer("sentence-transformers/paraphrase-multilingual-mpnet-base-v2")
+        for country in countries:
+            if country in country_policies:
+                policies = country_policies[country]
+                for policy in policies:
+                    # Full text is already included in get_country_policies
+                    policy_text = policy.get('text', '')
 
-    def search_and_answer(user_input, country=None):
-        # Generate embedding
-        query_vector = embedder.encode(user_input).tolist()
+                    relevance_score = 10  # Base score for country match
+                    if domain and domain.lower() in policy['title'].lower():
+                        relevance_score += 5
+                    if search_query:
+                        query_terms = search_query.lower().split()
+                        for term in query_terms:
+                            if term in policy['title'].lower():
+                                relevance_score += 3
+                            if term in country.lower():
+                                relevance_score += 2
 
-        # Build vector search stage with country filter if provided
-        vector_stage = {
-            "$vectorSearch": {
-                "index": "vector_index",
-                "filter": {"country" : {"$eq" :country}},
-                "path": "plot_embedding",
-                "queryVector": query_vector,
-                "numCandidates": 100,
-                "limit": 5
-            }
-        }
+                    policy_obj = {
+                        'title': policy['title'],
+                        'source': policy['source'],
+                        'regulator': policy['metadata'].get('regulator', 'N/A'),
+                        'country': country,
+                        'domain': domain or 'general',
+                        'text': policy_text,
+                        'relevance_score': relevance_score
+                    }
+                    relevant_policies.append(policy_obj)
 
-        # Run aggregation
-        results = collection.aggregate([vector_stage])
-        retrieved_chunks = [doc["text"] for doc in results]
-        
-        # Prepare RAG prompt
-        context = "\n\n".join(retrieved_chunks)
-        prompt = f"""
-        You are an intelligent assistant. Use the context below to answer the user's question as concisely and informatively as possible. Your job is to provide a clean and
-        concise evaluation of the users proposed company / initiative based on the context you will be provided and, as a fallback, your background knowledge. The user will describe
-        their company/initiative and you will provide a risk asessment based on the guidelines set out in your context. Provide brief summaries of risk areas and compliance gaps.
-        Cite the names of the documents you are referencing with short direct quotes and provide analysis as to how they relate. Summarize relevant information only. Respond exclusively in english
+        # Sort and limit to top 5 policies
+        relevant_policies.sort(key=lambda x: x['relevance_score'], reverse=True)
+        relevant_policies = relevant_policies[:5]
 
-        Context:
-        {context}
+        # Remove relevance_score from response
+        for policy in relevant_policies:
+            policy.pop('relevance_score', None)
 
-        Question: {user_input}
+        return jsonify({
+            'policies': relevant_policies,
+            'total_count': len(relevant_policies),
+            'countries_searched': countries,
+            'domain': domain,
+            'search_query': search_query,
+            'max_results': 5
+        }), 200
 
-        Answer:
-        """
-
-        # Use Gemini Pro to generate answer
-        model = genai.GenerativeModel("gemini-2.5-flash")
-        response = model.generate_content(prompt)
-        print("help")
-        return response.text
+    except Exception as e:
+        logger.error(f"Error processing request: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        client.close()
 
     # ==== 4. Run example ====
 
