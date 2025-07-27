@@ -603,7 +603,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"countries\": [\"USA\", \"EU\"],\r\n  \"domain\": \"privacy\",\r\n  \"search\": \"data protection\"\r\n}",
+							"raw": "{\r\n  \"countries\": [\"USA\", \"EU\"],\r\n  \"domain\": \"AI\",\r\n  \"search\": \"data privacy\",\r\n  \"user_input\": \"Our company is developing an AI-powered chatbot that processes user data to provide personalized responses.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -611,30 +611,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5001/policies/relevant",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5001",
-							"path": [
-								"policies",
-								"relevant"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "view policy document",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:5001/api/policies/document?policy_title=California%20Consumer%20Privacy%20Act%20(CCPA)&country=USA",
+							"raw": "http://localhost:5001/api/policies/relevant",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -643,17 +620,7 @@
 							"path": [
 								"api",
 								"policies",
-								"document"
-							],
-							"query": [
-								{
-									"key": "policy_title",
-									"value": "California%20Consumer%20Privacy%20Act%20(CCPA)"
-								},
-								{
-									"key": "country",
-									"value": "USA"
-								}
+								"relevant"
 							]
 						}
 					},
