@@ -114,7 +114,7 @@ def get_country_policies():
                 '_id': 0
             })
             policies[country] = list(country_policies)
-            
+
         # Update cache
         _country_policies_cache = policies
         _cache_timestamp = datetime.now()
@@ -1316,6 +1316,78 @@ def get_ml_analysis(doc_id):
 
 # --- MAIN ENTRY POINT ---
 # Starts the Flask development server if this file is run directly.
+
+# @app.route('/api/policies/relevant', methods=['POST'])
+# def use_case_one(u_input, selected_country):
+#     MONGO_URI = os.getenv("MONGO_URI")
+#     if not MONGO_URI:
+#         raise Exception("MONGO_URI not set in environment variables")
+#     DATABASE_NAME = "chunked_data"
+#     COLLECTION_NAME = "chunked_data"
+#     VECTOR_FIELD = "plot_embedding"
+#     INDEX_NAME = "vector_index"  # Must match your MongoDB Atlas vector index name
+
+
+#     client = MongoClient(MONGO_URI, server_api=ServerApi('1'))
+#     collection = client[DATABASE_NAME][COLLECTION_NAME]
+
+#     # For Gemini API key, use os.getenv
+#     import os
+#     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+#     if not GEMINI_API_KEY:
+#         raise Exception("GEMINI_API_KEY not set in environment variables")
+#     genai.configure(api_key=GEMINI_API_KEY)
+
+#     embedder = SentenceTransformer("sentence-transformers/paraphrase-multilingual-mpnet-base-v2")
+
+#     def search_and_answer(user_input, country=None):
+#         # Generate embedding
+#         query_vector = embedder.encode(user_input).tolist()
+
+#         # Build vector search stage with country filter if provided
+#         vector_stage = {
+#             "$vectorSearch": {
+#                 "index": "vector_index",
+#                 "filter": {"country" : {"$eq" :country}},
+#                 "path": "plot_embedding",
+#                 "queryVector": query_vector,
+#                 "numCandidates": 100,
+#                 "limit": 5
+#             }
+#         }
+
+#         # Run aggregation
+#         results = collection.aggregate([vector_stage])
+#         retrieved_chunks = [doc["text"] for doc in results]
+        
+#         # Prepare RAG prompt
+#         context = "\n\n".join(retrieved_chunks)
+#         prompt = f"""
+#         You are an intelligent assistant. Use the context below to answer the user's question as concisely and informatively as possible. Your job is to provide a clean and
+#         concise evaluation of the users proposed company / initiative based on the context you will be provided and, as a fallback, your background knowledge. The user will describe
+#         their company/initiative and you will provide a risk asessment based on the guidelines set out in your context. Provide brief summaries of risk areas and compliance gaps.
+#         Cite the names of the documents you are referencing with short direct quotes and provide analysis as to how they relate. Summarize relevant information only. Respond exclusively in english
+
+#         Context:
+#         {context}
+
+#         Question: {user_input}
+
+#         Answer:
+#         """
+
+#         # Use Gemini Pro to generate answer
+#         model = genai.GenerativeModel("gemini-2.5-flash")
+#         response = model.generate_content(prompt)
+#         print("help")
+#         return response.text
+
+#     # ==== 4. Run example ====
+
+#     answer = search_and_answer(u_input, selected_country)
+#     return ("\nAnswer:\n", answer)
+
+
 @app.route('/api/policies/relevant', methods=['POST'])
 def get_relevant_policies_and_assessment():
     """
