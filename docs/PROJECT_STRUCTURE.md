@@ -135,8 +135,6 @@ data/
 **Purpose**: Implementation examples and use case demonstrations.
 
 **Files**:
-- `uc1.py` - Use case 1 implementation
-- `uc3.py` - Use case 3 implementation
 - `compliance_analysis/` - Compliance analysis examples
 - `policy_comparison/` - Policy comparison examples
 - `principle_assessment/` - Principle assessment examples
