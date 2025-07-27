@@ -107,6 +107,9 @@ data/
 - `PROJECT_STRUCTURE.md` - This file
 - `COMPLIANCE_WIDGET_IMPROVEMENTS.md` - Frontend widget improvements
 - `TEST_COMPLIANCE_WIDGET.md` - Testing documentation
+- `DOCKER_SETUP.md` - Docker documentation
+- `ML_INTEGRATION_PLAN.md` - ML Architecture
+- `ML_INTEGRATION_TASK_ASSIGNMENT.md` - Tasks
 
 ### 🔧 Scripts (`scripts/`)
 
