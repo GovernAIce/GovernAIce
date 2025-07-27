@@ -1,147 +1,23 @@
-grobid-0.8.2/
+# GovernAIce - AI Policy Compliance Assessment Tool
+# Comprehensive .gitignore for the entire platform
 
-# Ignore all .env files everywhere
+# =============================================================================
+# ENVIRONMENT & CONFIGURATION
+# =============================================================================
 .env
 **/.env
+.env.local
+.env.development
+.env.test
+.env.production
 
-# Virtual environments
-.venv
-**/.venv
-venv/
-**/venv/
-
-# Python cache files
+# =============================================================================
+# PYTHON
+# =============================================================================
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-
-# Generated files and outputs
-data/processed/
-data/embeddings/
-use_cases/*/compliance_analysis_*.json
-use_cases/*/compliance_analysis_*.txt
-use_cases/*/sample1_*.json
-use_cases/*/sample1_*.md
-graphs/
-reports/
-sampletrial/
-
-# Large binary files
-*.bin
-*.pkl
-*.pdf
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# IDE files
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Logs
-*.log
-
-# Temporary files
-*.tmp
-*.temp
-
-# Test coverage
-.coverage
-htmlcov/
-
-# Virtual environments (comprehensive)
-venv/
-**/venv/
-.venv/
-**/.venv/
-env/
-**/env/
-ENV/
-**/ENV/
-
-# Large binary files
-*.dylib
-*.so
-*.dll
-*.bin
-*.pkl
-*.h5
-*.hdf5
-*.model
-*.weights
-
-# Generated embeddings and data
-embeddings_storage/
-**/embeddings_storage/
-embeddings/
-**/embeddings/
-*.embeddings
-*.vectors
-
-# Extracted text files
-textextracted/
-**/textextracted/
-extracted_texts/
-**/extracted_texts/
-
-# Test and sample directories
-sampletrial/
-**/sampletrial/
-samples/
-**/samples/
-
-# Large model files
-*.pt
-*.pth
-*.onnx
-*.tflite
-*.pb
-
-# Database files
-*.db
-*.sqlite
-*.sqlite3
-
-# Log files
-*.log
-logs/
-**/logs/
-
-# Temporary files
-*.tmp
-*.temp
-temp/
-**/temp/
-tmp/
-**/tmp/
-
-# IDE and editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Python cache
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-
-# Distribution / packaging
 .Python
 build/
 develop-eggs/
@@ -158,26 +34,19 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
-# PyInstaller
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-.pytest_cache/
+# Virtual environments
+venv/
+**/venv/
+.venv/
+**/.venv/
+env/
+**/env/
+ENV/
+**/ENV/
+env.bak/
+venv.bak/
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -185,32 +54,166 @@ coverage.xml
 # pyenv
 .python-version
 
-# celery beat schedule file
-celerybeat-schedule
+# =============================================================================
+# NODE.JS & FRONTEND
+# =============================================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.eslintcache
 
-# SageMath parsed files
-*.sage.py
+# Frontend build outputs
+frontend/dist/
+frontend/build/
+frontend/.next/
+frontend/out/
 
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
+# =============================================================================
+# DATA & EMBEDDINGS
+# =============================================================================
+data/processed/
+data/embeddings/
+embeddings_storage/
+**/embeddings_storage/
+embeddings/
+**/embeddings/
+*.embeddings
+*.vectors
 
-# Spyder project settings
+# Extracted text files
+textextracted/
+**/textextracted/
+extracted_texts/
+**/extracted_texts/
+
+# Generated files and outputs
+use_cases/*/compliance_analysis_*.json
+use_cases/*/compliance_analysis_*.txt
+use_cases/*/sample1_*.json
+use_cases/*/sample1_*.md
+graphs/
+reports/
+sampletrial/
+
+# =============================================================================
+# LARGE FILES & BINARIES
+# =============================================================================
+*.bin
+*.pkl
+*.pdf
+*.dylib
+*.so
+*.dll
+*.h5
+*.hdf5
+*.model
+*.weights
+*.pt
+*.pth
+*.onnx
+*.tflite
+*.pb
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# =============================================================================
+# LOGS & TEMPORARY FILES
+# =============================================================================
+*.log
+logs/
+**/logs/
+*.tmp
+*.temp
+temp/
+**/temp/
+tmp/
+**/tmp/
+
+# =============================================================================
+# IDE & EDITOR FILES
+# =============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 .spyderproject
 .spyproject
-
-# Rope project settings
 .ropeproject
 
-# mkdocs documentation
-/site
+# =============================================================================
+# OS GENERATED FILES
+# =============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# =============================================================================
+# TESTING & COVERAGE
+# =============================================================================
+.coverage
+.coverage.*
+.cache
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# =============================================================================
+# DOCKER
+# =============================================================================
+.dockerignore
+
+# =============================================================================
+# PLATFORM SPECIFIC
+# =============================================================================
+# Grobid (if used)
+grobid-0.8.2/
+
+# =============================================================================
+# DEVELOPMENT TOOLS
+# =============================================================================
+# Celery
+celerybeat-schedule
+
+# SageMath
+*.sage.py
 
 # mypy
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# =============================================================================
+# DOCUMENTATION
+# =============================================================================
+/site
+
+# =============================================================================
+# SECURITY
+# =============================================================================
+# API Keys (additional protection)
+*api_key*
+*secret*
+*token*
+*password*
+
+# =============================================================================
+# BACKUP FILES
+# =============================================================================
+*.bak
+*.backup
+*.old
+*.orig

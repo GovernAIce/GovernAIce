@@ -1,28 +1,42 @@
-# Combined Requirements for AI Policy Assessment Tools
-# Supports both MongoDB-based compliance checker and principle-based assessment
+# GovernAIce - AI Policy Compliance Assessment Tool
+# Comprehensive requirements for the entire platform
 
-# Core Dependencies
+# =============================================================================
+# CORE DEPENDENCIES
+# =============================================================================
 numpy>=1.21.0
 pandas>=1.3.0
 requests>=2.25.0
+python-dotenv>=0.19.0
+tqdm>=4.60.0
 
-# AI and Machine Learning
+# =============================================================================
+# WEB FRAMEWORK & API
+# =============================================================================
+flask>=2.0.0
+flask-cors>=3.0.0
+fastapi>=0.68.0
+uvicorn>=0.15.0
+
+# =============================================================================
+# AI & MACHINE LEARNING
+# =============================================================================
 torch>=1.9.0
 transformers>=4.15.0
 sentence-transformers>=2.2.0
 scikit-learn>=1.0.0
-
-# Together AI Client
 together>=0.2.0
+google-generativeai>=0.3.0
+openai>=0.27.0
 
-# MongoDB Integration
+# =============================================================================
+# DATABASE & STORAGE
+# =============================================================================
 pymongo>=4.0.0
 
-# Visualization
-matplotlib>=3.5.0
-seaborn>=0.11.0
-
-# Text Extraction Dependencies
+# =============================================================================
+# TEXT EXTRACTION & PROCESSING
+# =============================================================================
 opencv-python>=4.5.0
 pytesseract>=0.3.8
 easyocr>=1.4.0
@@ -32,27 +46,50 @@ python-docx>=0.8.11
 camelot-py[cv]>=0.8.0
 Pillow>=8.0.0
 
-# Optional: For better performance and compatibility
-# GPU Support (uncomment if using CUDA)
-# torch>=1.9.0+cu111
+# =============================================================================
+# VISUALIZATION & ANALYSIS
+# =============================================================================
+matplotlib>=3.5.0
+seaborn>=0.11.0
+plotly>=5.0.0
+faiss-cpu>=1.7.0
+umap-learn>=0.5.0
 
-# Development and Testing (optional)
+# =============================================================================
+# DEVELOPMENT & TESTING (Optional)
+# =============================================================================
 # pytest>=6.0.0
 # jupyter>=1.0.0
 # ipykernel>=6.0.0
 
-# Platform-specific optimizations (uncomment as needed)
+# =============================================================================
+# PLATFORM OPTIMIZATIONS (Uncomment as needed)
+# =============================================================================
+
 # For Intel CPUs
 # intel-extension-for-pytorch
 
 # For Apple Silicon Macs
 # accelerate>=0.12.0
 
-# Additional utilities that might be helpful
-tqdm>=4.60.0
-python-dotenv>=0.19.0
+# For GPU Support (CUDA)
+# torch>=1.9.0+cu111
 
-# Optional dependencies for advanced features
-faiss-cpu>=1.7.0
-umap-learn>=0.5.0
-plotly>=5.0.0
+# =============================================================================
+# USAGE NOTES
+# =============================================================================
+# 
+# 1. Install base requirements:
+#    pip install -r requirements.txt
+#
+# 2. For development, install additional packages:
+#    pip install pytest jupyter ipykernel
+#
+# 3. For GPU support, install PyTorch with CUDA:
+#    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+#
+# 4. For Apple Silicon Macs, add:
+#    pip install accelerate
+#
+# 5. For Intel CPU optimization:
+#    pip install intel-extension-for-pytorch
