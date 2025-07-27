@@ -1,5 +1,5 @@
-# Use Node.js 18 as base image
-FROM node:18-alpine
+# Use Node.js 20 as base image (more stable with Vite)
+FROM node:20-alpine
 
 # Set working directory
 WORKDIR /app
@@ -19,5 +19,5 @@ EXPOSE 5173
 # Set environment variables
 ENV VITE_API_URL=http://localhost:5001
 
-# Start development server
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"] 
+# Start development server with legacy OpenSSL provider
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"] 

@@ -10,8 +10,9 @@ services:
     environment:
       - FLASK_ENV=development
       - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - TOGETHER_API_KEY=${TOGETHER_API_KEY}
       - MONGO_URI=${MONGO_URI}
-      - MONGO_DB_NAME=${DB_NAME}
+      - MONGO_DB_NAME=${MONGO_DB_NAME}
     depends_on:
       - mongodb
     volumes:

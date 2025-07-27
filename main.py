@@ -18,18 +18,18 @@ def main():
     print("=" * 50)
     print("Available modules:")
     print("1. Compliance Checker - MongoDB-based compliance analysis")
-    print("2. Policy Comparator - Framework comparison tool")
+    # print("2. Policy Comparator - Framework comparison tool")
     print("3. Principle Assessor - Principle-based assessment")
     
-    choice = input("\nSelect module (1-3): ").strip()
+    choice = input("\nSelect module (1 or 3): ").strip()
     
     try:
         if choice == "1":
             from ml.models.compliance_checker import main as compliance_main
             compliance_main()
-        elif choice == "2":
-            from ml.models.policy_comparator import main as comparator_main
-            comparator_main()
+        # elif choice == "2":
+        #     from ml.models.policy_comparator import main as comparator_main
+        #     comparator_main()
         elif choice == "3":
             from ml.models.principle_assessor import main as assessor_main
             assessor_main()
