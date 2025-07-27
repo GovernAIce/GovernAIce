@@ -1,0 +1,77 @@
+[
+  {
+    "principle_id": "eu_principle_2",
+    "title": "EU Principle 2",
+    "description": "Principle extracted from framework analysis",
+    "key_requirements": [
+      "Requirements analysis unavailable"
+    ],
+    "representative_text": "--- Page 1 --- OfficialJournal oftheEuropeanUnionEN Lseries 2024/1689 12.7.2024 REGULATION(EU)2024/1689OFTHEEUROPEANPARLIAMENT ANDOFTHECOUNCIL of13June2024 layingdownharmonisedrulesonartificialintelli",
+    "importance_weight": 0.14285714285714285
+  },
+  {
+    "principle_id": "eu_principle_4",
+    "title": "Protection of Scientific Research and Development",
+    "description": "This principle ensures that the regulation does not hinder scientific research and development activities. It excludes AI systems specifically developed for research from the regulatory scope to foster innovation and maintain scientific freedom. However, once these systems are placed on the market or put into service, they must comply with the regulation.",
+    "key_requirements": [
+      "Exclude AI systems developed solely for scientific research and development from the regulation.",
+      "Ensure compliance with the regulation when AI systems are commercialized or put into service.",
+      "Allow research and development activities under specific conditions without regulatory interference.",
+      "Maintain regulatory flexibility for testing and development in real-world conditions."
+    ],
+    "representative_text": "This Regulation should support innovation, respect freedom of science, and not undermine research and development activity.",
+    "importance_weight": 0.85
+  },
+  {
+    "principle_id": "eu_principle_6",
+    "title": "Data Quality and Privacy in AI Development",
+    "description": "This principle emphasizes the importance of using high-quality, trustworthy data in the development and assessment of AI systems while ensuring the protection of privacy and adherence to data governance standards. It is crucial for maintaining transparency, accountability, and ethical standards in AI, ensuring that systems are reliable and respect user privacy.",
+    "key_requirements": [
+      "Use of certified compliance services for data governance",
+      "Ensuring dataset integrity and security",
+      "Employing anonymization and encryption techniques",
+      "Institutional governance and support from competent authorities"
+    ],
+    "representative_text": "The right to privacy and protection of personal data must be guaranteed throughout the entire lifecycle of the AI system.",
+    "importance_weight": 0.9
+  },
+  {
+    "principle_id": "eu_principle_1",
+    "title": "Proportionate and Necessary Use with Safeguards",
+    "description": "This principle ensures that the deployment of real-time remote biometric identification systems in public spaces for law enforcement is justified, proportionate, and subject to rigorous oversight. It balances security needs with the protection of civil liberties, requiring thorough assessments and authorizations to prevent abuse and safeguard individual rights.",
+    "key_requirements": [
+      "Prior authorization from a judicial or independent administrative authority",
+      "Completion of a fundamental rights impact assessment",
+      "Registration in the EU database",
+      "Consideration of the nature of the situation and potential consequences"
+    ],
+    "representative_text": "The use of such systems shall comply with necessary and proportionate safeguards and conditions in relation to the use in accordance with the national law authorising the use thereof.",
+    "importance_weight": 0.9
+  },
+  {
+    "principle_id": "eu_principle_3",
+    "title": "Transparency and Explainability",
+    "description": "This principle ensures that high-risk AI systems are designed with transparency, enabling deployers to understand and interpret their operations and outputs. It mandates the provision of comprehensive instructions and detailed information, crucial for trust, accountability, and safe usage.",
+    "key_requirements": [
+      "Designing systems to ensure transparency in operation",
+      "Providing clear, complete, and accessible instructions for use",
+      "Including detailed information on system capabilities, limitations, and performance metrics",
+      "Ensuring information is understandable to enable appropriate use"
+    ],
+    "representative_text": "High-risk AI systems shall be designed and developed in such a way as to ensure that their operation is sufficiently transparent to enable deployers to interpret a system\u2019s output and use it appropriately.",
+    "importance_weight": 0.9
+  },
+  {
+    "principle_id": "eu_principle_5",
+    "title": "Regulatory Harmonization and Standardization",
+    "description": "This principle ensures the creation of uniform rules and standards across different EU sectors to promote consistency, safety, and transparency. It simplifies compliance for businesses, enhances consumer safety, and maintains trust in democratic processes.",
+    "key_requirements": [
+      "Establishing common rules and standards across EU member states",
+      "Amending and repealing outdated regulations to maintain relevance",
+      "Ensuring safety and transparency in sectors like aviation and political advertising",
+      "Setting up regulatory agencies to enforce these standards"
+    ],
+    "representative_text": "Regulation (EU) 2018/1139 of the European Parliament and of the Council of 4 July 2018 on common rules in the field of civil aviation and establishing a European Union Aviation Safety Agency.",
+    "importance_weight": 0.9
+  }
+]

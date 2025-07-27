@@ -1,0 +1,70 @@
+[
+  {
+    "principle_id": "nist_principle_5",
+    "title": "Adaptability and Continuous Improvement",
+    "description": "This principle emphasizes the importance of maintaining a governance framework that evolves with technological advancements and changing requirements. It ensures the framework remains effective and relevant by incorporating regular reviews, community input, and a structured approach to updates.",
+    "key_requirements": [
+      "Regular reviews of the framework to assess its effectiveness and relevance.",
+      "Incorporation of formal input from the AI community, particularly in scheduled reviews.",
+      "Implementation of a versioning system to track major and minor changes systematically.",
+      "Maintenance of a Version Control Table to document all changes transparently.",
+      "Frequent updates to supplementary documents like the AI RMF Playbook.",
+      "Encouragement of ongoing feedback through public comment mechanisms."
+    ],
+    "representative_text": "The Artificial Intelligence Risk Management Framework (AI RMF) is intended to be a living document. NIST will review the content and usefulness of the Framework regularly to determine if an update is appropriate; a review with formal input from the AI community is expected to take place no later than 2028.",
+    "importance_weight": 0.9
+  },
+  {
+    "principle_id": "nist_principle_2",
+    "title": "Responsible AI Risk Management",
+    "description": "Responsible AI Risk Management emphasizes the importance of identifying and mitigating risks associated with AI systems to ensure they are developed and deployed responsibly. This principle underscores the need for proper controls to prevent negative outcomes and align AI decisions with intended values and ethical considerations. It highlights the unique challenges posed by AI, such as data variability and socio-technical interactions, which require comprehensive risk management strategies.",
+    "key_requirements": [
+      "Understanding and addressing unique risks posed by AI systems",
+      "Implementing proper controls to mitigate risks and prevent negative outcomes",
+      "Aligning AI system design, development, and deployment with intended values and ethical considerations",
+      "Considering socio-technical factors and societal dynamics in risk management"
+    ],
+    "representative_text": "AI risk management is a key component of responsible development and use of AI systems.",
+    "importance_weight": 0.9
+  },
+  {
+    "principle_id": "nist_principle_4",
+    "title": "Professional Responsibility and Trustworthy AI Development",
+    "description": "This principle emphasizes the importance of professionals and organizations involved in AI systems recognizing their influence on society and the future of AI. It ensures that AI is developed and used responsibly by managing risks, promoting trustworthiness, and fostering ethical practices. The framework provides a flexible and adaptable structure to guide organizations in achieving these goals.",
+    "key_requirements": [
+      "Recognizing the influence of professionals on society and AI's future",
+      "Managing risks associated with AI development and deployment",
+      "Promoting trustworthiness in AI systems",
+      "Providing flexible and adaptable approaches for various organizations",
+      "Fostering responsible AI practices over time"
+    ],
+    "representative_text": "The goal of the AI RMF is to offer a resource to the organizations designing, developing, deploying, or using AI systems to help manage the many risks of AI and promote trustworthy and responsible development and use of AI systems.",
+    "importance_weight": 0.9
+  },
+  {
+    "principle_id": "nist_principle_1",
+    "title": "Risk Management and Mitigation",
+    "description": "This principle emphasizes the importance of effectively managing and mitigating risks associated with AI systems. It involves understanding and addressing potential negative impacts, such as threats to civil liberties, while maximizing positive outcomes. The framework advocates for a comprehensive approach that includes collaboration across sectors and continuous improvement to ensure trustworthy AI systems.",
+    "key_requirements": [
+      "Application across all AI lifecycle stages",
+      "Collaboration between public and private sectors",
+      "Documentation and effective management of risks",
+      "Iterative improvement through a roadmap"
+    ],
+    "representative_text": "AI risk management offers a path to minimize potential negative impacts of AI systems, such as threats to civil liberties and rights, while also providing opportunities to maximize positive impacts.",
+    "importance_weight": 0.9
+  },
+  {
+    "principle_id": "nist_principle_3",
+    "title": "Balanced and Holistic Approach to AI Trustworthiness",
+    "description": "This principle emphasizes that AI trustworthiness is achieved by considering multiple, interconnected characteristics such as validity, reliability, accountability, and transparency. It recognizes that optimizing one characteristic may lead to tradeoffs with others, necessitating a balanced approach that considers the context and values at play. This ensures ethical and responsible AI deployment.",
+    "key_requirements": [
+      "Interconnected Consideration of Trustworthiness Characteristics",
+      "Human Judgment in Metrics and Thresholds",
+      "Acknowledgment of Tradeoffs",
+      "Contextual Decision-Making"
+    ],
+    "representative_text": "Dealing with tradeoffs requires taking into account the decision-making context.",
+    "importance_weight": 0.9
+  }
+]

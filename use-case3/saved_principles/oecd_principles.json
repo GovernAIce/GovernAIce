@@ -1,0 +1,56 @@
+[
+  {
+    "principle_id": "oecd_principle_1",
+    "title": "Establishment of International AI Governance Standard",
+    "description": "This principle underscores the creation of the first intergovernmental standard for AI, providing a unified framework to guide countries in AI governance. It ensures consistency, cooperation, and a coordinated approach to addressing AI challenges and opportunities globally.",
+    "key_requirements": [
+      "Official status as an OECD Legal Instrument",
+      "Proper citation and reproduction guidelines",
+      "Free access with non-alteration reproduction rights",
+      "Translation guidelines with accuracy disclaimers"
+    ],
+    "representative_text": "The Recommendation on Artificial Intelligence (AI) (hereafter the 'Recommendation') \u2013 the first intergovernmental standard on AI \u2013 was adopted by the OECD Council meeting at Ministerial level...",
+    "importance_weight": 0.9
+  },
+  {
+    "principle_id": "oecd_principle_0",
+    "title": "Responsible Stewardship of Trustworthy AI",
+    "description": "This principle establishes that AI systems should be developed and used in ways that prioritize ethical considerations, safety, and accountability. It emphasizes the need for all stakeholders to adhere to complementary principles that ensure AI benefits society as a whole while respecting human rights and democratic values. The principle is foundational as it sets the ethical and operational guidelines for AI governance, ensuring trustworthiness and long-term viability in a rapidly evolving field.",
+    "key_requirements": [
+      "Promote inclusive growth, sustainable development, and well-being",
+      "Respect the rule of law, human rights, and democratic values, including fairness and privacy",
+      "Ensure transparency and explainability in AI systems",
+      "Maintain robustness, security, and safety of AI systems",
+      "Establish accountability among AI actors according to their roles"
+    ],
+    "representative_text": "Principles for responsible stewardship of trustworthy AI: the first section sets out five complementary principles relevant to all stakeholders.",
+    "importance_weight": 0.9
+  },
+  {
+    "principle_id": "oecd_principle_5",
+    "title": "Responsible AI Governance",
+    "description": "This principle emphasizes the need for comprehensive and ethical management of AI systems, ensuring transparency, safety, accountability, and environmental sustainability. It encompasses measures to prevent misuse, promote cooperation among stakeholders, and maintain integrity in AI operations.",
+    "key_requirements": [
+      "Provide clear information to users about AI systems",
+      "Prevent and address intentional or unintentional misuse",
+      "Ensure safety measures to override or decommission harmful AI",
+      "Promote cooperation among jurisdictions and stakeholders",
+      "Consider environmental sustainability in AI development and use"
+    ],
+    "representative_text": "clarifying the information AI actors should provide regarding AI systems to ensure transparency and responsible disclosure",
+    "importance_weight": 0.95
+  },
+  {
+    "principle_id": "oecd_principle_3",
+    "title": "Responsible Stewardship of Trustworthy AI",
+    "description": "This principle emphasizes the importance of managing AI systems in a manner that prioritizes societal well-being, environmental sustainability, and adherence to ethical and legal standards. It ensures that AI technologies are developed and deployed responsibly to maximize benefits and minimize harm.",
+    "key_requirements": [
+      "Promote inclusive growth and sustainable development",
+      "Advance well-being and reduce inequalities",
+      "Respect the rule of law, human rights, and democratic values",
+      "Ensure fairness and privacy in AI systems"
+    ],
+    "representative_text": "Stakeholders should proactively engage in responsible stewardship of trustworthy AI in pursuit of beneficial outcomes for people and the planet.",
+    "importance_weight": 0.9
+  }
+]

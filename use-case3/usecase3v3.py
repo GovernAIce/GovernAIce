@@ -83,6 +83,56 @@ class PrincipleBasedAIAssessment:
             "eu": ["eu", "european", "ai act", "artificial intelligence act", "brussels"]
         }
 
+        # Directory for saved principles
+        self.saved_principles_dir = "saved_principles"
+        os.makedirs(self.saved_principles_dir, exist_ok=True)
+
+    def save_extracted_principles(self, framework_name: str, principles: List[ExtractedPrinciple]):
+        """Save extracted principles to JSON file"""
+        filename = f"{self.saved_principles_dir}/{framework_name.lower()}_principles.json"
+        principles_data = []
+        for principle in principles:
+            principles_data.append({
+                "principle_id": principle.principle_id,
+                "title": principle.title,
+                "description": principle.description,
+                "key_requirements": principle.key_requirements,
+                "representative_text": principle.representative_text,
+                "importance_weight": principle.importance_weight
+            })
+        
+        with open(filename, 'w', encoding='utf-8') as f:
+            json.dump(principles_data, f, indent=2)
+        logger.info(f"Saved {len(principles)} principles for {framework_name} to {filename}")
+
+    def load_extracted_principles(self, framework_name: str) -> List[ExtractedPrinciple]:
+        """Load extracted principles from JSON file"""
+        filename = f"{self.saved_principles_dir}/{framework_name.lower()}_principles.json"
+        if not os.path.exists(filename):
+            return None
+            
+        try:
+            with open(filename, 'r', encoding='utf-8') as f:
+                principles_data = json.load(f)
+            
+            principles = []
+            for data in principles_data:
+                principles.append(ExtractedPrinciple(
+                    principle_id=data["principle_id"],
+                    title=data["title"],
+                    description=data["description"],
+                    key_requirements=data["key_requirements"],
+                    representative_text=data["representative_text"],
+                    importance_weight=data["importance_weight"]
+                ))
+            
+            logger.info(f"Loaded {len(principles)} principles for {framework_name} from {filename}")
+            return principles
+            
+        except Exception as e:
+            logger.error(f"Error loading principles for {framework_name}: {e}")
+            return None
+
     def initialize_embedding_model(self):
         """Initialize the embedding model"""
         try:
@@ -248,6 +298,10 @@ class PrincipleBasedAIAssessment:
                 extracted_principles.append(principle)
         
         logger.info(f"Extracted {len(extracted_principles)} principles from {framework_name}")
+        
+        # Save the extracted principles
+        self.save_extracted_principles(framework_name, extracted_principles)
+        
         return extracted_principles
 
     def assess_principle_compliance(self, customer_text: str, 
@@ -326,13 +380,20 @@ class PrincipleBasedAIAssessment:
 
     def analyze_framework(self, customer_text: str, 
                          framework_chunks: List[Dict], 
-                         framework_name: str) -> FrameworkAnalysis:
+                         framework_name: str,
+                         use_saved_principles: bool = False) -> FrameworkAnalysis:
         """Comprehensive framework analysis"""
         
         logger.info(f"Analyzing {framework_name} framework...")
         
-        # Extract fundamental principles
-        extracted_principles = self.extract_framework_principles(framework_chunks, framework_name)
+        # Try to load saved principles if requested
+        extracted_principles = None
+        if use_saved_principles:
+            extracted_principles = self.load_extracted_principles(framework_name)
+        
+        # Extract principles if not loaded
+        if not extracted_principles:
+            extracted_principles = self.extract_framework_principles(framework_chunks, framework_name)
         
         # Assess compliance for each principle
         principle_compliance = []
@@ -543,7 +604,8 @@ class PrincipleBasedAIAssessment:
                transform=ax.get_yaxis_transform(), ha='center', color='red', fontweight='bold')
 
     def assess_customer_document(self, customer_document_path: str, 
-                               embeddings_file: str) -> ComprehensiveAssessment:
+                               embeddings_file: str,
+                               use_saved_principles: bool = False) -> ComprehensiveAssessment:
         """Main assessment function with principle-based analysis"""
         
         logger.info("Starting principle-based AI governance assessment...")
@@ -562,13 +624,13 @@ class PrincipleBasedAIAssessment:
         
         # Analyze each framework
         logger.info("Extracting and analyzing OECD principles...")
-        oecd_analysis = self.analyze_framework(customer_text, categorized_chunks["oecd"], "OECD")
+        oecd_analysis = self.analyze_framework(customer_text, categorized_chunks["oecd"], "OECD", use_saved_principles)
         
         logger.info("Extracting and analyzing NIST principles...")
-        nist_analysis = self.analyze_framework(customer_text, categorized_chunks["nist"], "NIST")
+        nist_analysis = self.analyze_framework(customer_text, categorized_chunks["nist"], "NIST", use_saved_principles)
         
         logger.info("Extracting and analyzing EU principles...")
-        eu_analysis = self.analyze_framework(customer_text, categorized_chunks["eu"], "EU")
+        eu_analysis = self.analyze_framework(customer_text, categorized_chunks["eu"], "EU", use_saved_principles)
         
         # Generate cross-framework insights
         logger.info("Generating cross-framework strategic insights...")
@@ -815,6 +877,10 @@ def main():
         print(f"Error: Embeddings file not found at {embeddings_file}")
         return
     
+    # Ask about using saved principles
+    use_saved = input("Load previously extracted principles? (y/n): ").strip().lower()
+    use_saved_principles = use_saved == 'y'
+    
     try:
         print("\nInitializing Principle-Based Assessment Tool...")
         print("🧠 Extracting fundamental principles from each framework...")
@@ -828,7 +894,11 @@ def main():
         print("📊 Phase 3: Extracting principles from EU framework...")
         print("🔍 Phase 4: Assessing customer document against each principle...")
         
-        assessment = assessor.assess_customer_document(customer_doc_path, embeddings_file)
+        assessment = assessor.assess_customer_document(
+            customer_doc_path, 
+            embeddings_file,
+            use_saved_principles=use_saved_principles
+        )
         
         # Display results
         print("\n" + "="*80)
