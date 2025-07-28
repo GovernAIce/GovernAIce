@@ -99,6 +99,53 @@ def get_country_policies():
             
             logger.info("Populated sample country data")
         
+        policies = {}
+        for country in mongo_db.list_collection_names():
+            # Only fetch the 'title' field instead of entire documents
+            country_policies = mongo_db[country].find({}, {'title': 1, '_id': 0})
+            policies[country] = [doc.get('title', '') for doc in country_policies if doc.get('title')]
+        
+        # Update cache
+        _country_policies_cache = policies
+        _cache_timestamp = datetime.now()
+        return policies
+    finally:
+        mongo_client.close()
+
+def get_country_policies_list():
+    global _country_policies_cache, _cache_timestamp
+    
+    # Check if cache is still valid
+    if (_country_policies_cache is not None and 
+        _cache_timestamp is not None and 
+        (datetime.now() - _cache_timestamp).seconds < CACHE_DURATION):
+        return _country_policies_cache
+    
+    mongo_client = get_mongo_client()
+    try:
+        mongo_db = mongo_client['Training']
+        
+        # Check if we need to populate sample data
+        collections = mongo_db.list_collection_names()
+        if not collections:
+            # Populate with sample data for testing
+            sample_countries = [
+                "Canada", "UAE", "Taiwan", "Saudi Arabia", "Australia", 
+                "Singapore", "South Korea", "Europe", "Brazil", "India", 
+                "USA", "Japan", "UK", "China", "EU"
+            ]
+            
+            for country in sample_countries:
+                # Create a sample document for each country
+                sample_doc = {
+                    "title": f"Sample Policy for {country}",
+                    "source": f"https://example.com/{country.lower().replace(' ', '-')}",
+                    "text": f"This is a sample policy document for {country}."
+                }
+                mongo_db[country].insert_one(sample_doc)
+            
+            logger.info("Populated sample country data")
+        
         # policies = {}
         # for country in mongo_db.list_collection_names():
         #     # Only fetch the 'title' field instead of entire documents
@@ -1462,7 +1509,7 @@ def get_relevant_policies_and_assessment():
             return response.text
 
         # Get policies (assuming get_country_policies is defined elsewhere)
-        country_policies = get_country_policies()
+        country_policies = get_country_policies_list()
         relevant_policies = []
 
         for country in countries:
