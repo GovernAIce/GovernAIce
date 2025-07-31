@@ -4,6 +4,8 @@
 # MongoDB is used for data storage. The backend is model-agnostic and can use OpenAI (default), Gemini, or future Llama/RAG models for document analysis.
 # Model selection is handled via the 'model' argument in analyze_document and llm_utils.py.
 # TODO: Add authentication to protect endpoints in the future.
+import os
+os.environ["TRANSFORMERS_NO_META_DEVICE"] = "1"
 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -24,6 +26,8 @@ from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 # Import model-agnostic LLM interface
 from llm_utils import analyze_policy
+
+
 
 
 # Initialize Flask app and load environment variables

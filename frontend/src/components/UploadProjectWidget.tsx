@@ -267,4 +267,4 @@ const UploadProjectWidget: React.FC<UploadProjectWidgetProps> = ({ onAnalysisCom
   );
 };
 
-export default UploadProjectWidget; 
+export default UploadProjectWidget;
