@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import Card from './Card';
 import { useCountryContext } from '../contexts/CountryContext';
-import { policyAPI } from '../api';
 
 interface Policy {
   title: string;
@@ -9,6 +9,7 @@ interface Policy {
   text?: string;
   country?: string;
   domain?: string;
+  regulator?: string;
 }
 
 interface ComplianceAnalysisWidgetProps {
@@ -16,6 +17,7 @@ interface ComplianceAnalysisWidgetProps {
   searchQuery?: string;
   uploadedFile: File | null;
   policies?: Policy[];
+  userInput?: string;
 }
 
 const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
@@ -23,6 +25,7 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
   searchQuery,
   uploadedFile,
   policies: externalPolicies,
+  userInput = '',
 }) => {
   const { selectedCountries, hasCountries } = useCountryContext();
   const [policies, setPolicies] = useState<Policy[]>(externalPolicies || []);
@@ -31,9 +34,6 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
   const [lastSearch, setLastSearch] = useState<string>('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFullText, setShowFullText] = useState(false);
-  const [fullPolicyText, setFullPolicyText] = useState<string | null>(null); // Store full policy text
-  const [fullPolicyLoading, setFullPolicyLoading] = useState(false); // Loading state for full policy
-  const [fullPolicyError, setFullPolicyError] = useState<string | null>(null); // Error state for full policy
 
   const generateSearchQuery = () => {
     let query = searchQuery || '';
@@ -54,6 +54,7 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
         'Saudi Arabia': 'data protection privacy consumer',
         UAE: 'data protection privacy consumer',
         Taiwan: 'privacy data protection consumer',
+        Germany: 'GDPR AI regulation data protection',
       };
       return keywords[country as keyof typeof keywords] || 'privacy data protection';
     }).join(' ');
@@ -95,61 +96,36 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
     }
 
     const currentSearch = generateSearchQuery();
-    const searchKey = `${selectedCountries.join(',')}-${currentSearch}-${uploadedFile?.name}`;
+    const searchKey = `${selectedCountries.join(',')}-${currentSearch}-${uploadedFile?.name}-${userInput}`;
     if (searchKey === lastSearch) return;
 
     setLoading(true);
     setError(null);
     setLastSearch(searchKey);
 
-    policyAPI
-      .use_case_one(selectedCountries, domain, currentSearch)
+    axios
+      .post('http://localhost:5001/api/policies/relevant', {
+        countries: selectedCountries,
+        domain,
+        search: currentSearch,
+        user_input: userInput,
+      })
       .then((response) => {
         const data = response.data;
         setPolicies(data.policies || []);
         setCurrentIndex(0);
         setShowFullText(false);
-        setFullPolicyText(null); // Reset full policy text
-        setFullPolicyError(null); // Reset full policy error
         setLoading(false);
       })
       .catch(() => {
         setError('Failed to fetch relevant policies. Please try again.');
         setLoading(false);
       });
-  }, [selectedCountries, domain, searchQuery, uploadedFile, hasCountries, externalPolicies]);
-
-  // Fetch full policy document
-  const fetchFullPolicy = async () => {
-    if (!policies[currentIndex]?.country || !policies[currentIndex]?.title) return;
-
-    setFullPolicyLoading(true);
-    setFullPolicyError(null);
-    setFullPolicyText(null);
-
-    try {
-      const response = await policyAPI.get_policy_document(
-        policies[currentIndex].title, // Uses parent_title from /api/policies/relevant
-        policies[currentIndex].country!
-      );
-      setFullPolicyText(response.data.text || 'No content available.');
-    } catch (err) {
-      setFullPolicyError('Failed to fetch full policy document. Please try again.');
-    } finally {
-      setFullPolicyLoading(false);
-    }
-  };
+  }, [selectedCountries, domain, searchQuery, uploadedFile, userInput, hasCountries, externalPolicies]);
 
   // Handle View Full Policy button click
   const handleViewFullPolicy = () => {
-    if (showFullText) {
-      setShowFullText(false);
-      setFullPolicyText(null); // Clear full policy text when hiding
-      setFullPolicyError(null); // Clear errors
-    } else {
-      setShowFullText(true);
-      fetchFullPolicy(); // Fetch full policy when showing
-    }
+    setShowFullText(!showFullText);
   };
 
   const statusMessage = getStatusMessage();
@@ -205,20 +181,13 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
               {policies[currentIndex].title}
             </div>
             <div className="text-gray-700 text-sm mb-2 whitespace-pre-line rubik-regular">
-              {showFullText ? (
-                fullPolicyLoading ? (
-                  <div className="flex items-center justify-center py-4">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                    <span className="ml-2 text-gray-600">Loading full policy document...</span>
-                  </div>
-                ) : fullPolicyError ? (
-                  <div className="text-red-500 text-sm rubik-regular">❌ {fullPolicyError}</div>
-                ) : (
-                  fullPolicyText || 'No content available.'
-                )
-              ) : (
-                (policies[currentIndex].text?.slice(0, 300) || 'No content available.') + '...'
-              )}
+              {showFullText
+                ? policies[currentIndex].text && policies[currentIndex].text !== `title: "${policies[currentIndex].title}"`
+                  ? policies[currentIndex].text
+                  : 'Full policy content not available.'
+                : (policies[currentIndex].text && policies[currentIndex].text !== `title: "${policies[currentIndex].title}"`
+                    ? policies[currentIndex].text.slice(0, 300)
+                    : 'No content available.') + (policies[currentIndex].text && policies[currentIndex].text.length > 300 ? '...' : '')}
             </div>
 
             {/* View Full Policy Button */}
@@ -226,7 +195,6 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
               <button
                 onClick={handleViewFullPolicy}
                 className="bg-gradient-to-r from-[#2196f3] to-[#21cbf3] text-white px-4 py-2 rounded-full text-sm font-medium shadow hover:opacity-90 rubik-medium"
-                disabled={fullPolicyLoading}
               >
                 {showFullText ? 'Hide Full Policy' : 'View Full Policy Document'}
               </button>
@@ -239,8 +207,6 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
                 onClick={() => {
                   setCurrentIndex((prev) => prev - 1);
                   setShowFullText(false);
-                  setFullPolicyText(null); // Reset full policy text
-                  setFullPolicyError(null); // Reset full policy error
                 }}
                 className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded disabled:opacity-50 rubik-medium"
               >
@@ -254,8 +220,6 @@ const ComplianceAnalysisWidget: React.FC<ComplianceAnalysisWidgetProps> = ({
                 onClick={() => {
                   setCurrentIndex((prev) => prev + 1);
                   setShowFullText(false);
-                  setFullPolicyText(null); // Reset full policy text
-                  setFullPolicyError(null); // Reset full policy error
                 }}
                 className="px-3 py-1 text-sm bg-blue-100 text-blue-700 rounded disabled:opacity-50 rubik-medium"
               >
