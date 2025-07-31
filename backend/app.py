@@ -496,47 +496,118 @@ def get_policies():
 # These endpoints handle document upload, analysis, listing, and search.
 # The analysis endpoints use the model-agnostic analyze_document function, which defaults to OpenAI but can be extended.
 
+# --- NEW POLICY FETCH FUNCTION ---
+def fetch_relevant_policies(countries, domain='', search=''):
+    """
+    Fetch relevant policies from the Training database based on countries, domain, and search query.
+    Returns a list of policy objects with title, source, regulator, country, domain, and text.
+    Limited to the top 5 most relevant policies based on relevance scoring.
+    """
+    try:
+        country_policies = get_country_policies_list()
+        relevant_policies = []
+        mongo_client = get_mongo_client()
+        try:
+            training_db = mongo_client['Training']
+            for country in countries:
+                if country in country_policies:
+                    policies = country_policies[country]
+                    for policy in policies:
+                        document = training_db[country].find_one({'title': policy['title']})
+                        policy_text = document.get('text', '') if document else ''
+                        relevance_score = 10  # Base score for country match
+                        if domain and domain.lower() in policy['title'].lower():
+                            relevance_score += 5
+                        if search:
+                            query_terms = search.lower().split()
+                            for term in query_terms:
+                                if term in policy['title'].lower():
+                                    relevance_score += 3
+                                if term in country.lower():
+                                    relevance_score += 2
+                        policy_obj = {
+                            'title': policy['title'],
+                            'source': policy['source'],
+                            'regulator': policy['metadata'].get('regulator', 'N/A'),
+                            'country': country,
+                            'domain': domain or 'general',
+                            'text': policy_text,
+                            'relevance_score': relevance_score
+                        }
+                        relevant_policies.append(policy_obj)
+            # Sort by relevance score and limit to top 5
+            relevant_policies.sort(key=lambda x: x['relevance_score'], reverse=True)
+            relevant_policies = relevant_policies[:5]
+            # Remove relevance_score from final output
+            for policy in relevant_policies:
+                policy.pop('relevance_score', None)
+            return relevant_policies
+        finally:
+            mongo_client.close()
+    except Exception as e:
+        logger.error(f"Error fetching relevant policies: {str(e)}")
+        return []
+
+# --- DOCUMENT ENDPOINTS ---
 @app.route('/upload-and-analyze/', methods=['POST'])
 def document_upload():
     """
     Upload a file and analyze it for compliance.
-    Expects multipart form-data with 'file', 'countries' (JSON list), and optional 'policies' (JSON list).
-    Returns: doc_id, filename, and analysis insights.
-    Uses the default LLM model (OpenAI) for analysis.
+    Expects multipart form-data with 'file', 'countries' (JSON list), 'domain', and 'search'.
+    Policies are fetched using fetch_relevant_policies.
+    Returns: doc_id, filename, document content, and compliance insights.
     """
     if 'file' not in request.files or 'countries' not in request.form:
         return jsonify({'error': 'Missing file or countries'}), 400
     file = request.files['file']
     try:
         countries = json.loads(request.form['countries'])
-        policies = json.loads(request.form.get('policies', '[]'))
-        if not isinstance(countries, list) or not isinstance(policies, list):
-            return jsonify({'error': 'Countries and policies must be lists'}), 400
+        domain = request.form.get('domain', '')
+        search_query = request.form.get('search', '')
+        if not isinstance(countries, list):
+            return jsonify({'error': 'Countries must be a list'}), 400
     except json.JSONDecodeError:
-        return jsonify({'error': 'Invalid countries or policies format'}), 400
+        return jsonify({'error': 'Invalid countries format'}), 400
     if not file:
         return jsonify({'error': 'No file uploaded'}), 400
-    # Validate countries and policies
-    valid_countries = set(get_country_policies().keys())
-    if not all(c in valid_countries for c in countries):
-        return jsonify({'error': 'Invalid country specified'}), 400
-    if policies:
-        for policy in policies:
-            if not any(policy in get_country_policies().get(c, []) for c in countries):
-                return jsonify({'error': f'Policy {policy} not valid for specified countries'}), 400
+
+    # Extract text from the uploaded file
     text = extract_text_from_pdf(file)
     doc_id = str(uuid.uuid4())
     filename = secure_filename(file.filename)
+
+    # Validate countries
+    valid_countries = set(get_country_policies_list().keys())
+    if not all(c in valid_countries for c in countries):
+        return jsonify({'error': 'Invalid country specified'}), 400
+
+    # Fetch relevant policies
+    policies = [policy['title'] for policy in fetch_relevant_policies(countries, domain, search_query)]
+
+    # Store document and perform compliance analysis
     mongo_client = get_mongo_client()
     try:
         mongo_db = mongo_client['regulatory_mongo']
         document = {
             'doc_id': doc_id,
             'content': text,
-            'compliance_scores': {}
+            'compliance_scores': {},
+            'countries': countries,
+            'domain': domain,
+            'search_query': search_query,
+            'filename': filename,
+            'timestamp': datetime.now().isoformat()
         }
         mongo_db.documents.insert_one(document)
-        insights = analyze_document(text, countries, policies or [p for c in countries for p in get_country_policies().get(c, [])], doc_id)
+
+        # Perform compliance analysis
+        insights = analyze_document(
+            text=text,
+            countries=countries,
+            policies=policies,
+            doc_id=doc_id
+        )
+
         # Update document with compliance details
         for insight in insights:
             policy = insight.get('policy')
@@ -551,12 +622,16 @@ def document_upload():
                     }
                 }}
             )
+
+        # Prepare response
         response_data = {
             'doc_id': doc_id,
             'filename': filename,
-            'insights': insights
+            'insights': insights,
+            'content': text
         }
         return jsonify(response_data), 201
+
     except Exception as e:
         logger.error(f"Error in document upload: {str(e)}")
         return jsonify({'error': str(e)}), 500
@@ -1440,6 +1515,7 @@ def get_relevant_policies_and_assessment():
     """
     Get relevant policies with full text and perform a risk assessment based on user input and selected countries.
     Expects JSON body with 'countries' (list), 'domain' (optional), 'search' (optional), and 'user_input' (for risk assessment).
+    Uses fetch_relevant_policies to retrieve policies.
     Returns: Array of relevant policy objects (limited to 5 most relevant) including full text and a risk assessment.
     """
     try:
@@ -1466,7 +1542,6 @@ def get_relevant_policies_and_assessment():
 
         client = get_mongo_client()
         collection = client[DATABASE_NAME][COLLECTION_NAME]
-        training_db = client['Training']
 
         # Gemini API setup
         GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
@@ -1508,47 +1583,8 @@ def get_relevant_policies_and_assessment():
             response = model.generate_content(prompt)
             return response.text
 
-        # Get policies (assuming get_country_policies is defined elsewhere)
-        country_policies = get_country_policies_list()
-        relevant_policies = []
-
-        for country in countries:
-            if country in country_policies:
-                policies = country_policies[country]
-                for policy in policies:
-                    # Fetch full document text from Training database
-                    document = training_db[country].find_one({'title': policy['title']})
-                    policy_text = document.get('text', '') if document else ''
-
-                    relevance_score = 10  # Base score for country match
-                    if domain and domain.lower() in policy['title'].lower():
-                        relevance_score += 5
-                    if search_query:
-                        query_terms = search_query.lower().split()
-                        for term in query_terms:
-                            if term in policy['title'].lower():
-                                relevance_score += 3
-                            if term in country.lower():
-                                relevance_score += 2
-
-                    policy_obj = {
-                        'title': policy['title'],
-                        'source': policy['source'],
-                        'regulator': policy['metadata'].get('regulator', 'N/A'),
-                        'country': country,
-                        'domain': domain or 'general',
-                        'text': policy_text,
-                        'relevance_score': relevance_score
-                    }
-                    relevant_policies.append(policy_obj)
-
-        # Sort and limit to top 5 policies
-        relevant_policies.sort(key=lambda x: x['relevance_score'], reverse=True)
-        relevant_policies = relevant_policies[:5]
-
-        # Remove relevance_score from response
-        for policy in relevant_policies:
-            policy.pop('relevance_score', None)
+        # Fetch relevant policies
+        relevant_policies = fetch_relevant_policies(countries, domain, search_query)
 
         # Perform risk assessment for each country
         risk_assessments = {}
@@ -1561,14 +1597,12 @@ def get_relevant_policies_and_assessment():
             'total_count': len(relevant_policies),
             'countries_searched': countries,
             'domain': domain,
-            'search_query': search_query,
-            'max_results': 5
+            'search_query': search_query
         }), 200
 
     except Exception as e:
         logger.error(f"Error processing request: {str(e)}")
         return jsonify({'error': str(e)}), 500
-    
 
 
 # app.py  (or wherever you call app.run)
