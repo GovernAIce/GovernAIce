@@ -67,45 +67,16 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:5000/upload-and-analyze/",
+							"raw": "http://localhost:5000/api/upload-analyze-policies/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
 							"port": "5000",
 							"path": [
-								"upload-and-analyze",
+								"api",
+								"upload-analyze-policies",
 								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "search",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:5001/documents/search/?query=AI Chatbot",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5001",
-							"path": [
-								"documents",
-								"search",
-								""
-							],
-							"query": [
-								{
-									"key": "query",
-									"value": "AI Chatbot"
-								}
 							]
 						}
 					},
@@ -135,35 +106,6 @@
 					"response": []
 				},
 				{
-					"name": "view specific doc using doc_id",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:5001/documents/?doc_id=2d75af5e-1704-4d3a-a0e1-88abf37c32e3",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5001",
-							"path": [
-								"documents",
-								""
-							],
-							"query": [
-								{
-									"key": "doc_id",
-									"value": "2d75af5e-1704-4d3a-a0e1-88abf37c32e3"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "product-info-upload",
 					"request": {
 						"method": "POST",
@@ -187,6 +129,39 @@
 							"path": [
 								"product-info-upload",
 								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "view policy doc",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/view-policy/?title=Data Governance Act (DGA)&country=EU",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"view-policy",
+								""
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "Data Governance Act (DGA)"
+								},
+								{
+									"key": "country",
+									"value": "EU"
+								}
 							]
 						}
 					},
@@ -583,44 +558,6 @@
 								"policy-liaison",
 								"contacts",
 								""
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Relevant policy api",
-			"item": [
-				{
-					"name": "relevant policy",
-					"request": {
-						"auth": {
-							"type": "noauth"
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"countries\": [\"USA\", \"EU\"],\r\n  \"domain\": \"AI\",\r\n  \"search\": \"data privacy\",\r\n  \"user_input\": \"This is a healthcare AI system for patient diagnosi s.\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:5000/api/policies/relevant",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"policies",
-								"relevant"
 							]
 						}
 					},
