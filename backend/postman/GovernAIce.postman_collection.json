@@ -1,265 +1,632 @@
 {
 	"info": {
-		"_postman_id": "ffa01280-c6c9-43e3-ac6d-381db47f52ce",
+		"_postman_id": "03b1ae55-779b-4640-aead-90f1617926bc",
 		"name": "GovernAIce",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "41012335"
 	},
 	"item": [
 		{
-			"name": "upload-and-analyze",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "countries",
-							"value": "[\"EU\",\"Canada\"]",
-							"type": "text"
+			"name": "Use Case 1",
+			"item": [
+				{
+					"name": "delete document",
+					"request": {
+						"auth": {
+							"type": "noauth"
 						},
-						{
-							"key": "file",
-							"type": "file",
-							"src": "postman-cloud:///1f05d95d-c185-4da0-8361-1c730157a97a"
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5001/upload-and-analyze/?doc_id=921769f5-8e77-446e-87e6-a73f75fd5573",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"upload-and-analyze",
+								""
+							],
+							"query": [
+								{
+									"key": "doc_id",
+									"value": "921769f5-8e77-446e-87e6-a73f75fd5573"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload-and-analyze",
+					"request": {
+						"auth": {
+							"type": "noauth"
 						},
-						{
-							"key": "policies",
-							"value": "[\"General Data Protection Regulation\", \"Canada Artificial Intelligence and Data Act (AIDA)-proposed\"]",
-							"type": "text"
-						}
-					]
-				},
-				"url": {
-					"raw": "http://localhost:5001/upload-and-analyze/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"upload-and-analyze",
-						""
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "upload-regulatory-compliance use case 3",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "formdata",
-					"formdata": [
-						{
-							"key": "countries",
-							"value": "[\"EU\",\"Canada\"]",
-							"type": "text"
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "countries",
+									"value": "[\"EU\",\"Canada\"]",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "postman-cloud:///1f05d95d-c185-4da0-8361-1c730157a97a"
+								},
+								{
+									"key": "domain",
+									"value": "\"AI\"",
+									"type": "text"
+								}
+							]
 						},
-						{
-							"key": "file",
-							"type": "file",
-							"src": "postman-cloud:///1f05d95d-c185-4da0-8361-1c730157a97a"
+						"url": {
+							"raw": "http://localhost:5000/upload-and-analyze/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"upload-and-analyze",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search",
+					"request": {
+						"auth": {
+							"type": "noauth"
 						},
-						{
-							"key": "policies",
-							"value": "[\"General Data Protection Regulation\", \"Canada Artificial Intelligence and Data Act (AIDA)-proposed\"]",
-							"type": "text"
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5001/documents/search/?query=AI Chatbot",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"documents",
+								"search",
+								""
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "AI Chatbot"
+								}
+							]
 						}
-					]
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://localhost:5001/upload-regulatory-compliance/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"upload-regulatory-compliance",
-						""
-					]
+				{
+					"name": "view documents",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5001/documents/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"documents",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "view specific doc using doc_id",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5001/documents/?doc_id=2d75af5e-1704-4d3a-a0e1-88abf37c32e3",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"documents",
+								""
+							],
+							"query": [
+								{
+									"key": "doc_id",
+									"value": "2d75af5e-1704-4d3a-a0e1-88abf37c32e3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "product-info-upload",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"product_info\": \"The AI Chatbot System for Customer Service is a sophisticated artificial intelligence solution designed to automate and enhance customer support operations. Built with advanced natural language processing (NLP), machine learning, and secure data-handling capabilities, this system can engage in real-time conversations with users, resolve queries, and assist with account-related tasks — all while prioritizing the protection and confidentiality of personal data.\",\r\n  \"countries\": [\"EU\", \"Canada\"],\r\n  \"policies\": [\"General Data Protection Regulation\", \"Canada Artificial Intelligence and Data Act (AIDA)-proposed\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/product-info-upload/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"product-info-upload",
+								""
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "view documents",
-			"request": {
-				"auth": {
-					"type": "noauth"
+			"name": "Use Case 3",
+			"item": [
+				{
+					"name": "upload-regulatory-compliance use case 3",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "countries",
+									"value": "[\"EU\",\"Canada\"]",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file",
+									"src": "postman-cloud:///1f05d95d-c185-4da0-8361-1c730157a97a"
+								},
+								{
+									"key": "policies",
+									"value": "[\"General Data Protection Regulation\", \"Canada Artificial Intelligence and Data Act (AIDA)-proposed\"]",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5001/upload-regulatory-compliance/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"upload-regulatory-compliance",
+								""
+							]
+						}
+					},
+					"response": []
 				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:5001/documents/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"documents",
-						""
-					]
+				{
+					"name": "analyze-regulatory-product-info use case 3",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"product_info\": \"The AI Chatbot System for Customer Service is a sophisticated artificial intelligence solution designed to automate and enhance customer support operations. Built with advanced natural language processing (NLP), machine learning, and secure data-handling capabilities, this system can engage in real-time conversations with users, resolve queries, and assist with account-related tasks — all while prioritizing the protection and confidentiality of personal data.\",\r\n  \"countries\": [\"EU\", \"Canada\"],\r\n  \"policies\": [\"General Data Protection Regulation\", \"Canada Artificial Intelligence and Data Act (AIDA)-proposed\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/analyze-regulatory-product-info/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"analyze-regulatory-product-info",
+								""
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "view specific doc using doc_id",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:5001/documents/?doc_id=2d75af5e-1704-4d3a-a0e1-88abf37c32e3",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"documents",
-						""
-					],
-					"query": [
-						{
-							"key": "doc_id",
-							"value": "2d75af5e-1704-4d3a-a0e1-88abf37c32e3"
+			"name": "Use Case 2",
+			"item": [
+				{
+					"name": "policy-opportunities",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"project_description\": \"An autonomous vehicle project focused on developing self-driving technology for urban environments\",\r\n  \"countries\": [\"Canada\", \"USA\"],\r\n  \"domains\": [\"Autonomous Vehicles\", \"AI\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/policy-opportunities/analyze/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"policy-opportunities",
+								"analyze",
+								""
+							]
 						}
-					]
+					},
+					"response": []
+				},
+				{
+					"name": "policy-opportunities upload",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "postman-cloud:///1f06237a-d7e6-4330-a24c-2594c846a866"
+								},
+								{
+									"key": "countries",
+									"value": "[\"Canada\", \"USA\"]",
+									"type": "text"
+								},
+								{
+									"key": "domains",
+									"value": "[\"AI\", \"Government Subsidies\"]",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/policy-opportunities/upload/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"policy-opportunities",
+								"upload",
+								""
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "search",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:5001/documents/search/?query=AI Chatbot",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"documents",
-						"search",
-						""
-					],
-					"query": [
-						{
-							"key": "query",
-							"value": "AI Chatbot"
+			"name": "Use Case 4",
+			"item": [
+				{
+					"name": "regulatory report generation by product upload",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "postman-cloud:///1f06237a-d7e6-4330-a24c-2594c846a866"
+								},
+								{
+									"key": "countries",
+									"value": "[\"Canada\", \"USA\"]",
+									"type": "text"
+								},
+								{
+									"key": "domains",
+									"value": " [\"Healthcare\", \"Technology\"]",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/regulatory-reports/generate/upload/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"regulatory-reports",
+								"generate",
+								"upload",
+								""
+							]
 						}
-					]
+					},
+					"response": []
+				},
+				{
+					"name": "regulatory report generation by product text",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"project_description\": \"This is an HR platform that collects employee biometric data...\",\r\n  \"countries\": [\"USA\", \"Canada\"],\r\n  \"domains\": [\"Healthcare\",\"AI\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/regulatory-reports/generate/text/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"regulatory-reports",
+								"generate",
+								"text",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "saved reports",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/regulatory-reports/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"regulatory-reports",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search report",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5000/regulatory-reports/search/?country=USA&domain=Healthcare",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"regulatory-reports",
+								"search",
+								""
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "HR",
+									"disabled": true
+								},
+								{
+									"key": "country",
+									"value": "USA"
+								},
+								{
+									"key": "domain",
+									"value": "Healthcare"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update report",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"project_description\": \"An autonomous vehicle project focused on developing self-driving technology for urban environments..\",\r\n  \"countries\": [\"USA\", \"Japan\"],\r\n  \"domains\": [\"AI\",\"Autonomous Vehicles\",\"Transportation\"]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/regulatory-reports/3e1ec503-d0fc-45ce-8915-73a530051f51/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"regulatory-reports",
+								"3e1ec503-d0fc-45ce-8915-73a530051f51",
+								""
+							]
+						}
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "delete document",
-			"request": {
-				"auth": {
-					"type": "noauth"
-				},
-				"method": "DELETE",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:5001/upload-and-analyze/?doc_id=921769f5-8e77-446e-87e6-a73f75fd5573",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"upload-and-analyze",
-						""
-					],
-					"query": [
-						{
-							"key": "doc_id",
-							"value": "921769f5-8e77-446e-87e6-a73f75fd5573"
+			"name": "Use Case 5",
+			"item": [
+				{
+					"name": "Policy Feedback",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"feedback_text\": \"We believe the policy could benefit from stronger data protection standards.\",\r\n  \"policy_name\": \"Data Privacy Regulation Draft\",\r\n  \"country\": \"USA\",\r\n  \"company_philosophy\": \"Our company is committed to user privacy and compliance with international data laws.\",\r\n  \"domain\": \"Cybersecurity\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/policy-feedback/submit/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"policy-feedback",
+								"submit",
+								""
+							]
 						}
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "product-info-upload",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"product_info\": \"The AI Chatbot System for Customer Service is a sophisticated artificial intelligence solution designed to automate and enhance customer support operations. Built with advanced natural language processing (NLP), machine learning, and secure data-handling capabilities, this system can engage in real-time conversations with users, resolve queries, and assist with account-related tasks — all while prioritizing the protection and confidentiality of personal data.\",\r\n  \"countries\": [\"EU\", \"Canada\"],\r\n  \"policies\": [\"General Data Protection Regulation\", \"Canada Artificial Intelligence and Data Act (AIDA)-proposed\"]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Use Case 6",
+			"item": [
+				{
+					"name": "Policy Liaison Contacts",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"countries\": [\"USA\", \"Japan\"],\r\n  \"domain\": \"Labor Laws\",\r\n  \"search\": \"employment standards\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5001/policy-liaison/contacts/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5001",
+							"path": [
+								"policy-liaison",
+								"contacts",
+								""
+							]
 						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:5001/product-info-upload/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"product-info-upload",
-						""
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "analyze-regulatory-product-info use case 3",
-			"request": {
-				"method": "POST",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"product_info\": \"The AI Chatbot System for Customer Service is a sophisticated artificial intelligence solution designed to automate and enhance customer support operations. Built with advanced natural language processing (NLP), machine learning, and secure data-handling capabilities, this system can engage in real-time conversations with users, resolve queries, and assist with account-related tasks — all while prioritizing the protection and confidentiality of personal data.\",\r\n  \"countries\": [\"EU\", \"Canada\"],\r\n  \"policies\": [\"General Data Protection Regulation\", \"Canada Artificial Intelligence and Data Act (AIDA)-proposed\"]\r\n}",
-					"options": {
-						"raw": {
-							"language": "json"
+			"name": "Relevant policy api",
+			"item": [
+				{
+					"name": "relevant policy",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"countries\": [\"USA\", \"EU\"],\r\n  \"domain\": \"AI\",\r\n  \"search\": \"data privacy\",\r\n  \"user_input\": \"This is a healthcare AI system for patient diagnosi s.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/policies/relevant",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"policies",
+								"relevant"
+							]
 						}
-					}
-				},
-				"url": {
-					"raw": "http://localhost:5001/analyze-regulatory-product-info/",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "5001",
-					"path": [
-						"analyze-regulatory-product-info",
-						""
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		}
 	]
 }
