@@ -17,8 +17,6 @@ collection = db["listingsAndReviews"]
 # Need to change - chunk has metadata as well (e.g. _id, country, title, etc) 
 documents = collection.find(filter, {'_id': 1, 'summary': 1})
 
-
-
 # Specify your Voyage API key and embedding model
 os.environ["VOYAGE_API_KEY"] = "<api-key>"
 model = "voyage-3-large"
