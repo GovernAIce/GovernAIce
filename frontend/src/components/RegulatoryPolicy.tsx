@@ -1,85 +1,133 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Card from './Card';
 
-interface ChartItem {
-  label: string;
-  values: { [year: string]: number };
+interface Policy {
+  title: string;
+  source?: string;
+  country?: string;
+  domain?: string;
+  regulator?: string;
 }
 
-const yearColors: { [key: string]: string } = {
-  2020: '#A78BFA',
-  2021: '#F87171',
-  2022: '#38BDF8',
-  2023: '#FACC15',
-  2024: '#60A5FA',
-  2025: '#34D399',
-};
+interface RegulatoryPolicyProps {
+  policies?: Policy[];
+  uploadedFile: File | null;
+}
 
-const maxHeight = 100;
+const RegulatoryPolicy: React.FC<RegulatoryPolicyProps> = ({ policies = [], uploadedFile }) => {
+  // Get top 5 policies by title
+  const topPolicies = policies.slice(0, 5);
 
-const RegulatoryPolicy = () => {
-  const [chartData, setChartData] = useState<ChartItem[]>([]);
+  if (!uploadedFile) {
+    return (
+      <Card className="bg-white rounded-2xl shadow-lg p-5 h-full custom-border p-2">
+        <div className="flex flex-col h-full gap-4">
+          <h3 className="text-lg text-[#1975d4] font-bold">Top 5 Relevant Policies</h3>
+          
+          <div className="space-y-2 flex-1">
+            {/* Placeholder policy items */}
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div 
+                key={index} 
+                className="bg-gray-50 rounded-lg p-2 border border-dashed border-gray-300"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-medium text-gray-400 flex-shrink-0">
+                        #{index + 1}
+                      </span>
+                      <p className="text-xs text-gray-400 italic">
+                        Upload document to see policies
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <img
+          src="/icons/info.svg"
+          alt="Info"
+          className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
+        />
+      </Card>
+    );
+  }
 
-  useEffect(() => {
-    fetch('http://localhost:5001/api/relevant-policies')  // adjust port if needed
-      .then(res => res.json())
-      .then(data => setChartData(data))
-      .catch(err => console.error("Failed to fetch policy data", err));
-  }, []);
-
-  const barWidth = 10;
-  const barGap = 6;
-  const groupGap = 40;
-
-  const years = chartData.length > 0 ? Object.keys(chartData[0].values) : [];
+  if (topPolicies.length === 0) {
+    return (
+      <Card className="bg-white rounded-2xl shadow-lg p-5 h-full custom-border p-2">
+        <div className="flex flex-col h-full gap-4">
+          <h3 className="text-lg text-[#1975d4] font-bold">Top 5 Relevant Policies</h3>
+          
+          <div className="space-y-2 flex-1">
+            {/* Empty state policy items */}
+            {Array.from({ length: 5 }).map((_, index) => (
+              <div 
+                key={index} 
+                className="bg-gray-50 rounded-lg p-2 border border-dashed border-gray-300"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-medium text-gray-400 flex-shrink-0">
+                        #{index + 1}
+                      </span>
+                      <p className="text-xs text-gray-400 italic">
+                        No policies found
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <img
+          src="/icons/info.svg"
+          alt="Info"
+          className="absolute top-2 right-2 w-4 h-4 cursor-pointer"
+        />
+      </Card>
+    );
+  }
 
   return (
-    <Card className="p-6 rounded-2xl border border-gray-200 shadow-md w-full max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold text-blue-600 mb-1">Relevant Policies & Regulators</h2>
-      <p className="text-sm text-gray-500 mb-4">(pop up relevant information)</p>
+    <Card className="bg-white rounded-2xl shadow-lg p-5 h-full custom-border p-2 h-full">
+      <div className="flex flex-col h-full gap-4">
+        <h3 className="text-lg text-[#1975d4] font-bold">Top 5 Relevant Policies</h3>
+        
+        <div className="space-y-2">
+          {topPolicies.map((policy, index) => (
+            <div 
+              key={index} 
+              className="bg-white rounded-lg p-2 hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-medium text-gray-600 flex-shrink-0">
+                      #{index + 1}
+                    </span>
+                    <p className="text-xs font-semibold text-gray-800 leading-tight truncate" title={policy.title}>
+                      {policy.title}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
 
-      <svg width="100%" height="200" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid meet">
-        <line x1="0" y1="180" x2="400" y2="180" stroke="#000" strokeWidth="1" />
-
-        {chartData.map((data, groupIndex) => {
-          const groupX = groupIndex * (years.length * (barWidth + barGap) + groupGap);
-          return years.map((year, i) => {
-            const value = data.values[year];
-            const barHeight = (value / maxHeight) * 160;
-            const x = groupX + i * (barWidth + barGap) + 50;
-            const y = 180 - barHeight;
-            return (
-              <rect
-                key={`${data.label}-${year}`}
-                x={x}
-                y={y}
-                width={barWidth}
-                height={barHeight}
-                fill={yearColors[year]}
-                rx="2"
-              />
-            );
-          });
-        })}
-
-        {chartData.map((data, i) => {
-          const groupX = i * (years.length * (barWidth + barGap) + groupGap);
-          const center = groupX + 50 + (years.length * (barWidth + barGap)) / 2 - barGap;
-          return (
-            <text key={data.label} x={center} y={195} fontSize="10" textAnchor="middle" fill="#374151">
-              {data.label}
-            </text>
-          );
-        })}
-      </svg>
-
-      <div className="flex flex-wrap justify-center mt-4 gap-4 text-sm text-gray-700">
-        {Object.entries(yearColors).map(([year, color]) => (
-          <div key={year} className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
-            {year}
+        {policies.length > 5 && (
+          <div className="mt-4 text-center">
+            <p className="text-xs text-gray-500">
+              Showing top 5 of {policies.length} relevant policies
+            </p>
           </div>
-        ))}
+        )}
       </div>
     </Card>
   );

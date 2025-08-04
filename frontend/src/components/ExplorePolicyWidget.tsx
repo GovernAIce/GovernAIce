@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import Card from './Card';
-import Input from './Input';
-import Button from './Button';
 import CountryDropdown from './CountryDropdown';
 import { useCountryContext } from '../contexts/CountryContext';
 
 const DOMAINS = [
   "Healthcare",
-  "Entertainment",
+  "Entertainment", 
   "Business",
   "Beauty",
   "Education",
@@ -17,6 +15,38 @@ const DOMAINS = [
   "Government",
   "Legal"
 ];
+
+// DomainDropdown Component
+const DomainDropdown: React.FC<{
+  value: string[];
+  onChange: (value: string[]) => void;
+  className?: string;
+}> = ({ value, onChange, className = "" }) => {
+  const handleDomainChange = (domain: string) => {
+    const newValues = value.includes(domain)
+      ? value.filter(d => d !== domain)
+      : [...value, domain];
+    onChange(newValues);
+  };
+
+  return (
+    <div className={className + " max-h-32 overflow-y-auto bg-white rounded-lg p-2 border-2 border-blue-400"}>
+      <div className="flex flex-wrap gap-2">
+        {DOMAINS.map(domain => (
+          <label key={domain} className="flex items-center gap-1 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={value.includes(domain)}
+              onChange={() => handleDomainChange(domain)}
+              className="rounded"
+            />
+            <span className="text-xs">{domain}</span>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const ExplorePolicyWidget: React.FC<{ onDomainChange?: (domains: string[]) => void }> = ({ onDomainChange }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -33,67 +63,69 @@ const ExplorePolicyWidget: React.FC<{ onDomainChange?: (domains: string[]) => vo
     // TODO: Implement the comparison logic here
   };
 
-
-  const handleDomainChange = (domain: string) => {
-    setSelectedDomains(prev =>
-      prev.includes(domain)
-        ? prev.filter(d => d !== domain)
-        : [...prev, domain]
-    );
+  const clearSearch = () => {
+    setSearchQuery('');
   };
 
   return (
-    <Card className="custom-border relative p-2 h-auto min-h-[200px]">
-      <img
-        src="/icons/info.svg"
-        alt="Info"
-        className="absolute top-1 right-1 w-3 h-3 cursor-pointer"
-      />
-      <div className="flex flex-col h-full gap-1.5">
+    <Card className="bg-white rounded-2xl shadow-lg p-5 h-full custom-border p-4 h-full">
+      <div className="flex flex-col h-full gap-4">
         <h3 className="text-lg text-[#1975d4] font-bold">Explore Policy</h3>
-        <Input
-          placeholder="Search policies..."
-          className="pl-8 pr-8 text-xs text-gray-800 bg-transparent outline-none"
-          value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-        />
-        <CountryDropdown
-          value={selectedCountries}
-          onChange={(value: string | string[]) => setSelectedCountries(Array.isArray(value) ? value : [])}
-          multiple={true}
-          placeholder="Select countries to compare"
-          className="custom-border rounded-lg p-1 text-xs w-full bg-transparent flex-1"
-        />
-        {/* Domain Dropdown */}
-        <div className="custom-border rounded-lg p-1 text-xs w-full bg-transparent flex-1 mt-1">
-          <div className="font-medium mb-1">Select Domains</div>
-          <div className="flex flex-wrap gap-2">
-            {DOMAINS.map(domain => (
-              <label key={domain} className="flex items-center gap-1 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={selectedDomains.includes(domain)}
-                  onChange={() => handleDomainChange(domain)}
-                  className="rounded"
-                />
-                <span className="text-xs">{domain}</span>
-              </label>
-            ))}
+        
+        {/* Search Input */}
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="w-full px-3 py-2 border border-blue-300 rounded-lg text-sm focus:outline-none focus:border-blue-500"
+          />
+          {searchQuery && (
+            <button
+              onClick={clearSearch}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              ×
+            </button>
+          )}
+        </div>
+
+        {/* Country and Domain Dropdowns */}
+        <div className="flex gap-3">
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
+            <CountryDropdown
+              value={selectedCountries}
+              onChange={setSelectedCountries}
+              multiple={true}
+              placeholder="Select Countries"
+              className="w-full"
+            />
+          </div>
+
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Domain</label>
+            <DomainDropdown
+              value={selectedDomains}
+              onChange={setSelectedDomains}
+              className="w-full"
+            />
           </div>
         </div>
-        <Button 
-          className="w-full text-white text-xs mt-auto"
+
+        {/* Compare Button */}
+        {/* } <button
           onClick={handleCompare}
           disabled={!hasCountries}
+          className="w-full bg-gradient-to-r from-[#9FD8FF] to-[#2196f3] text-white py-3 px-4 rounded-[50px] font-medium text-sm opacity-100 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
         >
-          {!hasCountries 
-            ? 'Compare' 
-            : `Compare (${selectedCountries.length})`
-          }
-        </Button>
+          Compare
+        </button>
+        */}
       </div>
     </Card>
   );
 };
 
-export default ExplorePolicyWidget; 
+export default ExplorePolicyWidget;

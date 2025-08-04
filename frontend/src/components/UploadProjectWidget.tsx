@@ -107,12 +107,19 @@ const UploadProjectWidget: React.FC<UploadProjectWidgetProps> = ({ onAnalysisCom
     const progressInterval = simulateProgress();
 
     try {
-      let response;
+      let response: any;
       
       if (analysisType === 'general') {
-        response = await uploadAPI.uploadAndAnalyze(selectedFile, selectedCountries);
-      } else {
-        response = await uploadAPI.uploadRegulatoryCompliance(selectedFile);
+        // Get domain and search query from context or use defaults
+        const domain = ''; // You can add domain selection if needed
+        const searchQuery = ''; // You can add search query if needed
+        
+        response = await uploadAPI.upload_analyze_policies(
+          selectedFile, 
+          selectedCountries, 
+          domain, 
+          searchQuery
+        );
       }
 
       // Complete progress
@@ -120,7 +127,7 @@ const UploadProjectWidget: React.FC<UploadProjectWidgetProps> = ({ onAnalysisCom
       setUploadProgress(100);
       
       // Pass results to parent component
-      if (onAnalysisComplete) {
+      if (onAnalysisComplete && response) {
         onAnalysisComplete({
           ...response.data,
           analysisType,
@@ -149,7 +156,7 @@ const UploadProjectWidget: React.FC<UploadProjectWidgetProps> = ({ onAnalysisCom
   };
 
   return (
-    <Card className="custom-border relative p-2 h-auto min-h-[280px]">
+    <Card className="bg-white rounded-2xl shadow-lg p-5 h-full custom-border relative p-2">
       <img
         src="/icons/info.svg"
         alt="Info"
@@ -159,8 +166,8 @@ const UploadProjectWidget: React.FC<UploadProjectWidgetProps> = ({ onAnalysisCom
       <div className="flex flex-col h-full gap-2">
         <h3 className="text-lg text-[#1975d4] font-bold">Upload Project</h3>
         
-        {/* Analysis Type Selection */}
-        <div className="flex gap-2">
+        {/* Analysis Type Selection - Hidden from UI */}
+        {/* <div className="flex gap-2">
           <label className="flex items-center gap-1 text-xs">
             <input
               type="radio"
@@ -172,7 +179,7 @@ const UploadProjectWidget: React.FC<UploadProjectWidgetProps> = ({ onAnalysisCom
             />
             General Compliance
           </label>
-        </div>
+        </div> */}
 
         {/* Country Status for General Analysis */}
         {analysisType === 'general' && (

@@ -88,4 +88,4 @@ def search_global_chunks(query: str, k: int = 10000, country: str = None, index_
 # search_global_chunks("penalties for data misuse in general?")
 
 # Search within UK only
-search_global_chunks("AI policy regualtions", country="USA")
+# search_global_chunks("AI policy regualtions", country="USA")

@@ -34,7 +34,7 @@ INDEX_NAME = "vector_index"  # Must match your MongoDB Atlas vector index name
 client = MongoClient(MONGO_URI, server_api=ServerApi('1'))
 collection = client[DATABASE_NAME][COLLECTION_NAME]
 
-genai.configure(api_key="AIzaSyA4cWfJTyHNvTUxYTlbdulx18u2ymFXi80")
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 # ==== 2. Load Embedding Model ====
 embedder = SentenceTransformer("sentence-transformers/paraphrase-multilingual-mpnet-base-v2")
