@@ -64,7 +64,7 @@ const CountryDropdown: React.FC<CountryDropdownProps> = ({
   // Always show as multi-checkbox list
   const selectedCountries = Array.isArray(value) ? value : [];
   return (
-    <div className={className + " max-h-32 overflow-y-auto bg-white rounded-lg p-2 border-2 border-blue-400"}>
+    <div className={`${className} max-h-32 overflow-y-auto bg-white rounded-lg p-2 border-2 border-blue-400`}>
       <div className="flex flex-wrap gap-2">
         {countries.map(country => (
           <label key={country} className="flex items-center gap-1 cursor-pointer">
