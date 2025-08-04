@@ -7,7 +7,16 @@ interface MenuProps {
 }
 
 const icons: Record<string, React.FC<{ className?: string }>> = {
-  // SVG icon components can be imported or inlined here if needed
+  Home: () => <img src="/src/assets/home.svg" alt="Home" className="w-4 h-4" />,
+  FileText: () => <img src="/src/assets/file.svg" alt="FileText" className="w-4 h-4" />,
+  Target: () => <img src="/src/assets/home.svg" alt="Target" className="w-4 h-4" />,
+  Shield: () => <img src="/src/assets/home.svg" alt="Shield" className="w-4 h-4" />,
+  Cpu: () => <img src="/src/assets/home.svg" alt="Cpu" className="w-4 h-4" />,
+  BarChart3: () => <img src="/src/assets/home.svg" alt="BarChart3" className="w-4 h-4" />,
+  Users: () => <img src="/src/assets/home.svg" alt="Users" className="w-4 h-4" />,
+  Building: () => <img src="/src/assets/home.svg" alt="Building" className="w-4 h-4" />,
+  Folder: () => <img src="/src/assets/home.svg" alt="Folder" className="w-4 h-4" />,
+  User: () => <img src="/src/assets/home.svg" alt="User" className="w-4 h-4" />,
 };
 
 const Menu: React.FC<MenuProps> = ({ projectName, onNavigate }) => {
@@ -17,7 +26,7 @@ const Menu: React.FC<MenuProps> = ({ projectName, onNavigate }) => {
     { type: 'header', label: 'Menu' },
     { type: 'item', label: 'Home', icon: 'Home', path: '/' },
     { type: 'header', label: 'Tools' },
-    { type: 'item', label: 'Policy Analysis', icon: 'FileText', path: '/policy-analysis' },
+    { type: 'item', label: 'Policy Analysis', icon: 'Target', path: '/policy-analysis' },
     { type: 'item', label: 'Opportunity Identification', icon: 'Target' },
     { type: 'item', label: 'Compliance Risk Assessment', icon: 'Shield', path: '/compliance-risk-assessment' },
     { type: 'item', label: 'ML Test Widget', icon: 'Cpu', path: '/ml-test-widget' },
@@ -39,6 +48,14 @@ const Menu: React.FC<MenuProps> = ({ projectName, onNavigate }) => {
     { type: 'item', label: 'Smaran', icon: 'User' },
     { type: 'item', label: 'Dhyan', icon: 'User' },
   ];
+
+  const renderIcon = (iconName: string) => {
+    const IconComponent = icons[iconName];
+    if (IconComponent) {
+      return <IconComponent className="w-4 h-4" />;
+    }
+    return <span className="w-4 h-4" />;
+  };
 
   return (
     <div className="w-64 h-full bg-white flex flex-col border-r border-[#d9d9d9] rounded-3xl shadow-lg">
@@ -70,18 +87,17 @@ const Menu: React.FC<MenuProps> = ({ projectName, onNavigate }) => {
                   : 'bg-transparent text-black hover:bg-gray-100'
               }`}
             >
-              {/* Replace with icon import or inline SVG as needed */}
-              <span className="w-4 h-4" />
+              {renderIcon(item.icon || '')}
               <span className="truncate">{item.label}</span>
             </button>
           )
         )}
       </div>
       <div className="p-4 border-t border-[#f0f0f0] flex items-center gap-2">
-        <div className="w-8 h-8 bg-[#d9d9d9] rounded-full flex items-center justify-center">
-          {/* <span className="w-4 h-4 text-[#9ea2ae]">U</span> */}
+        <div className="w-8 h-8 bg-[#1975d4] rounded-full flex items-center justify-center">
+          <span className="text-white text-sm font-bold">H</span>
         </div>
-        <span className="text-sm text-[#000000] font-medium">Name Name</span>
+        <span className="text-sm text-[#000000] font-medium">Heidy</span>
       </div>
     </div>
   );

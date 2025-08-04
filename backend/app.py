@@ -264,44 +264,69 @@ def fetch_relevant_policies(countries, domain='', search='', mongo_client=None):
             mongo_client = get_mongo_client()
             close_client = True
         try:
-            country_policies = get_country_policies_list()
             relevant_policies = []
             training_db = mongo_client['Training']
+            
+            logger.info(f"Fetching policies for countries: {countries}")
+            logger.info(f"Available collections: {training_db.list_collection_names()}")
+            
             for country in countries:
-                if country in country_policies:
-                    policies = country_policies[country]
-                    for policy in policies:
-                        if not isinstance(policy, dict) or 'title' not in policy:
-                            logger.warning(f"Invalid policy format for {country}: {policy}")
-                            continue
-                        document = training_db[country].find_one({'title': policy['title']}, {'_id': 0, 'title': 1, 'source': 1, 'metadata': 1})
-                        if not document:
-                            logger.warning(f"Policy {policy['title']} not found in {country} collection")
-                            continue
-                        relevance_score = 10
-                        if domain and domain.lower() in policy['title'].lower():
-                            relevance_score += 5
-                        if search:
-                            query_terms = search.lower().split()
-                            for term in query_terms:
-                                if term in policy['title'].lower():
-                                    relevance_score += 3
-                                if term in country.lower():
-                                    relevance_score += 2
-                        policy_obj = {
-                            'title': policy['title'],
-                            'source': policy['source'],
-                            'regulator': policy['metadata'].get('regulator', 'N/A'),
-                            'country': country,
-                            'domain': domain or 'general',
-                            'relevance_score': relevance_score
-                        }
-                        relevant_policies.append(policy_obj)
+                # Check if the country collection exists
+                if country not in training_db.list_collection_names():
+                    logger.warning(f"Country collection '{country}' not found in database")
+                    continue
+                
+                # Get all policies for this country
+                country_policies = training_db[country].find({}, {'_id': 0, 'title': 1, 'source': 1, 'metadata': 1, 'text': 1})
+                policy_count = 0
+                
+                for policy_doc in country_policies:
+                    policy_count += 1
+                    if not policy_doc or 'title' not in policy_doc:
+                        logger.warning(f"Invalid policy document in {country} collection: {policy_doc}")
+                        continue
+                    
+                    # Calculate relevance score
+                    relevance_score = 10
+                    title_lower = policy_doc['title'].lower()
+                    
+                    # Domain matching
+                    if domain and domain.lower() in title_lower:
+                        relevance_score += 5
+                    
+                    # Search query matching
+                    if search:
+                        query_terms = search.lower().split()
+                        for term in query_terms:
+                            if term in title_lower:
+                                relevance_score += 3
+                            if term in country.lower():
+                                relevance_score += 2
+                    
+                    # Create policy object
+                    policy_obj = {
+                        'title': policy_doc['title'],
+                        'source': policy_doc.get('source', ''),
+                        'regulator': policy_doc.get('metadata', {}).get('regulator', 'N/A'),
+                        'country': country,
+                        'domain': domain or 'general',
+                        'relevance_score': relevance_score
+                    }
+                    relevant_policies.append(policy_obj)
+                
+                logger.info(f"Found {policy_count} policies for country: {country}")
+            
+            # Sort by relevance score and take top 5
             relevant_policies.sort(key=lambda x: x['relevance_score'], reverse=True)
             relevant_policies = relevant_policies[:5]
+            
+            # Remove relevance score from final output
             for policy in relevant_policies:
                 policy.pop('relevance_score', None)
+            
+            logger.info(f"Returning {len(relevant_policies)} relevant policies for countries: {countries}")
             return relevant_policies
+            
         finally:
             if close_client:
                 mongo_client.close()
@@ -309,7 +334,10 @@ def fetch_relevant_policies(countries, domain='', search='', mongo_client=None):
         logger.error(f"Error fetching relevant policies: {str(e)}")
         return []
 
-# --- INTEGRATED UPLOAD, ANALYZE, AND POLICY ASSESSMENT ENDPOINT ---
+# ============================================================================
+# CORE UPLOAD & ANALYSIS ENDPOINTS
+# ============================================================================
+
 @app.route('/api/upload-analyze-policies/', methods=['POST'])
 def upload_analyze_policies():
     """
@@ -374,8 +402,9 @@ def upload_analyze_policies():
 
         GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
         if not GEMINI_API_KEY:
-            raise Exception("GEMINI_API_KEY not set in environment variables")
-        genai.configure(api_key=GEMINI_API_KEY)
+            risk_assessments = {country: "Risk assessment not available - configure GEMINI_API_KEY" for country in countries}
+        else:
+            genai.configure(api_key=GEMINI_API_KEY)
 
         embedder = SentenceTransformer("sentence-transformers/paraphrase-multilingual-mpnet-base-v2")
         query_vector = embedder.encode(text).tolist()
@@ -454,7 +483,10 @@ def upload_analyze_policies():
     finally:
         mongo_client.close()
 
-# --- VIEW FULL POLICY DOCUMENT ENDPOINT ---
+# ============================================================================
+# POLICY MANAGEMENT ENDPOINTS
+# ============================================================================
+
 @app.route('/view-policy/', methods=['GET'])
 def view_policy_document():
     title = request.args.get('title')
@@ -480,7 +512,10 @@ def view_policy_document():
     finally:
         mongo_client.close()
 
-# --- DOCUMENT ENDPOINTS ---
+# ============================================================================
+# DOCUMENT MANAGEMENT ENDPOINTS
+# ============================================================================
+
 @app.route('/product-info-upload/', methods=['POST'])
 def product_info_upload():
     try:
@@ -585,63 +620,16 @@ def document_search():
     finally:
         mongo_client.close()
 
-# --- REPORTS CRUD ---
-@app.route('/reports/', methods=['GET', 'POST'])
-def reports():
-    if request.method == 'GET':
-        return jsonify([]), 200
-    if request.method == 'POST':
-        return jsonify({'report_id': 'new_id'}), 201
+# --- PLACEHOLDER ENDPOINTS REMOVED ---
+# Removed unused CRUD endpoints for reports, folders, team, and chat
+# These were placeholder endpoints that weren't being used by the frontend
 
-@app.route('/reports/<report_id>/', methods=['GET', 'PUT', 'DELETE'])
-def report_detail(report_id):
-    if request.method == 'GET':
-        return jsonify({}), 200
-    if request.method == 'PUT':
-        return jsonify({}), 200
-    if request.method == 'DELETE':
-        return jsonify({'message': 'Deleted'}), 200
+# ============================================================================
+# REGULATORY COMPLIANCE ENDPOINTS (DEPRECATED)
+# ============================================================================
+# These endpoints are deprecated but kept for backward compatibility
+# Use /api/upload-analyze-policies/ for comprehensive analysis
 
-# --- FOLDERS CRUD ---
-@app.route('/folders/', methods=['GET', 'POST'])
-def folders():
-    if request.method == 'GET':
-        return jsonify([]), 200
-    if request.method == 'POST':
-        return jsonify({'folder_id': 'new_id'}), 201
-
-@app.route('/folders/<folder_id>/', methods=['GET', 'PUT', 'DELETE'])
-def folder_detail(folder_id):
-    if request.method == 'GET':
-        return jsonify({}), 200
-    if request.method == 'PUT':
-        return jsonify({}), 200
-    if request.method == 'DELETE':
-        return jsonify({'message': 'Deleted'}), 200
-
-# --- TEAM MEMBERS CRUD ---
-@app.route('/team/', methods=['GET', 'POST'])
-def team():
-    if request.method == 'GET':
-        return jsonify([]), 200
-    if request.method == 'POST':
-        return jsonify({'member_id': 'new_id'}), 201
-
-@app.route('/team/<member_id>/', methods=['GET', 'PUT', 'DELETE'])
-def team_member_detail(member_id):
-    if request.method == 'GET':
-        return jsonify({}), 200
-    if request.method == 'PUT':
-        return jsonify({}), 200
-    if request.method == 'DELETE':
-        return jsonify({'message': 'Deleted'}), 200
-
-# --- CHATBOT ---
-@app.route('/chat/', methods=['POST'])
-def chat():
-    return jsonify({'reply': 'This is a placeholder response.'}), 200
-
-# --- NEW REGULATORY COMPLIANCE ENDPOINTS ---
 def analyze_regulatory_document(text, doc_id, model="gemini"):
     if not text or not text.strip():
         logger.error("Empty or invalid text provided for analysis")
@@ -736,108 +724,139 @@ def analyze_regulatory_document(text, doc_id, model="gemini"):
                 insights[framework]["comparison"] = f"Comparison failed: {str(e)}"
     return insights
 
-@app.route('/upload-regulatory-compliance/', methods=['POST'])
-def upload_regulatory_compliance():
-    if 'file' not in request.files:
-        return jsonify({'error': 'Missing file'}), 400
-    file = request.files['file']
-    if not file:
-        return jsonify({'error': 'No file uploaded'}), 400
-    text = extract_text_from_pdf(file)
-    doc_id = str(uuid.uuid4())
-    filename = secure_filename(file.filename)
+@app.route('/api/oecd-scores', methods=['GET'])
+def get_oecd_scores():
+    # Get the most recent analysis results from the database
     mongo_client = get_mongo_client()
     try:
         mongo_db = mongo_client['regulatory_mongo']
-        document = {
-            'doc_id': doc_id,
-            'content': text,
-            'compliance_scores': {}
-        }
-        mongo_db.documents.insert_one(document)
-        insights = analyze_regulatory_document(text, doc_id)
-        for framework, data in insights.items():
-            sanitized_framework_name = sanitize_field_name(framework)
-            mongo_db.documents.update_one(
-                {'doc_id': doc_id},
-                {'$set': {f'compliance_scores.{sanitized_framework_name}': {'score': int(data['score'])}}}
-            )
-        response_data = {
-            'doc_id': doc_id,
-            'filename': filename,
-            'insights': insights
-        }
-        return jsonify(response_data), 201
+        # Get the most recent document with OECD analysis
+        latest_doc = mongo_db.documents.find_one(
+            {'compliance_scores': {'$exists': True}},
+            sort=[('timestamp', -1)]
+        )
+        
+        if latest_doc and 'compliance_scores' in latest_doc:
+            # Extract OECD-related scores from the analysis
+            compliance_scores = latest_doc['compliance_scores']
+            
+            # Map the analysis results to OECD principles
+            oecd_scores = [
+                {
+                    "name": "Inclusive and Sustainability",
+                    "score": compliance_scores.get('inclusive_growth_sustainability', {}).get('score', 55),
+                    "color": "#4CAF50"
+                },
+                {
+                    "name": "Fairness and Privacy", 
+                    "score": compliance_scores.get('fairness_privacy', {}).get('score', 50),
+                    "color": "#2196F3"
+                },
+                {
+                    "name": "Transparency and explainability",
+                    "score": compliance_scores.get('transparency_explainability', {}).get('score', 45),
+                    "color": "#9C27B0"
+                },
+                {
+                    "name": "Robustness, security, and safety",
+                    "score": compliance_scores.get('robustness_security_safety', {}).get('score', 35),
+                    "color": "#FF9800"
+                },
+                {
+                    "name": "AI",
+                    "score": compliance_scores.get('ai_governance', {}).get('score', 30),
+                    "color": "#F44336"
+                },
+                {
+                    "name": "Accountability",
+                    "score": compliance_scores.get('accountability', {}).get('score', 45),
+                    "color": "#4CAF50"
+                }
+            ]
+        else:
+            # Fallback to default scores if no analysis data available
+            oecd_scores = [
+                {"name": "Inclusive and Sustainability", "score": 55, "color": "#4CAF50"},
+                {"name": "Fairness and Privacy", "score": 50, "color": "#2196F3"},
+                {"name": "Transparency and explainability", "score": 45, "color": "#9C27B0"},
+                {"name": "Robustness, security, and safety", "score": 35, "color": "#FF9800"},
+                {"name": "AI", "score": 30, "color": "#F44336"},
+                {"name": "Accountability", "score": 45, "color": "#4CAF50"}
+            ]
+        
+        return jsonify(oecd_scores), 200
     except Exception as e:
-        logger.error(f"Error in regulatory document upload: {str(e)}")
+        logger.error(f"Error fetching OECD scores: {str(e)}")
         return jsonify({'error': str(e)}), 500
     finally:
         mongo_client.close()
 
-@app.route('/analyze-regulatory-product-info/', methods=['POST'])
-def analyze_regulatory_product_info():
-    try:
-        data = request.get_json()
-        if not data or 'product_info' not in data:
-            return jsonify({'error': 'Missing product_info'}), 400
-        product_info = data['product_info']
-        if len(product_info) < 10:
-            return jsonify({'error': 'Product info must be at least 10 characters'}), 400
-        doc_id = str(uuid.uuid4())
-        doc_title = f"Product_Info_{doc_id[:8]}"
-        mongo_client = get_mongo_client()
-        try:
-            mongo_db = mongo_client['regulatory_mongo']
-            document = {
-                'doc_id': doc_id,
-                'content': product_info,
-                'compliance_scores': {}
-            }
-            mongo_db.documents.insert_one(document)
-            insights = analyze_regulatory_document(product_info, doc_id)
-            for framework, data in insights.items():
-                sanitized_framework_name = sanitize_field_name(framework)
-                mongo_db.documents.update_one(
-                    {'doc_id': doc_id},
-                    {'$set': {f'compliance_scores.{sanitized_framework_name}': {'score': int(data['score'])}}}
-                )
-            response_data = {
-                'doc_id': doc_id,
-                'filename': doc_title,
-                'insights': insights
-            }
-            return jsonify(response_data), 201
-        except Exception as e:
-            logger.error(f"Error in regulatory product info upload: {str(e)}")
-            return jsonify({'error': str(e)}), 500
-        finally:
-            mongo_client.close()
-    except Exception as e:
-        logger.error(f"Error parsing request: {str(e)}")
-        return jsonify({'error': 'Invalid JSON data'}), 400
-
-@app.route('/api/oecd-scores', methods=['GET'])
-def get_oecd_scores():
-    oecd_scores = [
-        {"name": "Inclusive Growth & Sustainability", "score": 85, "color": "#4CAF50"},
-        {"name": "Fairness & Privacy", "score": 78, "color": "#2196F3"},
-        {"name": "Transparency & Explainability", "score": 72, "color": "#FF9800"},
-        {"name": "Robustness, Security & Safety", "score": 88, "color": "#9C27B0"},
-        {"name": "Accountability", "score": 81, "color": "#F44336"}
-    ]
-    return jsonify(oecd_scores), 200
-
 @app.route('/api/nist-lifecycle-scores', methods=['GET'])
 def get_nist_scores():
-    data = [
-        {"name": "Plan & Design", "riskLevel": 7, "mitigabilityLevel": 5},
-        {"name": "Collect & Process Data", "riskLevel": 10, "mitigabilityLevel": 8},
-        {"name": "Build & Use Model", "riskLevel": 9, "mitigabilityLevel": 7},
-        {"name": "Verify & Validate", "riskLevel": 6, "mitigabilityLevel": 4},
-        {"name": "Deploy and Use", "riskLevel": 3, "mitigabilityLevel": 2},
-        {"name": "Operate & Monitor", "riskLevel": 5, "mitigabilityLevel": 6},
-    ]
-    return jsonify(data), 200
+    # Get the most recent analysis results from the database
+    mongo_client = get_mongo_client()
+    try:
+        mongo_db = mongo_client['regulatory_mongo']
+        # Get the most recent document with NIST analysis
+        latest_doc = mongo_db.documents.find_one(
+            {'compliance_scores': {'$exists': True}},
+            sort=[('timestamp', -1)]
+        )
+        
+        if latest_doc and 'compliance_scores' in latest_doc:
+            # Extract NIST-related scores from the analysis
+            compliance_scores = latest_doc['compliance_scores']
+            
+            # Map the analysis results to NIST lifecycle stages
+            data = [
+                {
+                    "name": "Plan & Design",
+                    "riskLevel": compliance_scores.get('plan_design', {}).get('risk_score', 7),
+                    "mitigabilityLevel": compliance_scores.get('plan_design', {}).get('mitigation_score', 5)
+                },
+                {
+                    "name": "Collect & Process Data",
+                    "riskLevel": compliance_scores.get('collect_process_data', {}).get('risk_score', 8),
+                    "mitigabilityLevel": compliance_scores.get('collect_process_data', {}).get('mitigation_score', 5)
+                },
+                {
+                    "name": "Build & Use Model",
+                    "riskLevel": compliance_scores.get('build_use_model', {}).get('risk_score', 9),
+                    "mitigabilityLevel": compliance_scores.get('build_use_model', {}).get('mitigation_score', 4)
+                },
+                {
+                    "name": "Verify & Validate",
+                    "riskLevel": compliance_scores.get('verify_validate', {}).get('risk_score', 6),
+                    "mitigabilityLevel": compliance_scores.get('verify_validate', {}).get('mitigation_score', 2)
+                },
+                {
+                    "name": "Deploy and Use",
+                    "riskLevel": compliance_scores.get('deploy_use', {}).get('risk_score', 4),
+                    "mitigabilityLevel": compliance_scores.get('deploy_use', {}).get('mitigation_score', 1)
+                },
+                {
+                    "name": "Operate & Monitor",
+                    "riskLevel": compliance_scores.get('operate_monitor', {}).get('risk_score', 6),
+                    "mitigabilityLevel": compliance_scores.get('operate_monitor', {}).get('mitigation_score', 3)
+                }
+            ]
+        else:
+            # Fallback to default scores if no analysis data available
+            data = [
+                {"name": "Plan & Design", "riskLevel": 7, "mitigabilityLevel": 5},
+                {"name": "Collect & Process Data", "riskLevel": 8, "mitigabilityLevel": 5},
+                {"name": "Build & Use Model", "riskLevel": 9, "mitigabilityLevel": 4},
+                {"name": "Verify & Validate", "riskLevel": 6, "mitigabilityLevel": 2},
+                {"name": "Deploy and Use", "riskLevel": 4, "mitigabilityLevel": 1},
+                {"name": "Operate & Monitor", "riskLevel": 6, "mitigabilityLevel": 3}
+            ]
+        
+        return jsonify(data), 200
+    except Exception as e:
+        logger.error(f"Error fetching NIST scores: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        mongo_client.close()
 
 @app.route('/api/eu-risk-level', methods=['GET'])
 def eu_risk_level():
@@ -908,7 +927,10 @@ def get_radar_data():
     ]
     return jsonify(radar_data), 200
 
-# --- ML MODEL ENDPOINTS ---
+# ============================================================================
+# MACHINE LEARNING ENDPOINTS
+# ============================================================================
+
 @app.route('/ml/status/', methods=['GET'])
 def ml_model_status():
     try:
@@ -1066,29 +1088,17 @@ def get_ml_analysis(doc_id):
     finally:
         mongo_client.close()
 
+# ============================================================================
+# METADATA ENDPOINTS
+# ============================================================================
+
 @app.route('/metadata/country/', methods=['GET'])
 def get_countries():
     countries = list(get_country_policies().keys())
     return jsonify({'countries': countries}), 200
 
-@app.route('/debug/cache/clear/', methods=['POST'])
-def clear_cache():
-    clear_country_policies_cache()
-    return jsonify({'message': 'Cache cleared successfully'}), 200
-
-@app.route('/debug/cache/status/', methods=['GET'])
-def cache_status():
-    global _country_policies_cache, _cache_timestamp
-    if _country_policies_cache is None:
-        return jsonify({'cached': False, 'timestamp': None}), 200
-    else:
-        age_seconds = (datetime.now() - _cache_timestamp).seconds if _cache_timestamp else None
-        return jsonify({
-            'cached': True, 
-            'timestamp': _cache_timestamp.isoformat() if _cache_timestamp else None,
-            'age_seconds': age_seconds,
-            'cache_duration': CACHE_DURATION
-        }), 200
+# --- DEBUG ENDPOINTS REMOVED ---
+# Removed debug cache endpoints as they're not needed in production
 
 @app.route('/metadata/domains/', methods=['GET'])
 def get_domains():
@@ -1099,4 +1109,4 @@ def get_policies():
     return jsonify({'policies': []}), 200
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5002)

@@ -8,8 +8,8 @@ export default defineConfig({
     proxy: {
       '/chat': 'http://localhost:5001',
       '/metadata': 'http://localhost:5001',
-      '/upload-and-analyze': 'http://localhost:5001',
       '/api': 'http://localhost:5001',
+      '/ml': 'http://localhost:5001'
       // Add more endpoints as needed
     },
   },

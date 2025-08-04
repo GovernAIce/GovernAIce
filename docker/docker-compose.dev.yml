@@ -12,7 +12,7 @@ services:
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - TOGETHER_API_KEY=${TOGETHER_API_KEY}
       - MONGO_URI=${MONGO_URI}
-      - MONGO_DB_NAME=${MONGO_DB_NAME}
+      - MONGO_DB_NAME=Training
     depends_on:
       - mongodb
     volumes:
