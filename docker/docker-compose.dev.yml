@@ -7,14 +7,12 @@ services:
       dockerfile: docker/Dockerfile.dev
     ports:
       - "5001:5000"  # Host 5001 -> Container 5000 (Flask)
-    environment:
+   environment:
       - FLASK_ENV=development
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - TOGETHER_API_KEY=${TOGETHER_API_KEY}
       - MONGO_URI=${MONGO_URI}
-      - MONGO_DB_NAME=Training
-    depends_on:
-      - mongodb
+      - MONGO_DB_NAME=${MONGO_DB_NAME}
     volumes:
       - ../backend:/app/backend
       - ../ml:/app/ml

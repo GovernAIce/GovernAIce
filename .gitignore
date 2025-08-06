@@ -217,3 +217,4 @@ dmypy.json
 *.backup
 *.old
 *.orig
+*.backup2

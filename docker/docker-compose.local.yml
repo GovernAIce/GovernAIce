@@ -6,15 +6,15 @@ services:
       context: ..
       dockerfile: docker/Dockerfile.local
     ports:
-      - "5001:5000"
+      - "5001:5002"
     environment:
       - FLASK_ENV=development
       - GEMINI_API_KEY=${GEMINI_API_KEY}
       - TOGETHER_API_KEY=${TOGETHER_API_KEY}
       - MONGO_URI=${MONGO_URI}
-      - MONGO_DB_NAME=Training
-    depends_on:
-      - mongodb
+      - MONGO_DB_NAME=${MONGO_DB_NAME}
+    env_file:
+      - ../backend/.env
     networks:
       - app-network
     volumes:
@@ -39,18 +39,6 @@ services:
     depends_on:
       - backend
 
-  mongodb:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
-    networks:
-      - app-network
-
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  mongodb_data:
