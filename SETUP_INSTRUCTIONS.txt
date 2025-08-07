@@ -1,0 +1,217 @@
+# GovernAIce Setup Instructions
+
+## Prerequisites
+
+Before starting, make sure you have:
+- **Python 3.8+** installed
+- **Node.js 16+** and **npm** installed  
+- **Docker** and **Docker Compose** installed (optional, for Docker setup)
+- **Git** installed
+
+## Initial Setup
+
+### 1. Clone and Navigate
+```bash
+git clone <your-repo-url>
+cd GovernAIce
+```
+
+### 2. Set Up Python Environment
+```bash
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# On macOS/Linux:
+source venv/bin/activate
+# On Windows:
+# venv\Scripts\activate
+
+# Install Python dependencies
+pip install -r requirements.txt
+```
+
+### 3. Set Up Frontend Dependencies
+```bash
+cd frontend
+npm install
+cd ..
+```
+
+## Environment Configuration
+
+### 4. Create Environment Files
+
+**Backend Environment** (`backend/.env`):
+```bash
+# Database Configuration
+MONGO_URI=mongodb+srv://your_username:your_password@your_cluster.mongodb.net/?retryWrites=true&w=majority&appName=GovernAIce
+DATABASE_URL=mongodb+srv://your_username:your_password@your_cluster.mongodb.net/?retryWrites=true&w=majority&appName=GovernAIce
+
+# API Configuration
+GEMINI_API_KEY=your_gemini_api_key_here
+SECRET_KEY=your_secret_key_here
+
+# ML Service Configuration
+ML_SERVICE_URL=http://localhost:8001
+VOYAGE_API_KEY=your_voyage_api_key_here
+
+# Logging
+LOG_LEVEL=INFO
+```
+
+**Frontend Environment** (`frontend/.env`):
+```bash
+VITE_API_BASE_URL=http://localhost:5002
+VITE_ML_SERVICE_URL=http://localhost:8001
+VITE_ENABLE_ML_FEATURES=true
+VITE_ENABLE_CHAT=true
+```
+
+## Running the Application
+
+### Option 1: Quick Auto-Start (Recommended)
+```bash
+# This automatically detects and configures everything
+./scripts/start-app.sh
+```
+
+### Option 2: Manual Setup
+
+#### Direct Python/NPM Setup (Development)
+```bash
+# Terminal 1: Start Backend
+cd backend
+python app.py
+
+# Terminal 2: Start Frontend  
+cd frontend
+npm run dev
+```
+
+#### Docker Setup (Production)
+```bash
+# Start with Docker
+docker-compose -f docker/docker-compose.local.yml up --build
+```
+
+## Available Commands
+
+### Quick Commands
+```bash
+# Auto-configure frontend for current backend
+./scripts/auto-config.sh
+
+# Auto-configure and start frontend
+./scripts/start-frontend.sh
+
+# Full auto-start (backend + frontend)
+./scripts/start-app.sh
+
+# Check current status
+./scripts/quick-start.sh
+```
+
+### Manual Commands
+```bash
+# Backend (Direct)
+cd backend && python app.py
+
+# Backend (Docker)
+docker-compose -f docker/docker-compose.local.yml up backend
+
+# Frontend
+cd frontend && npm run dev
+```
+
+## Accessing the Application
+
+Once running, access the application at:
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:5002 (direct) or http://localhost:5001 (Docker)
+
+## Switching Between Setups
+
+### From Direct to Docker
+```bash
+# Stop direct backend (Ctrl+C)
+# Then run:
+docker-compose -f docker/docker-compose.local.yml up --build
+./scripts/auto-config.sh  # Auto-configure frontend
+```
+
+### From Docker to Direct
+```bash
+# Stop Docker containers
+docker-compose -f docker/docker-compose.local.yml down
+
+# Start direct backend
+cd backend && python app.py
+
+# In another terminal, auto-configure frontend
+./scripts/auto-config.sh
+```
+
+## Troubleshooting
+
+### Port Already in Use
+```bash
+# Find what's using the port
+lsof -i :5002
+lsof -i :5173
+
+# Kill the process
+kill -9 <PID>
+```
+
+### Frontend Network Errors
+```bash
+# Auto-configure frontend for current backend
+./scripts/auto-config.sh
+```
+
+### Docker Issues
+```bash
+# Rebuild containers
+docker-compose -f docker/docker-compose.local.yml down
+docker-compose -f docker/docker-compose.local.yml up --build
+```
+
+### Environment Variables Not Loading
+```bash
+# Check if .env files exist
+ls -la backend/.env
+ls -la frontend/.env
+
+# Restart the application after creating .env files
+```
+
+## 📝 Environment Variables Explained
+
+| Variable | Purpose | Required |
+|----------|---------|----------|
+| `MONGO_URI` | MongoDB connection string | Y |
+| `DATABASE_URL` | Alternative database URL | Y |
+| `SECRET_KEY` | Flask session security | Y |
+| `GEMINI_API_KEY` | Google Gemini AI API | N |
+| `VITE_API_BASE_URL` | Frontend API endpoint | Y |
+| `VITE_ML_SERVICE_URL` | ML service endpoint | N |
+
+## Success Indicators
+
+You'll know everything is working when:
+- Backend shows: `INFO:__main__:Successfully connected to MongoDB`
+- Frontend loads without "Failed to load countries" errors
+- Countries dropdown populates with data
+- No network errors in browser console
+
+## Getting Help
+
+If you encounter issues:
+1. Check the troubleshooting section above
+2. Run `./scripts/quick-start.sh` to see current status
+3. Use `./scripts/auto-config.sh` to fix configuration issues
+4. Check logs in the terminal for error messages
+
+---
+
