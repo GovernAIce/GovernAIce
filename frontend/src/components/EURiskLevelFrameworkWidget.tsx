@@ -22,7 +22,7 @@ const EURiskLevelFrameworkWidget: React.FC = () => {
 
   // Fetch data from backend
   useEffect(() => {
-    fetch('http://localhost:5001/api/eu-risk-level')
+          fetch('http://localhost:5002/api/eu-risk-level')
       .then((res) => res.json())
       .then((data) => {
         if (data && data.data) {

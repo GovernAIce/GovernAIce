@@ -23,7 +23,7 @@ const RadarChartComponent = () => {
   const [tooltip, setTooltip] = useState<{ x: number; y: number; label: string; value: number } | null>(null);
 
   useEffect(() => {
-    fetch('http://localhost:5001/api/radar-data') // ✅ Adjust port if needed
+            fetch('http://localhost:5002/api/radar-data') // ✅ Adjust port if needed
       .then((res) => res.json())
       .then((json) => setData(json))
       .catch((err) => console.error('Failed to fetch radar data', err));

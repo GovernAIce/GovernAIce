@@ -6,10 +6,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/chat': 'http://localhost:5001',
-      '/metadata': 'http://localhost:5001',
-      '/api': 'http://localhost:5001',
-      '/ml': 'http://localhost:5001'
+          '/chat': 'http://localhost:5002',
+    '/metadata': 'http://localhost:5002',
+    '/api': 'http://localhost:5002',
+    '/ml': 'http://localhost:5002'
       // Add more endpoints as needed
     },
   },
