@@ -6,13 +6,14 @@ services:
       context: ..
       dockerfile: docker/Dockerfile.local
     ports:
-      - "5001:5002"
+      - "5002:5002"
     environment:
       - FLASK_ENV=development
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - TOGETHER_API_KEY=${TOGETHER_API_KEY}
-      - MONGO_URI=${MONGO_URI}
-      - MONGO_DB_NAME=${MONGO_DB_NAME}
+      - GEMINI_API_KEY=AIzaSyDGZoBl8q00PF5Nd2XIQIlKWi_Ju7d30X8
+      - MONGO_URI=mongodb+srv://maxdefanti:vytsf38rBFxM1GQ6@governaice.q68lcpg.mongodb.net/?retryWrites=true&w=majority&appName=GovernAIce
+      - MONGO_DB_NAME=Training
+      - TOGETHER_API_KEY=2150c44b537a788818aa55f7fe669c44623f946dbf3d06cc4b8e1a6d1f04bb3e
+
     env_file:
       - ../backend/.env
     networks:
