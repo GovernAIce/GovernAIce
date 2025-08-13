@@ -143,7 +143,8 @@ cp docker/.env.example docker/.env
 
 # Start services
 cd docker
-./setup-docker.sh
+docker compose -f docker-compose.local.yml up --build
+
 ```
 
 ## Development Workflow

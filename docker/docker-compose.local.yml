@@ -22,6 +22,8 @@ services:
       - ../ml:/app/ml
       - ../main.py:/app/main.py
     command: python backend/app.py
+    
+
 
   frontend:
     build:
@@ -35,9 +37,11 @@ services:
       - ../frontend:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://localhost:5001
+      - VITE_API_BASE_URL=http://localhost:5001
     depends_on:
       - backend
+
+  
 
 networks:
   app-network:

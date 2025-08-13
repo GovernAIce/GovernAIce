@@ -92,7 +92,8 @@ npm run dev
 #### Docker Setup (Production)
 ```bash
 # Start with Docker
-docker-compose -f docker/docker-compose.local.yml up --build
+cd docker
+docker compose -f docker/docker-compose.local.yml up --build
 ```
 
 ## Available Commands
@@ -129,6 +130,7 @@ cd frontend && npm run dev
 Once running, access the application at:
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:5002 (direct) or http://localhost:5001 (Docker)
+- Successfully connected to MongoDB
 
 ## Switching Between Setups
 
