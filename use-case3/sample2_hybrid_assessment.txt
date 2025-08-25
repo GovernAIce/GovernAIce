@@ -1,0 +1,395 @@
+AI GOVERNANCE HYBRID COMPLIANCE ASSESSMENT REPORT
+Generated: 2025-08-05 21:53:00
+Document: sample2
+Method: Embeddings (framework guidance identification) + Gemini AI (compliance scoring)
+
+=============================================================================
+EXECUTIVE SUMMARY
+=============================================================================
+Overall Score: 2.9/10
+Overall Status: CRITICAL
+
+Framework Scores:
+- OECD Values-based Principles: 4.2/10 (NEEDS_IMPROVEMENT)
+- NIST AI Risk Management: 2.2/10 (CRITICAL)
+- EU AI Act Requirements: 2.4/10 (CRITICAL)
+
+=============================================================================
+DETAILED HYBRID ANALYSIS WITH FRAMEWORK GUIDANCE
+=============================================================================
+
+
+--- OECD VALUES-BASED PRINCIPLES ---
+Overall Score: 4.2/10
+Status: NEEDS_IMPROVEMENT
+Principles Assessed: 4
+
+
+1. Establishment of International AI Governance Standard [✗]
+   Score: 0.1/10 (Semantic Match: 0.56)
+   
+   Evidence Found (AI Analysis):
+      - The customer policy does not mention or address the principle of establishing international AI governance standards.
+   - The document is a user-facing privacy policy focused on data collection and use, not on the company's role in or adherence to international standard-setting bodies or initiatives.
+   
+   Improvement Recommendation:
+   In a corporate governance or 'Trustworthy AI' section of your website, state a commitment to monitoring and aligning with emerging multi-stakeholder, consensus-driven global technical standards for trustworthy AI.
+   
+   Framework Sections to Implement (Embedding-Based):
+      - 📋 OECD Reference (OECD-LEGAL-0449-en 1_extracted_20250721_185118.txt): encourage international, cross -sectoral and open multi -stakeholder initiatives to garne r long -term expertise on AI. c) Governments should promote the development of multi -stakeholder, consensus -driven global technical standards for interoperable and trustworthy AI. d) Governments should also e...
+   - 📋 OECD Reference (OECD-LEGAL-0449-en 1_extracted_20250721_185118.txt): multi-stakeholder and interdisciplinary dialogue. To provide an inclusive forum for exchanging information on AI policy and activities, and to foster multi-stakeholder and interdisciplinary dialogue, the OECD launched i) the AI Policy Observatory (OECD.AI) as well as ii) the informal OECD Network of...
+   
+   Key Requirements:
+      - Official status as an OECD Legal Instrument
+   - Proper citation and reproduction guidelines
+   
+   Framework Match Scores: 0.56, 0.54, 0.53
+
+
+2. Responsible Stewardship of Trustworthy AI [⚠]
+   Score: 5.5/10 (Semantic Match: 0.55)
+   
+   Evidence Found (AI Analysis):
+      - Our mission is to help you find your natural sleep rhythm using science-backed, personalized coaching.
+   - We are deeply committed to protecting your privacy and handling your data with the utmost care.
+   
+   Improvement Recommendation:
+   Enhance transparency by clarifying the capabilities and limitations of the AI companion 'Remi' and how the system addresses potential inaccuracies or misuse, in line with framework guidance on responsible disclosure and safety.
+   
+   Framework Sections to Implement (Embedding-Based):
+      - 📋 OECD Reference (OECD-LEGAL-0449-en 1_extracted_20250721_185118.txt): information integrity in the context of generative AI; addressing uses outside of intended purpose, intentional misuse, or unintentional misuse; clarifying the information AI actors should provide regarding AI systems to ensure transparency and responsible disclosure; addressing safety concerns, so ...
+   - 📋 OECD Reference (OECD-LEGAL-0449-en 1_extracted_20250721_185118.txt): and open datasets that are representative and respect privacy and data protec tion to support an environment for AI research and development that is free of harmful bias and to improve interoperability and use of standards. OECD/LEGAL/0449 ____________________________________________________________...
+   
+   Key Requirements:
+      - Promote inclusive growth, sustainable development, and well-being
+   - Respect the rule of law, human rights, and democratic values, including fairness and privacy
+   
+   Framework Match Scores: 0.55, 0.50, 0.50
+
+
+3. Responsible AI Governance [⚠]
+   Score: 5.5/10 (Semantic Match: 0.56)
+   
+   Evidence Found (AI Analysis):
+      - The policy clearly states the presence and purpose of the AI: 'Rhythmicly analyzes your sleep patterns to provide insights and coaching from our AI companion, Remi.'
+   - The policy is transparent about the data used by the AI: 'Health Data (From Apple Health)... Sleep Analysis... Heart Rate Data'.
+   
+   Improvement Recommendation:
+   Incorporate an 'Acceptable Use' or 'AI System Limitations' section that explicitly states the AI is not a medical device, clarifies what constitutes misuse, and outlines the measures taken to ensure information integrity and user safety.
+   
+   Framework Sections to Implement (Embedding-Based):
+      - 📋 OECD Reference (OECD-LEGAL-0449-en 1_extracted_20250721_185118.txt): information integrity in the context of generative AI; addressing uses outside of intended purpose, intentional misuse, or unintentional misuse; clarifying the information AI actors should provide regarding AI systems to ensure transparency and responsible disclosure; addressing safety concerns, so ...
+   - 📋 OECD Reference (OECD-LEGAL-0449-en 1_extracted_20250721_185118.txt): and open datasets that are representative and respect privacy and data protec tion to support an environment for AI research and development that is free of harmful bias and to improve interoperability and use of standards. OECD/LEGAL/0449 ____________________________________________________________...
+   
+   Key Requirements:
+      - Provide clear information to users about AI systems
+   - Prevent and address intentional or unintentional misuse
+   
+   Framework Match Scores: 0.56, 0.49, 0.49
+
+
+4. Responsible Stewardship of Trustworthy AI [⚠]
+   Score: 5.5/10 (Semantic Match: 0.55)
+   
+   Evidence Found (AI Analysis):
+      - Our mission is to help you find your natural sleep rhythm using science-backed, personalized coaching.
+   - Rhythmicly analyzes your sleep patterns to provide insights and coaching from our AI companion, Remi.
+   
+   Improvement Recommendation:
+   Incorporate a section that clarifies the capabilities and limitations of the AI companion 'Remi', addressing how the system's advice is generated and reviewed for safety to ensure it responsibly contributes to user well-being.
+   
+   Framework Sections to Implement (Embedding-Based):
+      - 📋 OECD Reference (OECD-LEGAL-0449-en 1_extracted_20250721_185118.txt): information integrity in the context of generative AI; addressing uses outside of intended purpose, intentional misuse, or unintentional misuse; clarifying the information AI actors should provide regarding AI systems to ensure transparency and responsible disclosure; addressing safety concerns, so ...
+   - 📋 OECD Reference (OECD-LEGAL-0449-en 1_extracted_20250721_185118.txt): that AI has the potential to improve the welfare and well -being of people, to contribute to positive sustainable global economic activity, to increase innovation and productivity, and to help respond to ke y global challenges; RECOGNISING that, at the same time, these transformations may have dispa...
+   
+   Key Requirements:
+      - Promote inclusive growth and sustainable development
+   - Advance well-being and reduce inequalities
+   
+   Framework Match Scores: 0.55, 0.52, 0.50
+
+
+--- NIST AI RISK MANAGEMENT FRAMEWORK ---
+Overall Score: 2.2/10
+Status: CRITICAL
+Principles Assessed: 5
+
+
+1. Adaptability and Continuous Improvement [✗]
+   Score: 0.1/10 (Semantic Match: 0.44)
+   
+   Evidence Found (AI Analysis):
+      - The customer document is a privacy policy focused on data handling and does not describe a process for framework review or improvement.
+   - There is no mention of reviewing the AI system's effectiveness, relevance, or a process for incorporating formal input from the AI community or any stakeholders.
+   
+   Improvement Recommendation:
+   Establish and document a formal process for periodically reviewing the AI system's performance and risks, specifying how feedback from users, regulators, and the AI community will be incorporated into updates.
+   
+   Framework Sections to Implement (Embedding-Based):
+      - 📋 NIST Reference (USA-NIST-AI framework-100-1 1_extracted_20250721_185718.txt): and international legal or regulatory regimes. 10. Be a living document. The AI RMF should be readily updated as technology, under- standing, and approaches to AI trustworthiness and uses of AI change and as stake- holders learn from implementing AI risk management generally and this framework in pa...
+   - 📋 NIST Reference (USA-NIST-AI framework-100-1 1_extracted_20250721_185718.txt): with related policies, proce- dures, and agreements. GOVERN 2.3: Executive leadership of the organization takes re- sponsibility for decisions about risks associated with AI system development and deployment. GOVERN 3: Workforce diversity, equity, inclusion, and accessibility processes are prioritiz...
+   
+   Key Requirements:
+      - Regular reviews of the framework to assess its effectiveness and relevance.
+   - Incorporation of formal input from the AI community, particularly in scheduled reviews.
+   
+   Framework Match Scores: 0.44, 0.43, 0.42
+
+
+2. Responsible AI Risk Management [✗]
+   Score: 3.0/10 (Semantic Match: 0.51)
+   
+   Evidence Found (AI Analysis):
+      - Rhythmicly analyzes your sleep patterns to provide insights and coaching from our AI companion, Remi.
+   - We are deeply committed to protecting your privacy and handling your data with the utmost care.
+   
+   Improvement Recommendation:
+   Incorporate a section that explains how the company actively manages risks associated with the AI's recommendations and decisions, such as testing for accuracy, monitoring for bias, and ensuring the safety of the health-related coaching it provides.
+   
+   Framework Sections to Implement (Embedding-Based):
+      - 📋 NIST Reference (USA-NIST-AI framework-100-1 1_extracted_20250721_185718.txt): to an AI system as an engineered or machine-based system that can, for a given set of objectives, generate outputs such as predictions, recommenda- tions, or decisions influencing real or virtual environments. AI systems are designed to operate with varying levels of autonomy (Adapted from: OECD Rec...
+   - 📋 NIST Reference (USA-NIST-AI framework-100-1 1_extracted_20250721_185718.txt): such as de-identification and aggregation for certain model outputs, can support design for privacy-enhanced AI systems. Under certain conditions such as data sparsity, privacy- enhancing techniques can result in a loss in accuracy, affecting decisions about fairness and other values in certain doma...
+   
+   Key Requirements:
+      - Understanding and addressing unique risks posed by AI systems
+   - Implementing proper controls to mitigate risks and prevent negative outcomes
+   
+   Framework Match Scores: 0.51, 0.46, 0.46
+
+
+3. Professional Responsibility and Trustworthy AI Development [✗]
+   Score: 3.0/10 (Semantic Match: 0.49)
+   
+   Evidence Found (AI Analysis):
+      - The policy states, 'We are deeply committed to protecting your privacy and handling your data with the utmost care,' which implies a sense of responsibility regarding data handling.
+   - The document is a privacy policy focused on data transparency and user consent, but it does not explicitly address the broader professional responsibility of the AI developers or the societal influence of the AI coaching system as required by the framework.
+   
+   Improvement Recommendation:
+   Incorporate a 'Responsible AI Development' clause acknowledging the professional responsibility of the creators and the system's potential influence on user health and well-being, and detail the measures taken to manage risks associated with AI-driven coaching.
+   
+   Framework Sections to Implement (Embedding-Based):
+      - 📋 NIST Reference (USA-NIST-AI framework-100-1 1_extracted_20250721_185718.txt): accord with “ professional responsibility ,” defined by ISOas an approach that “aims to ensure that professionals who design, develop, or deploy AI systems and applications or AI-based products or systems, recognize their unique position to exert influence on people, society, and the future of AI” (...
+   - 📋 NIST Reference (USA-NIST-AI framework-100-1 1_extracted_20250721_185718.txt): to an AI system as an engineered or machine-based system that can, for a given set of objectives, generate outputs such as predictions, recommenda- tions, or decisions influencing real or virtual environments. AI systems are designed to operate with varying levels of autonomy (Adapted from: OECD Rec...
+   
+   Key Requirements:
+      - Recognizing the influence of professionals on society and AI's future
+   - Managing risks associated with AI development and deployment
+   
+   Framework Match Scores: 0.49, 0.46, 0.44
+
+
+4. Risk Management and Mitigation [✗]
+   Score: 2.5/10 (Semantic Match: 0.50)
+   
+   Evidence Found (AI Analysis):
+      - We are deeply committed to protecting your privacy and handling your data with the utmost care.
+   - This policy explains what information we collect, how we use it to provide you with our service, and the controls you have over your information.
+   
+   Improvement Recommendation:
+   Incorporate a dedicated 'AI Governance' or 'Trust & Safety' section that outlines the company's commitment to managing AI risks throughout its lifecycle, including how the AI is tested for safety and accuracy before and during deployment.
+   
+   Framework Sections to Implement (Embedding-Based):
+      - 📋 NIST Reference (USA-NIST-AI framework-100-1 1_extracted_20250721_185718.txt): to an AI system as an engineered or machine-based system that can, for a given set of objectives, generate outputs such as predictions, recommenda- tions, or decisions influencing real or virtual environments. AI systems are designed to operate with varying levels of autonomy (Adapted from: OECD Rec...
+   - 📋 NIST Reference (USA-NIST-AI framework-100-1 1_extracted_20250721_185718.txt): incorporate AI risks. As part of the effort to address AI trustworthi- ness characteristics such as “Secure and Resilient” and “Privacy-Enhanced,” organizations may consider leveraging available standards and guidance that provide broad guidance to organizations to reduce security and privacy risks,...
+   
+   Key Requirements:
+      - Application across all AI lifecycle stages
+   - Collaboration between public and private sectors
+   
+   Framework Match Scores: 0.50, 0.49, 0.48
+
+
+5. Balanced and Holistic Approach to AI Trustworthiness [✗]
+   Score: 2.5/10 (Semantic Match: 0.53)
+   
+   Evidence Found (AI Analysis):
+      - The policy explains what information is collected and how it is used ('This policy explains what information we collect, how we use it...'), addressing the transparency aspect of trustworthiness.
+   - The policy focuses almost exclusively on data privacy and user consent, but does not describe how other critical trustworthiness characteristics (e.g., accuracy, reliability, fairness, bias) are considered in an interconnected, holistic manner for the AI coach 'Remi'.
+   
+   Improvement Recommendation:
+   Incorporate a new section on 'AI Trustworthiness' that explicitly states how human judgment is applied to set and review performance metrics for the AI, and how characteristics like accuracy, fairness, and reliability are managed as an interconnected system.
+   
+   Framework Sections to Implement (Embedding-Based):
+      - 📋 NIST Reference (USA-NIST-AI framework-100-1 1_extracted_20250721_185718.txt): AI systems. Valid & Reliable is a necessary condition of trustworthiness and is shown as the base for other trustworthiness characteristics. Accountable & Transparent is shown as a vertical box because it relates to all other characteristics. Trustworthiness characteristics (shown in Figure 4) are i...
+   - 📋 NIST Reference (USA-NIST-AI framework-100-1 1_extracted_20250721_185718.txt): reliability for deployed AI systems are often assessed by ongoing testing or monitoring that confirms a system is performing as intended. Measurement of validity, accuracy, robustness, and reliability contribute to trustworthiness and should take into con- sideration that certain types of failures c...
+   
+   Key Requirements:
+      - Interconnected Consideration of Trustworthiness Characteristics
+   - Human Judgment in Metrics and Thresholds
+   
+   Framework Match Scores: 0.53, 0.49, 0.47
+
+
+--- EU AI ACT REQUIREMENTS ---
+Overall Score: 2.4/10
+Status: CRITICAL
+Principles Assessed: 6
+
+
+1. EU Principle 2 [✗]
+   Score: 3.0/10 (Semantic Match: 0.42)
+   
+   Evidence Found (AI Analysis):
+      - Rhythmicly analyzes your sleep patterns to provide insights and coaching from our AI companion, Remi. To do this, we need to access certain data with your explicit permission.
+   - When you connect Rhythmicly to Apple Health, we ask for permission to read specific data points to analyze your sleep and rhythm. This includes: Sleep Analysis: Bedtime, wake time, and sleep duration. Heart Rate Data: Resting heart rate and he...
+   
+   Improvement Recommendation:
+   Incorporate a section on AI Data Governance, detailing the practices used to ensure the data for training, validating, and testing the 'Remi' AI is relevant, representative, and checked for biases, as guided by Article 10 of the EU AI Act.
+   
+   Framework Sections to Implement (Embedding-Based):
+      - 📋 EU Reference (The EU AI Act 2_extracted_20250721_185638.txt): --- Page 1 --- OfficialJournal oftheEuropeanUnionEN Lseries 2024/1689 12.7.2024 REGULATION(EU)2024/1689OFTHEEUROPEANPARLIAMENT ANDOFTHECOUNCIL of13June2024 layingdownharmonisedrulesonartificialintelligenceandamending Regulations(EC)No300/2008,(EU)No167/2013,(EU)No168/2013, (EU)2018/858,(EU)2018/1139...
+   - 📋 EU Reference (The EU AI Act 2_extracted_20250721_185638.txt): 19 --- Directive2014/90/EUoftheEuropeanParliamentandoftheCouncil(27), Directive(EU)2016/797oftheEuropeanParliamentandoftheCouncil(28), Regulation(EU)2018/858oftheEuropeanParliamentandoftheCouncil(29), Regulation(EU)2018/1139oftheEuropeanParliamentandoftheCouncil(30), andRegulation(EU)2019/2144oftheE...
+   
+   Key Requirements:
+      - Requirements analysis unavailable
+   
+   Framework Match Scores: 0.42, 0.40, 0.35
+
+
+2. Protection of Scientific Research and Development [✗]
+   Score: 2.0/10 (Semantic Match: 0.40)
+   
+   Evidence Found (AI Analysis):
+      - The customer policy describes an AI system that is commercialized and put into service: 'Rhythmicly analyzes your sleep patterns to provide insights and coaching from our AI companion, Remi.'
+   - The policy does not contain any language regarding the use of AI systems or data for the purpose of scientific research and development, nor does it address the distinction between R&D activities and commercial service delivery.
+   
+   Improvement Recommendation:
+   Explicitly state whether any AI development or data usage is conducted solely for scientific research and development, and clarify if and how this differs from the AI system provided to users.
+   
+   Framework Sections to Implement (Embedding-Based):
+      - 📋 EU Reference (The EU AI Act 2_extracted_20250721_185638.txt): (180)TheEuropeanDataProtectionSupervisorandtheEuropeanDataProtection BoardwereconsultedinaccordancewithArticle42(1)and(2)ofRegulation (EU)2018/1725anddeliveredtheirjointopinionon18June2021, HAVEADOPTEDTHISREGULATION: CHAPTERI GENERALPROVISIONS Article1 Subjectmatter` 1.ThepurposeofthisRegulationisto...
+   - 📋 EU Reference (The EU AI Act 2_extracted_20250721_185638.txt): --- Page 1 --- OfficialJournal oftheEuropeanUnionEN Lseries 2024/1689 12.7.2024 REGULATION(EU)2024/1689OFTHEEUROPEANPARLIAMENT ANDOFTHECOUNCIL of13June2024 layingdownharmonisedrulesonartificialintelligenceandamending Regulations(EC)No300/2008,(EU)No167/2013,(EU)No168/2013, (EU)2018/858,(EU)2018/1139...
+   
+   Key Requirements:
+      - Exclude AI systems developed solely for scientific research and development from the regulation.
+   - Ensure compliance with the regulation when AI systems are commercialized or put into service.
+   
+   Framework Match Scores: 0.40, 0.34, 0.34
+
+
+3. Data Quality and Privacy in AI Development [✗]
+   Score: 2.5/10 (Semantic Match: 0.36)
+   
+   Evidence Found (AI Analysis):
+      - The policy states a general commitment to 'protecting your privacy and handling your data with the utmost care'.
+   - The document lacks any mention of using certified compliance services for data governance or specific technical measures to ensure dataset integrity and security for its AI development.
+   
+   Improvement Recommendation:
+   Incorporate a 'Data Security and Integrity' section detailing the technical and organizational measures taken (e.g., encryption, access controls, data validation) and reference adherence to a recognized industry standard or certification to demonstrate robust data governance.
+   
+   Framework Sections to Implement (Embedding-Based):
+      - 📋 EU Reference (The EU AI Act 2_extracted_20250721_185638.txt): (180)TheEuropeanDataProtectionSupervisorandtheEuropeanDataProtection BoardwereconsultedinaccordancewithArticle42(1)and(2)ofRegulation (EU)2018/1725anddeliveredtheirjointopinionon18June2021, HAVEADOPTEDTHISREGULATION: CHAPTERI GENERALPROVISIONS Article1 Subjectmatter` 1.ThepurposeofthisRegulationisto...
+   - 📋 EU Reference (The EU AI Act 2_extracted_20250721_185638.txt): AIsystemforwhichithasbeendrawnup.AcopyoftheEUdeclarationof conformityshallbesubmittedtotherelevantnationalcompetentauthorities uponrequest. 2.TheEUdeclarationofconformityshallstatethatthehigh-riskAIsystem concernedmeetstherequirementssetoutinSection2.TheEUdeclaration ofconformityshallcontaintheinfor...
+   
+   Key Requirements:
+      - Use of certified compliance services for data governance
+   - Ensuring dataset integrity and security
+   
+   Framework Match Scores: 0.36, 0.34, 0.34
+
+
+4. Proportionate and Necessary Use with Safeguards [✗]
+   Score: 0.1/10 (Semantic Match: 0.36)
+   
+   Evidence Found (AI Analysis):
+      - The customer policy explains the purpose for collecting health data ('to analyze your sleep and rhythm') and notes it is done with 'explicit permission', but it entirely omits any mention of the key requirements: prior authorization from a judicial or independent administrative authority, or the completion of a fundamental rights impact assessment.
+   
+   Improvement Recommendation:
+   Incorporate a statement confirming that a Data Protection Impact Assessment (DPIA) has been completed for the high-risk processing of health data, as this is a key safeguard for ensuring proportionate and necessary use.
+   
+   Framework Sections to Implement (Embedding-Based):
+      - 📋 EU Reference (The EU AI Act 2_extracted_20250721_185638.txt): (180)TheEuropeanDataProtectionSupervisorandtheEuropeanDataProtection BoardwereconsultedinaccordancewithArticle42(1)and(2)ofRegulation (EU)2018/1725anddeliveredtheirjointopinionon18June2021, HAVEADOPTEDTHISREGULATION: CHAPTERI GENERALPROVISIONS Article1 Subjectmatter` 1.ThepurposeofthisRegulationisto...
+   - 📋 EU Reference (The EU AI Act 2_extracted_20250721_185638.txt): --- Page 1 --- OfficialJournal oftheEuropeanUnionEN Lseries 2024/1689 12.7.2024 REGULATION(EU)2024/1689OFTHEEUROPEANPARLIAMENT ANDOFTHECOUNCIL of13June2024 layingdownharmonisedrulesonartificialintelligenceandamending Regulations(EC)No300/2008,(EU)No167/2013,(EU)No168/2013, (EU)2018/858,(EU)2018/1139...
+   
+   Key Requirements:
+      - Prior authorization from a judicial or independent administrative authority
+   - Completion of a fundamental rights impact assessment
+   
+   Framework Match Scores: 0.36, 0.32, 0.28
+
+
+5. Transparency and Explainability [⚠]
+   Score: 6.5/10 (Semantic Match: 0.33)
+   
+   Evidence Found (AI Analysis):
+      - The policy clearly states what information is collected: 'Sleep Analysis: Bedtime, wake time, and sleep duration. Heart Rate Data: Resting heart rate...'
+   - The policy explains the purpose of the data collection: 'Rhythmicly analyzes your sleep patterns to provide insights and coaching from our AI companion, Remi.'
+   
+   Improvement Recommendation:
+   In the 'How Rhythmicly Works' section, add a brief, high-level explanation of the logic your AI companion, Remi, uses to generate insights, such as the key factors it considers (e.g., sleep consistency, heart rate trends) to create its coaching advice.
+   
+   Framework Sections to Implement (Embedding-Based):
+      - 📋 EU Reference (The EU AI Act 2_extracted_20250721_185638.txt): (180)TheEuropeanDataProtectionSupervisorandtheEuropeanDataProtection BoardwereconsultedinaccordancewithArticle42(1)and(2)ofRegulation (EU)2018/1725anddeliveredtheirjointopinionon18June2021, HAVEADOPTEDTHISREGULATION: CHAPTERI GENERALPROVISIONS Article1 Subjectmatter` 1.ThepurposeofthisRegulationisto...
+   - 📋 EU Reference (The EU AI Act 2_extracted_20250721_185638.txt): AIsystemforwhichithasbeendrawnup.AcopyoftheEUdeclarationof conformityshallbesubmittedtotherelevantnationalcompetentauthorities uponrequest. 2.TheEUdeclarationofconformityshallstatethatthehigh-riskAIsystem concernedmeetstherequirementssetoutinSection2.TheEUdeclaration ofconformityshallcontaintheinfor...
+   
+   Key Requirements:
+      - Designing systems to ensure transparency in operation
+   - Providing clear, complete, and accessible instructions for use
+   
+   Framework Match Scores: 0.33, 0.32, 0.30
+
+
+6. Regulatory Harmonization and Standardization [✗]
+   Score: 0.1/10 (Semantic Match: 0.46)
+   
+   Evidence Found (AI Analysis):
+      - The customer policy document is a privacy notice focused on explaining data collection and usage to end-users (e.g., 'This policy explains what information we collect, how we use it...').
+   - The document does not address the high-level legislative principle of creating or maintaining common rules across member states; its scope is limited to operational compliance for a single entity.
+   
+   Improvement Recommendation:
+   Incorporate a statement acknowledging adherence to major harmonized EU regulations relevant to your service, such as GDPR and the EU AI Act (Regulation (EU) 2024/1689), to demonstrate commitment to the EU's standardized legal framework.
+   
+   Framework Sections to Implement (Embedding-Based):
+      - 📋 EU Reference (The EU AI Act 2_extracted_20250721_185638.txt): --- Page 1 --- OfficialJournal oftheEuropeanUnionEN Lseries 2024/1689 12.7.2024 REGULATION(EU)2024/1689OFTHEEUROPEANPARLIAMENT ANDOFTHECOUNCIL of13June2024 layingdownharmonisedrulesonartificialintelligenceandamending Regulations(EC)No300/2008,(EU)No167/2013,(EU)No168/2013, (EU)2018/858,(EU)2018/1139...
+   - 📋 EU Reference (The EU AI Act 2_extracted_20250721_185638.txt): vehicles,amendingRegulations(EC)No715/2007and(EC)No595/2009andrepealingDirective2007/46/EC(OJL151, 14.6.2018,p.1). (30)Regulation(EU)2018/1139oftheEuropeanParliamentandoftheCouncilof4July2018oncommonrulesinthefieldof civilaviationandestablishingaEuropeanUnionAviationSafetyAgency,andamendingRegulatio...
+   
+   Key Requirements:
+      - Establishing common rules and standards across EU member states
+   - Amending and repealing outdated regulations to maintain relevance
+   
+   Framework Match Scores: 0.46, 0.44, 0.43
+
+
+=============================================================================
+PRIORITY IMPROVEMENT ACTIONS (Based on Hybrid Analysis)
+=============================================================================
+
+Critical Issues (Score < 4):
+
+- OECD: Establishment of International AI Governance Standard (Score: 0.1) [Low semantic match: 0.56]
+- NIST: Adaptability and Continuous Improvement (Score: 0.1) [Low semantic match: 0.44]
+- NIST: Responsible AI Risk Management (Score: 3.0) [Low semantic match: 0.51]
+- NIST: Professional Responsibility and Trustworthy AI Development (Score: 3.0) [Low semantic match: 0.49]
+- NIST: Risk Management and Mitigation (Score: 2.5) [Low semantic match: 0.50]
+
+High Framework Match, Low Score (Quick Implementation Opportunities):
+
+- OECD: Establishment of International AI Governance Standard (Score: 0.1, Framework Match: 0.56)
+- OECD: Responsible Stewardship of Trustworthy AI (Score: 5.5, Framework Match: 0.55)
+- OECD: Responsible AI Governance (Score: 5.5, Framework Match: 0.56)
+
+Strengths (Score 7+):
+
+No high-scoring principles identified.
+
+=============================================================================
+HYBRID METHODOLOGY SUMMARY
+=============================================================================
+
+Framework Guidance Identification:
+- Used sentence embeddings to find most relevant framework document sections
+- Calculated cosine similarity between principles and actual OECD/NIST/EU content
+- Identified top-matching framework sections for implementation guidance
+
+AI Compliance Scoring:
+- Gemini AI analyzed customer policy against principle requirements
+- Provided evidence-based scoring with specific recommendations
+- Used framework context to generate targeted improvement suggestions
+
+Benefits of Framework-Guided Approach:
+- Shows specific framework sections to implement (not just what you have)
+- Provides authoritative source material for improvements
+- Gives similarity scores to prioritize implementation efforts
+- Links compliance gaps directly to official framework guidance
+
+Assessment completed: 2025-08-05 21:53:00
